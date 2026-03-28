@@ -1,0 +1,18 @@
+{"event": "section_start", "ts": "2026-03-26T20:59:14.559344+00:00", "section": "sota", "step": "perplexity:sota"}
+{"event": "section_done", "ts": "2026-03-26T20:59:36.017929+00:00", "section": "sota", "duration_s": 21.469, "chars": 3046}
+{"event": "section_start", "ts": "2026-03-26T20:59:36.033598+00:00", "section": "gaps", "step": "perplexity:gaps"}
+{"event": "section_done", "ts": "2026-03-26T20:59:47.207350+00:00", "section": "gaps", "duration_s": 11.172, "chars": 2851}
+{"event": "section_start", "ts": "2026-03-26T20:59:47.210770+00:00", "section": "methodology", "step": "perplexity:methodology"}
+{"event": "section_done", "ts": "2026-03-26T20:59:59.625960+00:00", "section": "methodology", "duration_s": 12.406, "chars": 3293}
+{"event": "section_start", "ts": "2026-03-26T20:59:59.640831+00:00", "section": "datasets", "step": "perplexity:datasets"}
+{"event": "section_done", "ts": "2026-03-26T21:00:17.185579+00:00", "section": "datasets", "duration_s": 17.547, "chars": 2513}
+{"event": "section_start", "ts": "2026-03-26T21:00:17.188923+00:00", "section": "experiments", "step": "perplexity:experiments"}
+{"event": "section_done", "ts": "2026-03-26T21:00:39.280872+00:00", "section": "experiments", "duration_s": 22.079, "chars": 2554}
+{"event": "section_start", "ts": "2026-03-26T21:00:39.284179+00:00", "section": "discussion", "step": "perplexity:discussion"}
+{"event": "section_done", "ts": "2026-03-26T21:00:49.047488+00:00", "section": "discussion", "duration_s": 9.75, "chars": 1992}
+{"event": "section_start", "ts": "2026-03-26T21:00:49.050679+00:00", "section": "writing_hook", "step": "perplexity:writing_hook"}
+{"event": "section_done", "ts": "2026-03-26T21:00:55.059017+00:00", "section": "writing_hook", "duration_s": 6.0, "chars": 1074}
+{"event": "section_start", "ts": "2026-03-26T21:00:55.062344+00:00", "section": "conclusion", "step": "perplexity:conclusion"}
+{"event": "section_done", "ts": "2026-03-26T21:01:03.130724+00:00", "section": "conclusion", "duration_s": 8.078, "chars": 1535}
+{"event": "draft_assembled", "ts": "2026-03-26T21:01:03.335155+00:00", "path": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\396b4624db5c\\outputs\\draft_paper.md"}
+{"event": "notion_sync_ok", "ts": "2026-03-26T21:01:35.008191+00:00"}

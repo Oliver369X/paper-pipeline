@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "selected_goal_type": "literature",
+  "goal_text": "Explorar literatura y contraejemplos para reducir incertidumbre.",
+  "priority": 0.6,
+  "reason": "No hay una señal fuerte para ejecutar publicación o experimento inmediato.",
+  "source_signals": [
+    "objective_state.json",
+    "memory_index.json"
+  ],
+  "gates": {
+    "metrics_valid": true,
+    "publishable": true,
+    "loop_stopped": false,
+    "requires_human_approval": false
+  },
+  "last_updated_at": "2026-03-27T16:43:53.578654+00:00"
+}

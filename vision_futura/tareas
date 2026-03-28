@@ -1,0 +1,757 @@
+Sí: te dejo el **backlog maestro completo de implementación** para llevar `paper-pipeline` desde su estado actual —parser de misión, runner lineal, `paper-loop`, meta-loop, API FastAPI, worktrees paralelos, triage, Notion opcional, logs y documentación por capas— hacia una plataforma de investigación auditable, reproducible y publicable de punta a punta. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/886127c1-6ba3-41c6-93c8-a9e1888b8566/ESTADO_Y_OBJETIVO.md)
+Lo organizo como un plan ejecutable: **épicas → tareas → inputs → proceso → outputs → tests → criterios de aceptación → dependencias**, priorizado para que no construyas features encima de una base todavía inconsistente. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/5da860f8-daae-48fa-96c3-f69582c1f61d/01-arquitectura.md)
+
+## Supuesto base
+
+Este backlog parte de la realidad documentada del repo: hoy ya existen `mission.md` como entrada, fases del runner, artefactos en `outputs/`, `run_state.json` para reanudación, `manifest.json`, `run.log`, `paper-loop`, `paper-meta-loop`, `paper-meta-watch`, `paper-web`, `paper-parallel`, worktrees y triage por tiers. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md)
+También asume que el sistema real hoy vive principalmente en CLI/API/archivos y que la `visual-flow` es solo demo didáctica, no el flujo principal. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/8b3cfa7f-9353-4e2f-a123-19ae861643ea/GUIA_FLUJO_COMPLETO.md)
+La consecuencia es simple: primero hay que **endurecer contratos y estado**, luego calidad/evidencia, después paralelo/web/publicación.
+
+## Prioridad general
+
+| Fase | Objetivo | Resultado |
+|---|---|---|
+| P0 | Congelar contratos | Misión y estado consistentes |
+| P1 | Hacer el sistema auditable | Ledger único + fases v2 |
+| P2 | Hacerlo confiable | Quality gates + evidence bundle |
+| P3 | Hacerlo escalable | Paralelo + leaderboard + loop seguro |
+| P4 | Hacerlo operable | API/web cockpit + Notion bien modelado |
+| P5 | Hacerlo publicable | Research pack + code pack + web pack |
+
+## Epic 0
+
+Esta épica existe para evitar que el proyecto crezca sobre claves inconsistentes entre docs, runner, loop, triage y web, algo que ya se nota en la documentación actual con varias nomenclaturas y capas de estado separadas. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/cdf518f8-f85d-44cd-ada9-5e836da100c1/OUTPUTS_REFERENCE.md)
+
+### Tarea 0.1 — Inventario de contrato actual
+- **Objetivo:** listar todas las claves y artefactos hoy usados por runner, loop, triage, API y frontend.
+- **Archivos a leer y mapear:** `pipeline/runner.py`, `integrated_loop_main.py`, `meta_main.py`, `parallel/worktree_runner.py`, `hypervisor/triage.py`, routers FastAPI, formularios web, docs.
+- **Input:** código actual + docs técnicas + docs de usuario.
+- **Proceso:**
+  1. extraer claves de misión leídas en runtime;
+  2. extraer nombres reales de outputs;
+  3. identificar duplicados/aliases;
+  4. marcar “estable / experimental / legado”.
+- **Output:** `docs/architecture/contract_inventory.md`
+- **Tests:** ninguno de runtime; revisión documental.
+- **Criterio de aceptación:** el inventario cubre 100% de claves usadas por CLI, API y paralelo.
+
+### Tarea 0.2 — Definir Mission Schema v2
+- **Objetivo:** crear un esquema único de misión.
+- **Archivos nuevos:** `schemas/mission.schema.json`
+- **Input:** inventario de 0.1
+- **Proceso:** modelar grupos:
+  - identidad
+  - contenido
+  - calidad
+  - reproducibilidad
+  - integraciones
+  - paralelo
+  - publicación
+- **Output:** schema JSON validable
+- **Tests:**
+  - misión mínima válida;
+  - misión completa válida;
+  - misión con claves deprecadas;
+  - misión inválida por tipo;
+  - misión inválida por campo faltante.
+- **Criterio de aceptación:** toda misión de ejemplo pasa o falla con errores explicables.
+
+### Tarea 0.3 — Normalizador de misión
+- **Objetivo:** soportar migración desde formatos previos.
+- **Archivos nuevos:** `paper_pipeline/config/mission_normalizer.py`
+- **Input:** `mission.md`
+- **Proceso:**
+  1. parsear frontmatter;
+  2. convertir aliases heredados;
+  3. completar defaults;
+  4. emitir warnings por claves deprecadas.
+- **Output:** `mission.normalized.json`
+- **Tests:** golden tests de migración
+- **Criterio de aceptación:** misiones viejas pueden seguir corriendo durante la ventana de transición.
+
+### Tarea 0.4 — Validador de misión
+- **Objetivo:** fallar rápido antes del runner.
+- **Archivos nuevos:** `paper_pipeline/config/mission_validator.py`
+- **Input:** misión normalizada
+- **Output:** `mission.validation.json`
+- **Tests:** validación positiva/negativa
+- **Criterio de aceptación:** ningún run empieza si la misión no es válida.
+
+### Tarea 0.5 — Congelar ejemplos oficiales
+- **Objetivo:** evitar ejemplos rotos.
+- **Archivos nuevos:** `examples/missions/*.md`
+- **Inputs:** schema v2
+- **Outputs:** 5 ejemplos oficiales:
+  - paper simple
+  - paper con code
+  - loop reactivo
+  - paralelo
+  - publish-ready
+- **Tests:** todos pasan validación
+- **Criterio de aceptación:** los ejemplos sirven como fixtures de CI.
+
+## Epic 1
+
+La referencia de `outputs/` deja claro que hoy existen `run.log`, `run_state.json`, `meta_loop_state.json`, `draft_paper.md`, secciones, `next_instruction.md`, `cursor_turn.md`, `cursor_cli.log` y más, pero no una sola estructura canónica de estado. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/cdf518f8-f85d-44cd-ada9-5e836da100c1/OUTPUTS_REFERENCE.md)
+Eso es el siguiente cuello de botella real.
+
+### Tarea 1.1 — Diseñar `run_ledger.json`
+- **Objetivo:** una fuente única de verdad por run.
+- **Archivo nuevo:** `schemas/run_ledger.schema.json`
+- **Input:** manifest + run_state + events actuales
+- **Output:** contrato del ledger
+- **Tests:** schema tests
+- **Criterio:** cubre fases, integraciones, artefactos, decisión final, errores y resumibilidad.
+
+### Tarea 1.2 — Implementar modelo de ledger
+- **Archivo nuevo:** `paper_pipeline/state/run_ledger.py`
+- **Input:** datos de ejecución
+- **Output:** objeto serializable
+- **Tests:** unit tests del modelo
+- **Criterio:** soporta append, update por fase y snapshot final.
+
+### Tarea 1.3 — Escritor de ledger
+- **Archivo nuevo:** `paper_pipeline/state/ledger_writer.py`
+- **Proceso:** crear al inicio, actualizar al cambio de fase, sellar al final.
+- **Output:** `outputs/run_ledger.json`
+- **Tests:** escritura incremental + crash recovery
+- **Criterio:** si el proceso se interrumpe, el ledger sigue siendo parseable.
+
+### Tarea 1.4 — Adaptador desde `run.log`
+- **Objetivo:** derivar timeline detallado desde eventos ya existentes. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md)
+- **Archivos:** `paper_pipeline/state/log_to_ledger.py`
+- **Tests:** replay tests
+- **Criterio:** el ledger refleja estados reales del log.
+
+### Tarea 1.5 — Adaptador desde `manifest.json`
+- **Objetivo:** mantener compatibilidad con UI y auditoría actuales. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/5da860f8-daae-48fa-96c3-f69582c1f61d/01-arquitectura.md)
+- **Output:** manifest derivado o deprecado
+- **Tests:** equivalencia parcial con el manifest actual
+- **Criterio:** la UI no se rompe en la transición.
+
+### Tarea 1.6 — Política de deprecación de estados
+- **Objetivo:** decidir qué se mantiene y qué se deriva.
+- **Recomendación:**
+  - `run_ledger.json` → canónico
+  - `run.log` → detalle
+  - `pipeline_events.jsonl` → stream
+  - `manifest.json` → derivado
+  - `run_state.json` → subestado técnico
+  - `meta_loop_state.json` → subestado técnico del revisor [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/cdf518f8-f85d-44cd-ada9-5e836da100c1/OUTPUTS_REFERENCE.md)
+- **Output:** `docs/architecture/state_policy.md`
+- **Criterio:** ningún desarrollador duda cuál archivo manda.
+
+## Epic 2
+
+El orquestador actual tiene 5 fases documentadas: `perplexity_sections`, `assembly_draft`, `quality_check`, `notion_sync`, `cursor_cli`. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md)
+Eso ya no basta para tu visión.
+
+### Tarea 2.1 — Definir fases v2
+- **Archivo:** `docs/architecture/pipeline_v2.md`
+- **Fases propuestas:**
+  1. mission_validation
+  2. preflight
+  3. perplexity_sections
+  4. assembly_draft
+  5. claim_extraction
+  6. quality_validation
+  7. evidence_packaging
+  8. triage
+  9. notion_sync
+  10. cursor_cli
+  11. publication_pack
+  12. final_decision
+- **Criterio:** cada fase tiene input/output definidos.
+
+### Tarea 2.2 — Implementar motor de fases
+- **Archivo nuevo:** `paper_pipeline/pipeline/stage_engine.py`
+- **Input:** misión validada + contexto de run
+- **Output:** ejecución fase por fase
+- **Tests:** orden correcto, skip correcto, resume correcto
+- **Criterio:** cada fase puede reintentarse o marcarse omitida explícitamente.
+
+### Tarea 2.3 — Integrar `mission_validation`
+- **Input:** misión normalizada
+- **Output:** fase bloqueante
+- **Tests:** run no arranca si la misión falla
+- **Criterio:** error legible desde CLI y API.
+
+### Tarea 2.4 — Integrar `preflight`
+- **Input:** variables de entorno, paths, binarios, permisos
+- **Output:** `outputs/preflight_report.json`
+- **Tests:** sin token, sin binario, sin repo git, output dir inválido
+- **Criterio:** falla antes de gastar tiempo en ejecución.
+
+### Tarea 2.5 — Migrar runner actual
+- **Archivo a modificar:** `paper_pipeline/pipeline/runner.py`
+- **Objetivo:** usar el motor de fases v2
+- **Tests:** snapshot de outputs en modo legacy y v2
+- **Criterio:** flujo viejo sigue disponible con flag temporal si hace falta.
+
+## Epic 3
+
+El sistema hoy genera secciones por Perplexity y ensambla `draft_paper.md`. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/886127c1-6ba3-41c6-93c8-a9e1888b8566/ESTADO_Y_OBJETIVO.md)
+El siguiente paso es convertir ese draft en objeto verificable.
+
+### Tarea 3.1 — Extractor de claims
+- **Archivo nuevo:** `paper_pipeline/validation/claim_extractor.py`
+- **Input:** `outputs/draft_paper.md`
+- **Proceso:** identificar afirmaciones cuantitativas, literarias, metodológicas y causales.
+- **Output:** `outputs/evidence/claims.json`
+- **Tests:** textos sintéticos y drafts reales
+- **Criterio:** recall alto para claims cuantitativos y metodológicos.
+
+### Tarea 3.2 — Clasificador de claims
+- **Output adicional:** tipo, severidad, requerimientos de evidencia
+- **Tests:** edge cases
+- **Criterio:** cada claim queda marcado como verificable/no verificable.
+
+### Tarea 3.3 — Mapa claim → sección
+- **Objetivo:** saber dónde corregir
+- **Output:** `source_map.json`
+- **Tests:** claims con repetición entre secciones
+- **Criterio:** relación claim-sección precisa.
+
+### Tarea 3.4 — Gaps report enriquecido
+- **Objetivo:** reemplazar `quality_gaps.md` genérico por un reporte accionable. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md)
+- **Output:** `outputs/validation/quality_gaps.md`
+- **Tests:** snapshots
+- **Criterio:** cada gap indica acción concreta.
+
+## Epic 4
+
+Tu triage ya acepta un `metrics.json` con `exit_code`, `main`, `baseline`, `coverage`, `math_checks`, `anomaly_detected`, `oom_error` y decide tiers 0–3. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7202532b-9845-487f-a7de-f9d1e7c82d91/HIPERVISOR_Y_PARALELO.md)
+Hay que convertir eso en un contrato experimental serio.
+
+### Tarea 4.1 — `metrics.schema.json`
+- **Archivo nuevo:** `schemas/metrics.schema.json`
+- **Input:** formato actual + extensiones
+- **Campos nuevos recomendados:**
+  - schema_version
+  - seed
+  - n_runs
+  - confidence_interval
+  - dataset_hash
+  - code_commit
+  - runtime_sec
+- **Tests:** validación schema
+- **Criterio:** cualquier experimento puede producir un metrics bundle estándar.
+
+### Tarea 4.2 — Writer de métricas estándar
+- **Archivo nuevo:** `paper_pipeline/evidence/metrics_writer.py`
+- **Input:** resultados de experimento
+- **Output:** `outputs/evidence/metrics.json`
+- **Tests:** serialización + completitud
+- **Criterio:** el triage nunca recibe métricas incompletas sin marcarlo.
+
+### Tarea 4.3 — Verificador de consistencia métrica
+- **Objetivo:** detectar imposibles o incoherencias
+- **Checks:**
+  - coverage entre 0 y 1
+  - CI ordenado
+  - baseline presente si target_metric lo requiere
+  - main compatible con higher_is_better
+- **Output:** `metrics_validation.json`
+- **Tests:** valores corruptos
+- **Criterio:** falla antes de triage si el bundle es inconsistente.
+
+### Tarea 4.4 — Integrar baseline de misión
+- **Objetivo:** cruzar mission + metrics + triage
+- **Tests:** higher/lower is better
+- **Criterio:** la lógica tier siempre usa el contrato de misión, no heurísticas escondidas.
+
+## Epic 5
+
+Hoy `quality_check` es opcional. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md)
+Eso hay que revertir.
+
+### Tarea 5.1 — Quality gate runner
+- **Archivo nuevo:** `paper_pipeline/validation/quality_gate_runner.py`
+- **Input:** misión, draft, claims, metrics, environment
+- **Output:** `outputs/validation/quality_validation.json`
+- **Tests:** gates individuales y combinados
+- **Criterio:** hay resultado legible por máquina y humano.
+
+### Tarea 5.2 — Gate estructural
+- **Input:** outputs mínimos
+- **Checks:** secciones, draft, logs, misión válida
+- **Output:** pass/fail
+- **Criterio:** nada avanza si faltan artefactos mínimos.
+
+### Tarea 5.3 — Gate epistémico
+- **Input:** claims + soporte
+- **Checks:** porcentaje de claims soportados, claims críticos sin evidencia
+- **Criterio:** publishable false si fallan claims críticos.
+
+### Tarea 5.4 — Gate experimental
+- **Input:** metrics + tests
+- **Checks:** completitud, coherencia, cobertura, baseline
+- **Criterio:** no se promueve a tier 3 con métricas parciales.
+
+### Tarea 5.5 — Gate reproducibilidad
+- **Input:** seed, environment, command, hashes
+- **Output:** reproducibility status
+- **Criterio:** no publishable si falta expediente reproducible.
+
+### Tarea 5.6 — Gate integridad
+- **Checks:** draft dice X, metrics dicen Y, triage no puede concluir Z
+- **Criterio:** inconsistencias bloquean publish.
+
+### Tarea 5.7 — Gate seguridad
+- **Base existente:** `command_safety.py`, timeouts, path validation, secretos fuera de git. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e4898275-1061-4471-b568-bc84ab3d263a/03-servidor-api.md)
+- **Extensión:** supply chain y publicación segura
+- **Criterio:** ningún output publicable arrastra riesgo obvio.
+
+## Epic 6
+
+Hoy el repo tiene `outputs/run_state.json`, `draft_paper.md`, secciones, logs y `metrics.json`, pero no un expediente de evidencia estandarizado. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7202532b-9845-487f-a7de-f9d1e7c82d91/HIPERVISOR_Y_PARALELO.md)
+Eso es clave para investigación seria.
+
+### Tarea 6.1 — Builder de evidence bundle
+- **Archivo nuevo:** `paper_pipeline/evidence/bundle_builder.py`
+- **Input:** misión, draft, logs, metrics, claims, triage
+- **Output:** carpeta `outputs/evidence/`
+- **Tests:** build completo, build parcial, resume
+- **Criterio:** siempre genera un índice.
+
+### Tarea 6.2 — `environment.json`
+- **Contenido:** OS, Python, dependencias, git SHA, CUDA, fecha, cwd
+- **Tests:** serialización multiplataforma
+- **Criterio:** suficiente para reconstruir entorno.
+
+### Tarea 6.3 — `seeds.json`
+- **Contenido:** seeds declaradas y usadas
+- **Criterio:** si una seed no existe, se marca explícitamente.
+
+### Tarea 6.4 — `data_sources.json`
+- **Contenido:** papers, URLs, datasets, repos, fuentes usadas
+- **Criterio:** cada claim externo tiene rastreo.
+
+### Tarea 6.5 — `evidence_index.json`
+- **Objetivo:** índice maestro del bundle
+- **Criterio:** cualquier herramienta puede navegarlo sin inferencias.
+
+### Tarea 6.6 — `reproducibility_check.json`
+- **Objetivo:** registrar si hubo replay o no
+- **Criterio:** publish-ready exige estado no desconocido.
+
+## Epic 7
+
+`paper-loop` ya ejecuta directivas `@PERPLEXITY`, `@NOTION`, `@CURSOR`, regenera draft y puede correr meta-loop. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/8b3cfa7f-9353-4e2f-a123-19ae861643ea/GUIA_FLUJO_COMPLETO.md)
+La guía también reconoce detección opcional de `LOOP_STALLED`. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/20669b06-afe7-4446-8232-4d39e92148f4/GUIA_PRUEBAS_Y_DEBUG.md)
+Ahora hay que impedir degradación silenciosa.
+
+### Tarea 7.1 — `LoopStallDetector`
+- **Archivo nuevo:** `paper_pipeline/validation/loop_stall_detector.py`
+- **Input:** drafts por ciclo
+- **Output:** stalled / not stalled
+- **Tests:** sin cambios, cambios triviales, cambios reales
+- **Criterio:** evita ciclos vacíos.
+
+### Tarea 7.2 — `DraftRegressionDetector`
+- **Checks:** longitud útil, estructura, pérdida de secciones, densidad de evidencia
+- **Output:** `loop_regression.json`
+- **Criterio:** detecta empeoramiento.
+
+### Tarea 7.3 — `ClaimRegressionDetector`
+- **Checks:** claims soportados antes/después
+- **Criterio:** si baja soporte, bloquear.
+
+### Tarea 7.4 — `SectionDriftDetector`
+- **Checks:** instrucciones meta hacen que el draft se aleje de la misión
+- **Criterio:** drift severo detiene loop.
+
+### Tarea 7.5 — Política de parada
+- **Regla propuesta:**
+  - 2 regresiones consecutivas → STOP
+  - 1 regresión crítica → STOP
+  - stall configurable → STOP
+- **Output:** `outputs/loop/stop_decision.json`
+- **Tests:** simulaciones de ciclos
+- **Criterio:** no más loops que solo generan actividad.
+
+## Epic 8
+
+La CLI `paper-parallel batch` ya existe, requiere repo git y specs con `exp_id`, `mission_md_content`, y opcionales como `command`, `hypothesis` y `branch_name`. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7202532b-9845-487f-a7de-f9d1e7c82d91/HIPERVISOR_Y_PARALELO.md)
+Además, ya hay pruebas y guía para correr 10 worktrees en paralelo. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/f6e6b0f2-c1f5-4a22-8f77-8645aa04f635/PRUEBAS_NIVELES_5_10_NOTION.md)
+Ahora toca convertir eso en un laboratorio comparativo.
+
+### Tarea 8.1 — Generador de specs desde hipótesis
+- **Archivo nuevo:** `paper_pipeline/parallel/specs_generator.py`
+- **Input:** misión v2 con hipótesis
+- **Output:** `outputs/parallel/specs.json`
+- **Tests:** una misión → N specs
+- **Criterio:** cero edición manual para lotes comunes.
+
+### Tarea 8.2 — Batch summary
+- **Output:** `batch_summary.json`
+- **Contenido:** total, éxitos, fallos, tiers, duración
+- **Tests:** batch de 1, 5 y 10
+- **Criterio:** summary reproducible.
+
+### Tarea 8.3 — Leaderboard
+- **Output:** `leaderboard.json` y `leaderboard.tsv`
+- **Orden:** target metric + gates + tier
+- **Tests:** empates y métricas faltantes
+- **Criterio:** ranking claro.
+
+### Tarea 8.4 — Promotion engine
+- **Objetivo:** decidir qué ramas o experimentos siguen
+- **Reglas:** tier, publishable, reproducibility status
+- **Output:** `promotion_decision.json`
+- **Criterio:** ninguna promoción basada solo en una métrica aislada.
+
+### Tarea 8.5 — Keep/discard policy
+- **Objetivo:** decidir qué worktrees/ramas conservar
+- **Criterio:** breakthroughs y negativos honestos valiosos pueden persistir.
+
+## Epic 9
+
+La API actual ya tiene health, CRUD, runs, SSE, run-log, events-log, run-state, draft, loop, snapshots y validación segura de `mission_id`. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e4898275-1061-4471-b568-bc84ab3d263a/03-servidor-api.md)
+Eso es muy buena base.  
+Ahora hay que exponer el nuevo corazón del sistema.
+
+### Tarea 9.1 — Endpoint ledger
+- **Ruta:** `GET /api/missions/{id}/ledger/latest`
+- **Output:** ledger canónico
+- **Tests:** contract test API
+- **Criterio:** la web no necesita reconstruir estado desde muchos archivos.
+
+### Tarea 9.2 — Endpoint evidence
+- **Ruta:** `GET /api/missions/{id}/evidence/latest`
+- **Output:** índice del evidence bundle
+- **Tests:** bundle inexistente / parcial / completo
+- **Criterio:** respuesta clara en todos los casos.
+
+### Tarea 9.3 — Endpoint claims
+- **Ruta:** `GET /api/missions/{id}/claims/latest`
+- **Output:** claims + soporte
+- **Tests:** sorting, filtros, claims vacíos
+- **Criterio:** útil para UI de revisión.
+
+### Tarea 9.4 — Endpoint triage
+- **Ruta:** `GET /api/missions/{id}/triage/latest`
+- **Output:** card + report + decision
+- **Criterio:** una sola fuente para UI.
+
+### Tarea 9.5 — Endpoint publish preview
+- **Ruta:** `POST /api/missions/{id}/publish/preview`
+- **Input:** run_id opcional
+- **Output:** elegibilidad de publicación
+- **Criterio:** devuelve razones de bloqueo.
+
+### Tarea 9.6 — Endpoint specs generator
+- **Ruta:** `POST /api/missions/{id}/parallel/specs/generate`
+- **Output:** specs derivadas de hipótesis
+- **Criterio:** usable desde la web.
+
+## Epic 10
+
+La web actual opera sobre la API y la guía ya la posiciona como capa de UX encima del pipeline real. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/20669b06-afe7-4446-8232-4d39e92148f4/GUIA_PRUEBAS_Y_DEBUG.md)
+Debes convertirla en cockpit.
+
+### Tarea 10.1 — Mission Editor v2
+- **Input:** schema v2
+- **Features:** tabs por grupos, validación inline, ejemplos, hints
+- **Output:** misión válida
+- **Tests:** frontend form tests
+- **Criterio:** no requiere editar YAML a mano para casos comunes.
+
+### Tarea 10.2 — Run Timeline
+- **Input:** ledger
+- **Output visual:** fases, timestamps, estados
+- **Tests:** mock ledger states
+- **Criterio:** un operador entiende dónde se rompió el run.
+
+### Tarea 10.3 — Claims Board
+- **Input:** claims + claim checks
+- **Output:** tabla de claims, soporte, severidad, estado
+- **Criterio:** permite revisión humana eficiente.
+
+### Tarea 10.4 — Evidence Board
+- **Input:** evidence index
+- **Output:** lista de artefactos y estado
+- **Criterio:** el usuario sabe qué falta.
+
+### Tarea 10.5 — Parallel Leaderboard UI
+- **Input:** batch summary + leaderboard
+- **Output:** ranking filtrable
+- **Criterio:** útil en experimentos grandes.
+
+### Tarea 10.6 — Publish Preview UI
+- **Input:** publish preview API
+- **Output:** ready / blocked + razones
+- **Criterio:** evita publicar a ciegas.
+
+## Epic 11
+
+Hoy Notion ya puede sincronizar secciones del paper y registrar breakthrough tier 3 usando la misma integración/tóken del workspace, pero solo como canal opcional. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/09e305af-834a-48d5-969d-85a24aa47561/04-integraciones.md)
+Eso está bien, pero hay que estructurarlo.
+
+### Tarea 11.1 — Modelo Notion de missions
+- **Base/Page:** Research Missions
+- **Campos:** mission_id, topic, target, status, latest_run
+- **Criterio:** tablero operativo limpio.
+
+### Tarea 11.2 — Modelo Notion de runs
+- **Campos:** run_id, fase final, tier, publishable, main metric
+- **Criterio:** histórico de runs.
+
+### Tarea 11.3 — Modelo Notion de breakthroughs
+- **Basado en:** tier 3 existente [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/21cc0d45-dc7b-47d2-8085-e5a39c1d7fd3/NOTION_MCP_TRIAGE.md)
+- **Extensión:** razones, artifacts, next steps
+- **Criterio:** legible para equipo e inversionistas.
+
+### Tarea 11.4 — Modelo Notion de negativos honestos
+- **Objetivo:** capturar tier 1 valiosos
+- **Criterio:** el sistema aprende también de fracasos.
+
+### Tarea 11.5 — Sync manager
+- **Archivo nuevo:** `paper_pipeline/integrations/notion_sync_v2.py`
+- **Input:** ledger + triage + publish decision
+- **Tests:** dry-run sync, idempotencia, fallback
+- **Criterio:** sincronización repetible y no destructiva.
+
+## Epic 12
+
+La documentación actual ya cubre pruebas por capas, integración opcional con Perplexity y Notion, debug, API y paralelo 10. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/f9cf5b1d-12d3-4fc3-8db6-f58f05a8d6ec/README.md)
+Eso te permite subir el estándar sin empezar de cero.
+
+### Tarea 12.1 — Tests de schema
+- **Carpeta:** `tests/schema/`
+- **Objetivo:** mission, ledger, metrics, evidence
+- **Criterio:** contratos blindados.
+
+### Tarea 12.2 — Contract tests CLI
+- **Comandos:** `paper-pipeline`, `paper-loop`, `paper-parallel`, `paper-web`
+- **Criterio:** outputs esperados con fixtures.
+
+### Tarea 12.3 — Contract tests API
+- **Objetivo:** endpoints nuevos y heredados
+- **Criterio:** payloads estables.
+
+### Tarea 12.4 — Replay tests
+- **Objetivo:** reconstruir ledger desde logs pasados
+- **Criterio:** reproducibilidad administrativa.
+
+### Tarea 12.5 — Golden-output tests
+- **Objetivo:** drafts y reports esperados para fixtures canónicos
+- **Criterio:** cambios significativos son visibles.
+
+### Tarea 12.6 — Stress tests paralelo
+- **Base:** la guía de 10 worktrees ya existente [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/f6e6b0f2-c1f5-4a22-8f77-8645aa04f635/PRUEBAS_NIVELES_5_10_NOTION.md)
+- **Extensión:** 20 y 50 en entorno controlado
+- **Criterio:** no colisiones ni corrupción de estado.
+
+### Tarea 12.7 — Loop regression tests
+- **Objetivo:** confirmar stop policies
+- **Criterio:** loops degradantes se frenan.
+
+### Tarea 12.8 — Publish decision tests
+- **Objetivo:** publishable true/false por gates
+- **Criterio:** cero ambigüedad.
+
+## Epic 13
+
+Tu proyecto hoy genera borradores, outputs y triage, pero aún no un paquete final de publicación estandarizado. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/886127c1-6ba3-41c6-93c8-a9e1888b8566/ESTADO_Y_OBJETIVO.md)
+Aquí está el cierre del sistema.
+
+### Tarea 13.1 — Publish manager
+- **Archivo nuevo:** `paper_pipeline/publication/publish_manager.py`
+- **Input:** ledger + evidence + triage + gates
+- **Output:** decisión de publicación
+- **Tests:** publishable true/false
+- **Criterio:** solo publica si todo pasa.
+
+### Tarea 13.2 — Research pack
+- **Output:** carpeta exportable con draft, claims, metrics, triage, environment
+- **Criterio:** suficiente para revisión externa.
+
+### Tarea 13.3 — Code pack
+- **Output:** commit SHA, lockfiles, tests, comandos
+- **Criterio:** reproducible por otro desarrollador.
+
+### Tarea 13.4 — Web pack
+- **Output:** sitio estático o bundle web con abstract, métricas, figuras y enlaces
+- **Criterio:** no se construye si la publicación está bloqueada.
+
+### Tarea 13.5 — Publish decision artifact
+- **Output:** `outputs/publication/publish_decision.json`
+- **Criterio:** legible por máquina y humano.
+
+## Epic 14
+
+La seguridad actual documentada cubre `mission_id` seguro, `command_safety`, secretos en variables de entorno y timeouts/logs para subprocess. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/c50b626d-9b37-4b0e-869a-e4da0477bc88/06-seguridad.md)
+Pero una plataforma de investigación autónoma necesita más.
+
+### Tarea 14.1 — Source provenance
+- **Objetivo:** toda fuente externa queda registrada
+- **Output:** `data_sources.json`
+- **Criterio:** nada “aparece” sin origen.
+
+### Tarea 14.2 — License guard
+- **Objetivo:** detectar assets o dependencias de publicación dudosa
+- **Output:** `license_report.json`
+- **Criterio:** publish bloqueado si hay riesgo crítico.
+
+### Tarea 14.3 — Prompt injection guard
+- **Objetivo:** marcar contenido externo que intente modificar instrucciones
+- **Output:** `source_safety_report.json`
+- **Criterio:** reportado y trazable.
+
+### Tarea 14.4 — Checksum guard
+- **Objetivo:** hashes para artifacts críticos
+- **Output:** `checksums.json`
+- **Criterio:** cambios posteriores son detectables.
+
+## Epic 15
+
+El proyecto tiene buena documentación por rol, pero ya está lo bastante grande como para necesitar una arquitectura oficial viva. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7ca261ed-cfe9-4a8a-9ebf-1d771fd4b949/00-indice.md)
+Si no haces esto, el backlog se implementa y luego se vuelve a fragmentar.
+
+### Tarea 15.1 — Architecture Status Matrix
+- **Archivo nuevo:** `docs/architecture/status-matrix.md`
+- **Columnas:**
+  - módulo
+  - implementado
+  - experimental
+  - deprecado
+  - tests
+  - owner
+- **Criterio:** una sola vista de salud del sistema.
+
+### Tarea 15.2 — Operador handbook
+- **Objetivo:** uso diario del sistema v2
+- **Input:** guías actuales [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/f9cf5b1d-12d3-4fc3-8db6-f58f05a8d6ec/README.md)
+- **Output:** handbook actualizado
+- **Criterio:** alguien nuevo puede operar el sistema.
+
+### Tarea 15.3 — Contributor handbook v2
+- **Objetivo:** cómo tocar contratos sin romper todo
+- **Criterio:** reglas claras de PR y migración.
+
+## Backlog en formato corto
+
+Aquí tienes la secuencia exacta de ejecución recomendada:
+
+| Orden | Tarea | Prioridad | Bloquea a |
+|---|---|---|---|
+| 1 | 0.1 Inventario de contrato | P0 | todo |
+| 2 | 0.2 Mission schema v2 | P0 | 0.3, 0.4, 10.1 |
+| 3 | 0.3 Normalizador | P0 | runner v2 |
+| 4 | 0.4 Validador | P0 | runner v2 |
+| 5 | 1.1 Diseño ledger | P0 | 1.2–1.6 |
+| 6 | 1.2–1.4 Implementación ledger | P0 | API/UI nuevas |
+| 7 | 2.1–2.5 Pipeline v2 | P1 | validation/evidence |
+| 8 | 3.1–3.4 Claims layer | P1 | quality gates |
+| 9 | 4.1–4.4 Metrics contract | P1 | triage v2 |
+| 10 | 5.1–5.7 Quality gates | P1 | publish |
+| 11 | 6.1–6.6 Evidence bundle | P1 | publish/API |
+| 12 | 7.1–7.5 Loop seguro | P2 | loop estable |
+| 13 | 8.1–8.5 Paralelo laboratorio | P2 | leaderboard/promoción |
+| 14 | 9.1–9.6 API v2 | P2 | cockpit |
+| 15 | 10.1–10.6 Web cockpit | P2 | operación |
+| 16 | 11.1–11.5 Notion v2 | P3 | operación editorial |
+| 17 | 12.1–12.8 Test pyramid | P0 continuo | todo |
+| 18 | 13.1–13.5 Publication | P3 | release |
+| 19 | 14.1–14.4 Seguridad extendida | P2 | publish |
+| 20 | 15.1–15.3 Documentación viva | P0 continuo | escalabilidad |
+
+## Definición de Done global
+
+No des por terminado el proyecto hasta que se cumplan estas 12 condiciones:
+
+- La misión v2 valida igual en CLI, API y web.
+- Existe `run_ledger.json` como verdad canónica.
+- El runner usa fases v2.
+- `quality_validation` ya no es opcional.
+- Existe `outputs/evidence/` completo.
+- El triage usa métricas versionadas y evidencia.
+- El loop se detiene ante degradación.
+- El paralelo produce leaderboard y decisiones.
+- La API expone ledger, claims, evidence y triage.
+- La web puede operar un run sin leer archivos manuales.
+- Notion consume estado, no define verdad.
+- La publicación solo ocurre con gates en verde.
+
+## Plantilla por tarea
+
+Usa esta plantilla exacta para cada issue o PR:
+
+```md
+# Título
+[EPIC-X][TASK-Y] Nombre
+
+## Objetivo
+Qué resuelve y por qué existe
+
+## Inputs
+Archivos, objetos, endpoints o estados que consume
+
+## Proceso
+Pasos internos del módulo
+
+## Outputs
+Artefactos, eventos, endpoints, logs
+
+## Archivos
+- crear:
+- modificar:
+- deprecar:
+
+## Tests
+- unit
+- contract
+- integration
+- replay
+- snapshot
+
+## Criterios de aceptación
+- [ ]
+- [ ]
+- [ ]
+
+## Dependencias
+Tareas previas
+
+## Riesgos
+Qué puede romper
+```
+
+## Primeras 10 issues exactas
+
+Para que no te quedes en teoría, estas serían mis primeras 10 issues reales de implementación:
+
+1. Inventario de claves y outputs actuales  
+2. `mission.schema.json` v2  
+3. `mission_normalizer.py`  
+4. `mission_validator.py`  
+5. `run_ledger.schema.json`  
+6. `run_ledger.py`  
+7. `ledger_writer.py`  
+8. motor de fases v2  
+9. `claim_extractor.py`  
+10. `quality_gate_runner.py`  
+
+## Recomendación táctica
+
+Si quieres velocidad sin caos, trabaja en esta cadencia:
+
+- **Semana 1:** contratos
+- **Semana 2:** ledger
+- **Semana 3:** runner v2
+- **Semana 4:** claims + quality
+- **Semana 5:** evidence + triage v2
+- **Semana 6:** loop seguro + paralelo
+- **Semana 7:** API/web cockpit
+- **Semana 8:** Notion + publish + hardening
+
+## Qué haría yo como regla de disciplina
+
+- Ningún PR grande sin actualizar `status-matrix.md`
+- Ninguna feature nueva sin schema o contrato asociado
+- Ningún “breakthrough” sin evidence bundle completo
+- Ningún cambio de misión sin test de validación
+- Ninguna UI nueva que lea archivos directamente si ya existe ledger/API
+- Ningún loop autónomo sin stop policy formal
+

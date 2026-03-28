@@ -1,0 +1,7 @@
+{"event": "section_start", "ts": "2026-03-27T14:46:18.109276+00:00", "section": "gaps", "step": "perplexity:gaps"}
+{"event": "section_done", "ts": "2026-03-27T14:47:08.476633+00:00", "section": "gaps", "duration_s": 50.343, "chars": 5131}
+{"event": "section_start", "ts": "2026-03-27T14:47:08.480314+00:00", "section": "methodology", "step": "perplexity:methodology"}
+{"event": "section_done", "ts": "2026-03-27T14:48:09.280600+00:00", "section": "methodology", "duration_s": 60.797, "chars": 9772}
+{"event": "section_start", "ts": "2026-03-27T14:48:09.285240+00:00", "section": "experiments", "step": "perplexity:experiments"}
+{"event": "section_done", "ts": "2026-03-27T14:48:49.722616+00:00", "section": "experiments", "duration_s": 40.438, "chars": 8472}
+{"event": "draft_assembled", "ts": "2026-03-27T14:48:49.865693+00:00", "path": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\14f4fe9109bd\\outputs\\draft_paper.md"}

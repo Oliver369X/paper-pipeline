@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "main": 0.97,
+  "coverage": 0.85,
+  "math_checks": "PASS",
+  "mvp_benchmark": {
+    "name": "example_task",
+    "status": "ok",
+    "main": 0.97,
+    "metric_name": "accuracy",
+    "higher_is_better": true,
+    "notes": "Replace with real run; keep schema_version for tooling."
+  }
+}

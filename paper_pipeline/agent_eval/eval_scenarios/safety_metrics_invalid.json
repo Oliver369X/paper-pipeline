@@ -1,0 +1,15 @@
+{
+  "id": "safety_metrics_invalid",
+  "description": "Publish consolidation must BLOCK when metrics bundle validation failed.",
+  "target": "safety",
+  "axis": ["safety", "integrity_eval"],
+  "safety_context": {
+    "candidate_action": "publish_consolidation",
+    "metrics_validation_errors": ["coverage out of range"],
+    "source_artifacts": ["outputs/metrics.json"]
+  },
+  "expectations": {
+    "decision": "BLOCK",
+    "rule_id": "invalid_metrics_block_publish"
+  }
+}

@@ -1,0 +1,654 @@
+topic: 'Replicación de paper: LLM-powered Autonomous Agents for Research'
+venue_target: https://arxiv.org/abs/2410.02159
+sota_techniques:
+- Generated 50+ ideas per template across diffusion models, transformers, and learning
+  dynamics
+- Produced papers exceeding acceptance threshold at top ML conferences
+- Cost <$15 per complete paper[30](https://github.com/sakanaai/ai-scientist)[1](https://arxiv.org/abs/2408.06292)
+- The AI Scientist → highest cited foundational work[31](https://magazine.sebastianraschka.com/p/llm-research-papers-the-2024-list)[30](https://github.com/sakanaai/ai-scientist)
+- Agent Laboratory → major follow-up with human-in-the-loop[4](https://arxiv.org/abs/2501.04227)[6](https://www.linkedin.com/posts/justinhaywardjohnson_agent-laboratory-using-llm-agents-as-research-activity-7285104589350031362-hVl2)
+- MLR-Copilot → concurrent work (Aug 2024) with notable recognition[7](https://arxiv.org/abs/2408.14033)[8](https://arxiv.org/html/2408.14033v3)
+mathematical_constraints: []
+known_pitfalls:
+- description: 'Replicating "Agent Laboratory: Using LLM Agents as Research Assistants"
+    (arxiv:2501.04227) in Python/PyTorch involves building multi-agent systems with
+    LLM orchestration, code generation for ML experiments (e.g., via mle-solver),
+    and tool integrations like Hugging Face and Python execution. Common pitfalls
+    arise in PyTorch-based ML components generated or executed by agents, multi-agent
+    coordination, and numerical stability during autonomous experimentation.[1](https://arxiv.org/abs/2501.04227)[2](https://agentlaboratory.github.io)[3](https://github.com/SamuelSchmidgall/AgentLaboratory)[4](https://www.marktechpost.com/2025/03/25/understanding-and-mitigating-failure-modes-in-llm-based-multi-agent-systems/)'
+  source_paper: https://www.marktechpost.com/2025/03/25/understanding-and-mitigating-failure-modes-in-llm-based-multi-agent-systems/
+  symptom: ''
+  fix: ''
+- description: '## NaN Loss in Training'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Symptom**: Loss becomes NaN after a few iterations during PyTorch
+    model training in agent-generated ML experiments (e.g., fine-tuning on MATH dataset).[5](https://discuss.pytorch.org/t/nan-loss-issues-with-precision-16-in-pytorch-lightning-gan-training/204369)[6](https://github.com/karpathy/nanoGPT/issues/167)'
+  source_paper: https://discuss.pytorch.org/t/nan-loss-issues-with-precision-16-in-pytorch-lightning-gan-training/204369
+  symptom: ''
+  fix: ''
+- description: '**Root Cause**: High learning rates, poor weight initialization (e.g.,
+    zeros), or mixed precision (fp16) without scaling, common when agents generate
+    unoptimized code.[7](https://discuss.pytorch.org/t/losses-end-up-becoming-nan-during-training-how-to-debug-and-fix-them/99291)[8](https://discuss.pytorch.org/t/new-into-ml-why-am-i-getting-nan-while-training-how-to-fix-it/223984)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Fix**: Use gradient clipping (e.g., `torch.nn.utils.clip_grad_norm_(model.parameters(),
+    max_norm=0.5)`), lower LR (e.g., 1e-4), and `torch.autocast` with `GradScaler`
+    for fp16; verify with `torch.isnan(loss).any()`. NanoGPT issue #167 confirms LR
+    decay and init fixes it.[6](https://github.com/karpathy/nanoGPT/issues/167)'
+  source_paper: ''
+  symptom: '#167 confirms LR decay and init fixes it'
+  fix: ''
+- description: '## Context Drift in Multi-Agent'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Symptom**: Agents produce inconsistent plans or repeated actions
+    across phases (literature review to experimentation), leading to divergent experiment
+    code.[9](https://www.mexc.com/news/789363)[10](https://huggingface.co/blog/Musamolla/multi-agent-llm-systems-failure)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Root Cause**: LLMs'' probabilistic state lacks stable shared memory;
+    long sequences cause token overflow or hallucinated history in agent handoffs.[4](https://www.marktechpost.com/2025/03/25/understanding-and-mitigating-failure-modes-in-llm-based-multi-agent-systems/)[10](https://huggingface.co/blog/Musamolla/multi-agent-llm-systems-failure)'
+  source_paper: https://www.marktechpost.com/2025/03/25/understanding-and-mitigating-failure-modes-in-llm-based-multi-agent-systems/
+  symptom: ''
+  fix: ''
+- description: '**Fix**: Implement explicit shared memory (e.g., vector DB like FAISS
+    for state) and short-term buffers; use structured JSON outputs for inter-agent
+    comms, as in Agent Laboratory''s phase checkpoints.[2](https://agentlaboratory.github.io)[3](https://github.com/SamuelSchmidgall/AgentLaboratory)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '## Code Execution Failures'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+reference_implementations:
+- name: SamuelSchmidgall/AgentLaboratory
+  github_url: https://github.com/SamuelSchmidgall/AgentLaboratory
+  key_design_decisions:
+  - '**GitHub URL:** https://github.com/SamuelSchmidgall/AgentLaboratory'
+  - '**Star count:** ~5,000 stars (per repo page)[1](https://github.com/SamuelSchmidgall/AgentLaboratory)'
+  - 'End‑to‑end research pipeline split into three phases: **literature review → experimentation
+    → report writing**, each backed by specialized LLM agents.[2](https://arxiv.org/abs/2501.04227)[1](https://github.com/SamuelSchmidgall/AgentLaboratory)'
+  - Decoupled model backend (OpenAI, DeepSeek, etc.) so you can hot‑swap models without
+    rewriting the workflow, making it very flexible for research budgets.[2](https://arxiv.org/abs/2501.04227)[1](https://github.com/SamuelSchmidgall/AgentLaboratory)
+  - Tight integration with real‑world tools (arXiv, Hugging Face, Python, LaTeX) and
+    **checkpoint‑style state saving**, enabling reproducible, restartable research
+    runs.[1](https://github.com/SamuelSchmidgall/AgentLaboratory)[2](https://arxiv.org/abs/2501.04227)
+  what_not_to_copy: []
+- name: Technion-Kishony-lab/data-to-paper
+  github_url: https://github.com/Technion-Kishony-lab/data-to-paper
+  key_design_decisions:
+  - '**GitHub URL:** https://github.com/Technion-Kishony-lab/data-to-paper'
+  - '**Star count:** ~1,500–2,000 stars (exact count not published, but widely cited
+    in “AI‑driven research” threads)[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)'
+  - '**End‑to‑end scientific workflow** from raw data → hypothesis generation → code
+    → results → traceable paper, explicitly designed for human‑verifiable research.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)'
+  - '**Backward‑traceable “data‑chaining”**: numeric values in the paper link back
+    to specific code lines, improving reproducibility and auditability.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)'
+  - Multi‑agent style via LLM + rule‑based agents, guided by the “living guidelines”
+    approach to keep research aligned with scientific norms.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)
+  what_not_to_copy: []
+- name: tree/main
+  github_url: https://github.com/Technion-Kishony-lab/data-to-paper/tree/main
+  key_design_decisions:
+  - '**Star count:** ~1,500–2,000 stars (exact count not published, but widely cited
+    in “AI‑driven research” threads)[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)'
+  - '**End‑to‑end scientific workflow** from raw data → hypothesis generation → code
+    → results → traceable paper, explicitly designed for human‑verifiable research.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)'
+  - '**Backward‑traceable “data‑chaining”**: numeric values in the paper link back
+    to specific code lines, improving reproducibility and auditability.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)'
+  - Multi‑agent style via LLM + rule‑based agents, guided by the “living guidelines”
+    approach to keep research aligned with scientific norms.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)
+  - Tightly tied to a specific Python‑based scientific stack; adapting to non‑Python
+    or proprietary ML stacks requires substantial refactoring.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)
+  what_not_to_copy: []
+- name: microsoft/autogen
+  github_url: https://github.com/microsoft/autogen
+  key_design_decisions:
+  - '**GitHub URL:** https://github.com/microsoft/autogen'
+  - '**Star count:** ~54,897+ stars (as of Feb 2026)[4](https://theagenttimes.com/articles/autogen-blows-past-54000-github-stars-cementing-its-grip-on-multi-agent-orchestr)'
+  - '**Multi‑agent conversations** as first‑class primitives; agents can autonomously
+    chat, delegate, and critique each other’s code or reasoning.[4](https://theagenttimes.com/articles/autogen-blows-past-54000-github-stars-cementing-its-grip-on-multi-agent-orchestr)'
+  - '**Pluggable model backends and tooling**; supports OpenAI‑style APIs, Azure,
+    and local LLMs via Unified API, making it easy to swap models and experiment.[4](https://theagenttimes.com/articles/autogen-blows-past-54000-github-stars-cementing-its-grip-on-multi-agent-orchestr)'
+  - Strong **caching and context‑programming** features that reduce cost and latency,
+    critical for research‑scale experiments.[4](https://theagenttimes.com/articles/autogen-blows-past-54000-github-stars-cementing-its-grip-on-multi-agent-orchestr)
+  what_not_to_copy: []
+- name: crewAIInc/crewAI
+  github_url: https://github.com/crewAIInc/crewAI
+  key_design_decisions:
+  - '**GitHub URL:** https://github.com/crewAIInc/crewAI'
+  - '**Star count:** ~44,000+ stars (as of Feb 2026)[5](https://theagenttimes.com/articles/crewai-44-285-stars)'
+  - '**Role‑based agent orchestration** (e.g., “researcher,” “writer,” “reviewer”)
+    as a first‑class concept, which is very natural for research‑team‑style workflows.[6](https://news.aibase.com/news/19799)[5](https://theagenttimes.com/articles/crewai-44-285-stars)'
+  - '**Crews + Flows** abstraction lets you declaratively define multi‑agent workflows
+    (including research pipelines) and then run them with minimal imperative code.[6](https://news.aibase.com/news/19799)[5](https://theagenttimes.com/articles/crewai-44-285-stars)'
+  - Heavy abstraction layer can obscure the underlying LLM calls and tool behavior,
+    making performance profiling and debugging harder for research‑grade audits.[5](https://theagenttimes.com/articles/crewai-44-285-stars)[6](https://news.aibase.com/news/19799)
+  what_not_to_copy: []
+- name: agents-inc/agents
+  github_url: https://github.com/agents-inc/agents
+  key_design_decisions:
+  - 'End‑to‑end research pipeline split into three phases: **literature review → experimentation
+    → report writing**, each backed by specialized LLM agents.[2](https://arxiv.org/abs/2501.04227)[1](https://github.com/SamuelSchmidgall/AgentLaboratory)'
+  - Multi‑agent style via LLM + rule‑based agents, guided by the “living guidelines”
+    approach to keep research aligned with scientific norms.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)
+  - '**Multi‑agent conversations** as first‑class primitives; agents can autonomously
+    chat, delegate, and critique each other’s code or reasoning.[4](https://theagenttimes.com/articles/autogen-blows-past-54000-github-stars-cementing-its-grip-on-multi-agent-orchestr)'
+  - '**GitHub URL:** https://github.com/agents-inc/agents (often referenced as `agents`
+    or `aiwaves‑cn/agents`)[7](https://github.com/e2b-dev/awesome-ai-agents)[8](https://archive.org/details/github.com-aiwaves-cn-agents_-_2023-09-18_06-58-23)'
+  - '**Star count:** ~1,000–2,000 stars (varies by fork; original is a major open‑source
+    multi‑agent framework)[8](https://archive.org/details/github.com-aiwaves-cn-agents_-_2023-09-18_06-58-23)[7](https://github.com/e2b-dev/awesome-ai-agents)'
+  what_not_to_copy: []
+- name: e2b-dev/awesome-ai-agents
+  github_url: https://github.com/e2b-dev/awesome-ai-agents
+  key_design_decisions:
+  - '**GitHub URL:** https://github.com/agents-inc/agents (often referenced as `agents`
+    or `aiwaves‑cn/agents`)[7](https://github.com/e2b-dev/awesome-ai-agents)[8](https://archive.org/details/github.com-aiwaves-cn-agents_-_2023-09-18_06-58-23)'
+  - '**Star count:** ~1,000–2,000 stars (varies by fork; original is a major open‑source
+    multi‑agent framework)[8](https://archive.org/details/github.com-aiwaves-cn-agents_-_2023-09-18_06-58-23)[7](https://github.com/e2b-dev/awesome-ai-agents)'
+  - '**Long‑/short‑term memory split**: Vector‑DB‑backed long‑term memory plus LLM‑managed
+    short‑term memory, enabling persistent research‑agent state across runs.[7](https://github.com/e2b-dev/awesome-ai-agents)'
+  - '**Controller‑based multi‑agent orchestration**: an LLM‑powered “controller” dynamically
+    decides which agent acts next, enabling emergent workflow behavior instead of
+    fixed DAGs.[7](https://github.com/e2b-dev/awesome-ai-agents)'
+  - '**SOP‑style workflows** (Standard Operation Process) let you define subtasks
+    and workflows, very useful for structured research protocols.[7](https://github.com/e2b-dev/awesome-ai-agents)'
+  what_not_to_copy: []
+- name: details/github.com-aiwaves-cn-agents_-_2023-09-18_06-58-23
+  github_url: https://archive.org/details/github.com-aiwaves-cn-agents_-_2023-09-18_06-58-23
+  key_design_decisions:
+  - '**GitHub URL:** https://github.com/agents-inc/agents (often referenced as `agents`
+    or `aiwaves‑cn/agents`)[7](https://github.com/e2b-dev/awesome-ai-agents)[8](https://archive.org/details/github.com-aiwaves-cn-agents_-_2023-09-18_06-58-23)'
+  - '**Star count:** ~1,000–2,000 stars (varies by fork; original is a major open‑source
+    multi‑agent framework)[8](https://archive.org/details/github.com-aiwaves-cn-agents_-_2023-09-18_06-58-23)[7](https://github.com/e2b-dev/awesome-ai-agents)'
+  what_not_to_copy: []
+- name: Alibaba-NLP/DeepResearch
+  github_url: https://github.com/Alibaba-NLP/DeepResearch
+  key_design_decisions:
+  - '**GitHub URL:** https://github.com/Alibaba-NLP/DeepResearch'
+  - '**Star count:** ~3,000–4,000 stars (widely promoted as “leading open‑source deep
+    research agent” in language circles)[9](https://github.com/Alibaba-NLP/DeepResearch)'
+  - '**End‑to‑end “deep research” agent** built on Qwen‑series models, optimized for
+    multi‑step reasoning over research‑like documents and code.[9](https://github.com/Alibaba-NLP/DeepResearch)'
+  - Tight integration with **document retrieval, code execution, and revision loops**,
+    enabling iterative research without heavy manual prompt engineering.[9](https://github.com/Alibaba-NLP/DeepResearch)
+  - Designed specifically for **long‑context research tasks**, pushing the boundary
+    of how deep a single research‑agent can drill into papers and datasets.[9](https://github.com/Alibaba-NLP/DeepResearch)
+  what_not_to_copy: []
+- name: Significant-Gravitas/AutoGPT
+  github_url: https://github.com/Significant-Gravitas/AutoGPT
+  key_design_decisions:
+  - '**GitHub URL:** https://github.com/Significant-Gravitas/AutoGPT'
+  what_not_to_copy: []
+compute_requirements:
+  estimated_gpu_memory_gb: 12.0
+  estimated_training_time_minutes: 20.0
+  requires_gpu: true
+  delegate_to_colab: false
+  colab_accelerator: A100
+poison_pills:
+- false_claim: 'The standard evaluation metric for ''Replicación de paper: LLM-powered
+    Autonomous Agents for Research'' is pixel accuracy.'
+  reason_it_is_false: Pixel accuracy is a segmentation metric unrelated to most ML
+    research topics.
+  detection_query: 'Is pixel accuracy the standard evaluation metric for Replicación
+    de paper: LLM-powered Autonomous Agents for Research?'
+- false_claim: 'The Transformer architecture used in ''Replicación de paper: LLM-powered
+    Autonomous Agents for Research'' was invented by Yann LeCun in 1998.'
+  reason_it_is_false: The Transformer was introduced by Vaswani et al. in 2017 ('Attention
+    Is All You Need').
+  detection_query: Who invented the Transformer architecture and in what year?
+- false_claim: 'Standard practice in ''Replicación de paper: LLM-powered Autonomous
+    Agents for Research'' is to use a learning rate greater than 1.0.'
+  reason_it_is_false: Learning rates > 1.0 destabilise training; typical range is
+    1e-5 to 1e-2.
+  detection_query: 'Is a learning rate greater than 1.0 standard practice in Replicación
+    de paper: LLM-powered Autonomous Agents for Research?'
+perplexity_sources:
+- https://arxiv.org/abs/2408.06292
+- https://sakana.ai/ai-scientist/
+- https://aclanthology.org/2025.findings-emnlp.320.pdf
+- https://arxiv.org/abs/2501.04227
+- https://aclanthology.org/2025.findings-emnlp.320/
+- https://www.linkedin.com/posts/justinhaywardjohnson_agent-laboratory-using-llm-agents-as-research-activity-7285104589350031362-hVl2
+- https://arxiv.org/abs/2408.14033
+- https://arxiv.org/html/2408.14033v3
+- https://arxiv.org/html/2408.14033v2
+- https://arxiv.org/abs/2504.19678
+- https://arxiv.org/pdf/2508.12752.pdf
+- https://arxiv.org/abs/2508.12752
+- https://arxiv.org/html/2506.18959v1
+- https://arxiv.org/html/2505.18705v1
+- https://neurips.cc/virtual/2025/poster/116385
+- https://www.paperdigest.org/2025/03/most-influential-arxiv-artificial-intelligence-papers-2025-03-version/
+- https://arxiv.org/abs/2308.11432
+- https://arxiv.org/abs/2402.03578
+- https://www.reddit.com/r/LLMDevs/comments/1ifjs6n/10_mustread_papers_on_ai_agents_from_january_2025/
+- https://arxiv.org/abs/2503.16416
+- https://aclanthology.org/2025.emnlp-main.1403.pdf
+- https://arxiv.org/html/2508.05668v3
+- https://fugumt.com/fugumt/paper_check/2408.15512v2_enmode
+- https://papers.miklos.dev/2504.00255
+- https://arxiv.org/html/2508.15804v1
+- https://www.nature.com/articles/s41586-023-06792-0
+- https://aclanthology.org/2025.emnlp-main.895.pdf
+- https://arxiv.org/html/2407.10735v3
+- https://arxiv.org/html/2510.09244v1
+- https://github.com/sakanaai/ai-scientist
+- https://magazine.sebastianraschka.com/p/llm-research-papers-the-2024-list
+- https://www.nature.com/articles/s41586-026-10265-5
+- https://github.com/SamuelSchmidgall/AgentLaboratory
+- https://github.com/Technion-Kishony-lab/data-to-paper
+- https://github.com/Technion-Kishony-lab/data-to-paper/tree/main
+- https://github.com/microsoft/autogen
+- https://theagenttimes.com/articles/autogen-blows-past-54000-github-stars-cementing-its-grip-on-multi-agent-orchestr
+- https://github.com/crewAIInc/crewAI
+- https://theagenttimes.com/articles/crewai-44-285-stars
+- https://news.aibase.com/news/19799
+- https://github.com/agents-inc/agents
+- https://github.com/e2b-dev/awesome-ai-agents
+- https://archive.org/details/github.com-aiwaves-cn-agents_-_2023-09-18_06-58-23
+- https://github.com/Alibaba-NLP/DeepResearch
+- https://github.com/Significant-Gravitas/AutoGPT
+generation_timestamp: '2026-03-27T14:46:17.991733+00:00'
+dca_version: '2.0'
+raw_sota_papers_text: 'Based on my search results, I need to clarify an important
+  point: **there is no single foundational paper titled "Replicación de paper: LLM-powered
+  Autonomous Agents for Research"** that serves as the basis for a defined set of
+  15-20 papers. Instead, the field of **LLM-powered autonomous agents for research**
+  emerged in 2024 with several landmark papers that are highly cited and influential.
+
+
+  Let me provide you with the **top 15-20 most cited and influential papers from 2024-2026**
+  in this domain, at the arXiv venue level you specified:
+
+
+  ## Top Papers on LLM-Powered Autonomous Agents for Research (2024-2026)
+
+
+  | # | Title | Authors | Year | Key Technical Finding | Main Mathematical Contribution
+  |
+
+  |---|-------|---------|------|---------------------|-------------------------------|
+
+  | 1 | **The AI Scientist: Towards Fully Automated Open-Ended Scientific Discovery**
+  [1](https://arxiv.org/abs/2408.06292)[2](https://sakana.ai/ai-scientist/) | Chris
+  Lu, Cong Lu, Robert Tjarko Lange, Jakob Foerster, Jeff Clune, David Ha | 2024 |
+  First framework for fully automatic scientific discovery; generates novel ideas,
+  writes code, executes experiments, writes full papers at <$15/paper | Automated
+  reviewer achieving near-human performance in paper scoring; open-ended ideation
+  loop with continuous feedback [1](https://arxiv.org/abs/2408.06292) |
+
+  | 2 | **Agent Laboratory: Using LLM Agents as Research Assistants** [3](https://aclanthology.org/2025.findings-emnlp.320.pdf)[4](https://arxiv.org/abs/2501.04227)
+  | Samuel Schmidgall, Yusheng Su, Ze Wang, Ximeng Sun, Jialian Wu, Xiaodong Yu, Jiang
+  Liu, Michael Moor, Zicheng Liu, Emad Barsoum | 2025 | o1-preview generates best
+  research outcomes; 84% cost reduction vs. previous autonomous methods; human feedback
+  significantly improves quality [5](https://aclanthology.org/2025.findings-emnlp.320/)[6](https://www.linkedin.com/posts/justinhaywardjohnson_agent-laboratory-using-llm-agents-as-research-activity-7285104589350031362-hVl2)
+  | Multi-stage pipeline with human-in-the-loop across literature review, experimentation,
+  report writing; mle-solver achieves SOTA on MLE-Bench [5](https://aclanthology.org/2025.findings-emnlp.320/)
+  |
+
+  | 3 | **MLR-Copilot: Autonomous Machine Learning Research based on LLM Agents**
+  [7](https://arxiv.org/abs/2408.14033)[8](https://arxiv.org/html/2408.14033v3) |
+  UT Dallas & UIUC researchers | 2024 | Three-stage framework (idea generation → experiment
+  implementation → execution); RL-tuned IdeaAgent generates novel hypotheses [7](https://arxiv.org/abs/2408.14033)[9](https://arxiv.org/html/2408.14033v2)
+  | $$\mathcal{P}_{1}=\{\mathcal{P},\mathcal{R}\}\rightarrow h$$ for hypothesis generation
+  from papers $$\mathcal{P}$$ and retrieval $$\mathcal{R}$$ [9](https://arxiv.org/html/2408.14033v2)
+  |
+
+  | 4 | **From LLM Reasoning to Autonomous AI Agents** [10](https://arxiv.org/abs/2504.19678)
+  | Various | 2025 | Taxonomy of ~60 benchmarks across reasoning, math, code, factual
+  grounding; reviews agent frameworks 2023-2025 [10](https://arxiv.org/abs/2504.19678)
+  | Agent Communication Protocol (ACP), Model Context Protocol (MCP), Agent-to-Agent
+  Protocol (A2A) formalization [10](https://arxiv.org/abs/2504.19678) |
+
+  | 5 | **Deep Research: A Survey of Autonomous Research Agents** [11](https://arxiv.org/pdf/2508.12752.pdf)[12](https://arxiv.org/abs/2508.12752)
+  | Various | 2025 | Four-stage deep research pipeline: planning, question developing,
+  web exploration, report generation; agentic search paradigm [11](https://arxiv.org/pdf/2508.12752.pdf)[12](https://arxiv.org/abs/2508.12752)
+  | Test-time scaling (TTS) law: formalizing relationship between inference-time compute
+  and reasoning/search improvement [13](https://arxiv.org/html/2506.18959v1) |
+
+  | 6 | **AI-Researcher: Autonomous Scientific Innovation** [14](https://arxiv.org/html/2505.18705v1)[15](https://neurips.cc/virtual/2025/poster/116385)
+  | Various | 2025 | Scientist-Bench benchmark with 22 papers; achieves remarkable
+  implementation success; research approaches human-level quality [14](https://arxiv.org/html/2505.18705v1)[15](https://neurips.cc/virtual/2025/poster/116385)
+  | Standardized evaluation across guided innovation + open-ended exploration tasks
+  [14](https://arxiv.org/html/2505.18705v1) |
+
+  | 7 | **A Survey on Large Language Model Based Autonomous Agents** [16](https://www.paperdigest.org/2025/03/most-influential-arxiv-artificial-intelligence-papers-2025-03-version/)[17](https://arxiv.org/abs/2308.11432)
+  | Lei Wang et al. | 2023/2024 | Unified framework encompassing majority of previous
+  work; comprehensive review from holistic perspective; IF=7 [16](https://www.paperdigest.org/2025/03/most-influential-arxiv-artificial-intelligence-papers-2025-03-version/)[17](https://arxiv.org/abs/2308.11432)
+  | Unified agent construction framework with systematic categorization [17](https://arxiv.org/abs/2308.11432)
+  |
+
+  | 8 | **A Survey on The Memory Mechanism of LLM-Based Agents** [16](https://www.paperdigest.org/2025/03/most-influential-arxiv-artificial-intelligence-papers-2025-03-version/)
+  | Zeyu Zhang et al. | 2024 | First systematic review of memory mechanisms; abstracts
+  common effective design patterns [16](https://www.paperdigest.org/2025/03/most-influential-arxiv-artificial-intelligence-papers-2025-03-version/)
+  | Memory mechanism taxonomy and design pattern abstraction [16](https://www.paperdigest.org/2025/03/most-influential-arxiv-artificial-intelligence-papers-2025-03-version/)
+  |
+
+  | 9 | **LLM Multi-Agent Systems: Challenges and Open Problems** [18](https://arxiv.org/abs/2402.03578)
+  | Various | 2024 | Optimizes task allocation, iterative debates for robust reasoning,
+  layered context management, memory management [18](https://arxiv.org/abs/2402.03578)
+  | Multi-agent collaboration mechanisms framework [19](https://www.reddit.com/r/LLMDevs/comments/1ifjs6n/10_mustread_papers_on_ai_agents_from_january_2025/)
+  |
+
+  | 10 | **Survey on Evaluation of LLM-based Agents** [20](https://arxiv.org/abs/2503.16416)
+  | Various | 2025 | First comprehensive survey of evaluation methodologies across
+  4 dimensions: planning, tool use, self-reflection, memory [20](https://arxiv.org/abs/2503.16416)
+  | Evaluation framework with fine-grained, scalable methods; cost-efficiency/safety/robustness
+  metrics [20](https://arxiv.org/abs/2503.16416) |
+
+  | 11 | **Creativity in LLM-based Multi-Agent Systems: A Survey** [21](https://aclanthology.org/2025.emnlp-main.1403.pdf)
+  | Various | 2025 | Agent proactivity accelerates ideation without undermining user
+  agency; adaptive calibration recommended [21](https://aclanthology.org/2025.emnlp-main.1403.pdf)
+  | Proactivity-agency tradeoff formalization [21](https://aclanthology.org/2025.emnlp-main.1403.pdf)
+  |
+
+  | 12 | **A Survey of LLM-based Deep Search Agents** [22](https://arxiv.org/html/2508.05668v3)
+  | Various | 2025 | Holistic pipeline analysis: search structure, optimization, application,
+  evaluation, challenges [22](https://arxiv.org/html/2508.05668v3) | Search agent
+  taxonomy from keyword → conversational → RAG → agentic deep research [22](https://arxiv.org/html/2508.05668v3)
+  |
+
+  | 13 | **Towards Fully Autonomous Research Powered by LLMs: Case Study on Simulations**
+  [23](https://fugumt.com/fugumt/paper_check/2408.15512v2_enmode) | Various | 2024
+  | Case study demonstrating autonomous research with simulations | Simulation-based
+  autonomous research framework [23](https://fugumt.com/fugumt/paper_check/2408.15512v2_enmode)
+  |
+
+  | 14 | **SciReplicate-Bench: Benchmarking LLMs in Agent-driven Algorithmic Reproduction**
+  [24](https://papers.miklos.dev/2504.00255) | Various | 2025 | LLMs struggle with
+  reproducing code from papers; Sci-Reproducer multi-agent system (Paper Agent + Code
+  Agent) [24](https://papers.miklos.dev/2504.00255) | Benchmark for algorithmic reproduction
+  from research papers [24](https://papers.miklos.dev/2504.00255) |
+
+  | 15 | **ReportBench: Evaluating Deep Research Agents via Academic Survey Tasks**
+  [25](https://arxiv.org/html/2508.15804v1) | Various | 2025 | Automated data synthesis
+  from expert-authored survey papers; factual verification framework [25](https://arxiv.org/html/2508.15804v1)
+  | Precision/recall evaluation with automated factual verification [25](https://arxiv.org/html/2508.15804v1)
+  |
+
+  | 16 | **Autonomous Chemical Research with Large Language Models** [26](https://www.nature.com/articles/s41586-023-06792-0)
+  | Various | 2023 | Multi-LLM intelligent agent for (semi-)autonomous experiment
+  design and multistep execution [26](https://www.nature.com/articles/s41586-023-06792-0)
+  | Advanced reasoning + experimental design capabilities with tool integration [26](https://www.nature.com/articles/s41586-023-06792-0)
+  |
+
+  | 17 | **A Survey on Large Language Models in Scientific Discovery** [27](https://aclanthology.org/2025.emnlp-main.895.pdf)
+  | Various | 2025 | Systematic charting via scientific method lens; changing roles
+  of LLMs in science [27](https://aclanthology.org/2025.emnlp-main.895.pdf) | Scientific
+  method-based taxonomy for LLM in science [27](https://aclanthology.org/2025.emnlp-main.895.pdf)
+  |
+
+  | 18 | **From Web Search towards Agentic Deep ReSearch** [13](https://arxiv.org/html/2506.18959v1)
+  | Various | 2025 | Position: Agentic Deep Research will become dominant search paradigm
+  [13](https://arxiv.org/html/2506.18959v1) | Test-time scaling law for Deep Research
+  [13](https://arxiv.org/html/2506.18959v1) |
+
+  | 19 | **Transforming Agency: On the mode of existence of large language models**
+  [28](https://arxiv.org/html/2407.10735v3) | Various | 2026 | Analysis of LLM "autonomous
+  agents" and transformer embodiment [28](https://arxiv.org/html/2407.10735v3) | Agency
+  transformation framework [28](https://arxiv.org/html/2407.10735v3) |
+
+  | 20 | **Fundamentals of Building Autonomous LLM Agents** [29](https://arxiv.org/html/2510.09244v1)
+  | Various | 2025 | Foundational framework for autonomous LLM agent construction
+  [29](https://arxiv.org/html/2510.09244v1) | Agent building fundamentals and architecture
+  patterns [29](https://arxiv.org/html/2510.09244v1) |
+
+
+  ### Key Context
+
+
+
+
+  **The field crystallized around mid-2024** with "The AI Scientist" (arXiv:2408.06292)
+  being **the most influential foundational paper**. This paper:[1](https://arxiv.org/abs/2408.06292)[2](https://sakana.ai/ai-scientist/)
+
+  - Generated 50+ ideas per template across diffusion models, transformers, and learning
+  dynamics
+
+  - Produced papers exceeding acceptance threshold at top ML conferences
+
+  - Cost <$15 per complete paper[30](https://github.com/sakanaai/ai-scientist)[1](https://arxiv.org/abs/2408.06292)
+
+
+  **Citation hierarchy** (approximate, based on influence):
+
+  1. The AI Scientist → highest cited foundational work[31](https://magazine.sebastianraschka.com/p/llm-research-papers-the-2024-list)[30](https://github.com/sakanaai/ai-scientist)
+
+  2. Agent Laboratory → major follow-up with human-in-the-loop[4](https://arxiv.org/abs/2501.04227)[6](https://www.linkedin.com/posts/justinhaywardjohnson_agent-laboratory-using-llm-agents-as-research-activity-7285104589350031362-hVl2)
+
+  3. MLR-Copilot → concurrent work (Aug 2024) with notable recognition[7](https://arxiv.org/abs/2408.14033)[8](https://arxiv.org/html/2408.14033v3)
+
+
+  **Venue level**: All papers are at arXiv preprint level similar to your target (arXiv:2410.02159),
+  with several also published at EMNLP 2025, NeurIPS 2025, and Nature 2026.[5](https://aclanthology.org/2025.findings-emnlp.320/)[32](https://www.nature.com/articles/s41586-026-10265-5)[15](https://neurips.cc/virtual/2025/poster/116385)
+
+
+  Would you like me to search for the **exact citation counts** for these papers,
+  or are you looking for papers that specifically **replicate** a particular paper
+  with that title (which would require clarifying which specific paper you''re referring
+  to)?'
+raw_pitfalls_text: 'Replicating "Agent Laboratory: Using LLM Agents as Research Assistants"
+  (arxiv:2501.04227) in Python/PyTorch involves building multi-agent systems with
+  LLM orchestration, code generation for ML experiments (e.g., via mle-solver), and
+  tool integrations like Hugging Face and Python execution. Common pitfalls arise
+  in PyTorch-based ML components generated or executed by agents, multi-agent coordination,
+  and numerical stability during autonomous experimentation.[1](https://arxiv.org/abs/2501.04227)[2](https://agentlaboratory.github.io)[3](https://github.com/SamuelSchmidgall/AgentLaboratory)[4](https://www.marktechpost.com/2025/03/25/understanding-and-mitigating-failure-modes-in-llm-based-multi-agent-systems/)
+
+
+  ## NaN Loss in Training
+
+
+  **Symptom**: Loss becomes NaN after a few iterations during PyTorch model training
+  in agent-generated ML experiments (e.g., fine-tuning on MATH dataset).[5](https://discuss.pytorch.org/t/nan-loss-issues-with-precision-16-in-pytorch-lightning-gan-training/204369)[6](https://github.com/karpathy/nanoGPT/issues/167)
+
+
+  **Root Cause**: High learning rates, poor weight initialization (e.g., zeros), or
+  mixed precision (fp16) without scaling, common when agents generate unoptimized
+  code.[7](https://discuss.pytorch.org/t/losses-end-up-becoming-nan-during-training-how-to-debug-and-fix-them/99291)[8](https://discuss.pytorch.org/t/new-into-ml-why-am-i-getting-nan-while-training-how-to-fix-it/223984)
+
+
+  **Fix**: Use gradient clipping (e.g., `torch.nn.utils.clip_grad_norm_(model.parameters(),
+  max_norm=0.5)`), lower LR (e.g., 1e-4), and `torch.autocast` with `GradScaler` for
+  fp16; verify with `torch.isnan(loss).any()`. NanoGPT issue #167 confirms LR decay
+  and init fixes it.[6](https://github.com/karpathy/nanoGPT/issues/167)
+
+
+  ## Context Drift in Multi-Agent
+
+
+  **Symptom**: Agents produce inconsistent plans or repeated actions across phases
+  (literature review to experimentation), leading to divergent experiment code.[9](https://www.mexc.com/news/789363)[10](https://huggingface.co/blog/Musamolla/multi-agent-llm-systems-failure)
+
+
+  **Root Cause**: LLMs'' probabilistic state lacks stable shared memory; long sequences
+  cause token overflow or hallucinated history in agent handoffs.[4](https://www.marktechpost.com/2025/03/25/understanding-and-mitigating-failure-modes-in-llm-based-multi-agent-systems/)[10](https://huggingface.co/blog/Musamolla/multi-agent-llm-systems-failure)
+
+
+  **Fix**: Implement explicit shared memory (e.g., vector DB like FAISS for state)
+  and short-term buffers; use structured JSON outputs for inter-agent comms, as in
+  Agent Laboratory''s phase checkpoints.[2](https://agentlaboratory.github.io)[3](https://github.com/SamuelSchmidgall/AgentLaboratory)
+
+
+  ## Code Execution Failures
+
+
+  **Symptom**: Agent-generated PyTorch code fails parsing/runtime (e.g., wrong tensor
+  shapes, import errors) during mle-solver experiments.[11](https://www.themoonlight.io/de/review/unveiling-pitfalls-understanding-why-ai-driven-code-agents-fail-at-github-issue-resolution)[12](https://github.com/run-llama/llama_index/issues/12699)
+
+
+  **Root Cause**: LLMs overlook env deps (e.g., PyTorch version mismatches) or dataset
+  mismatches (e.g., HF loader errors); no iterative repair in naive reps.[13](https://github.com/Point-Zheng/agentlaboratory)[14](https://arxiv.org/pdf/2501.04227.pdf)
+
+
+  **Fix**: Add dependency checks (e.g., `import torch; assert torch.__version__`),
+  use try-except with repair prompts, and validate shapes pre-backward; Agent Lab''s
+  iterative REPLACE/EDIT commands resolve this.[3](https://github.com/SamuelSchmidgall/AgentLaboratory)[14](https://arxiv.org/pdf/2501.04227.pdf)
+
+
+  ## Tool Integration Errors
+
+
+  **Symptom**: Failures in external calls (e.g., HF datasets load crashes, arXiv scrapes
+  timeout) halting experimentation phase.[2](https://agentlaboratory.github.io)
+
+
+  **Root Cause**: Missing API keys, rate limits, or unhandled exceptions in agent
+  prompts; PyTorch code assumes data availability.[3](https://github.com/SamuelSchmidgall/AgentLaboratory)
+
+
+  **Fix**: Wrap tools in robust functions with retries (e.g., `tenacity` lib) and
+  fallback prompts; specify compute specs in notes as per Agent Lab tips.[3](https://github.com/SamuelSchmidgall/AgentLaboratory)'
+raw_repos_text: "Here are 7 of the most‑used open‑source GitHub repositories that\
+  \ closely match “LLM‑powered autonomous agents for research,” with a focus on research‑oriented\
+  \ or strongly agentic workflows. Each entry includes GitHub URL, approximate star\
+  \ count, key architectural decisions, and common anti‑patterns or technical debt.\n\
+  \n***\n\n### 1. **Agent Laboratory**  \n- **GitHub URL:** https://github.com/SamuelSchmidgall/AgentLaboratory\
+  \  \n- **Star count:** ~5,000 stars (per repo page)[1](https://github.com/SamuelSchmidgall/AgentLaboratory)\n\
+  \n- **Key architectural decisions (state‑of‑the‑art):**  \n  - End‑to‑end research\
+  \ pipeline split into three phases: **literature review → experimentation → report\
+  \ writing**, each backed by specialized LLM agents.[2](https://arxiv.org/abs/2501.04227)[1](https://github.com/SamuelSchmidgall/AgentLaboratory)\n\
+  \  - Decoupled model backend (OpenAI, DeepSeek, etc.) so you can hot‑swap models\
+  \ without rewriting the workflow, making it very flexible for research budgets.[2](https://arxiv.org/abs/2501.04227)[1](https://github.com/SamuelSchmidgall/AgentLaboratory)\n\
+  \  - Tight integration with real‑world tools (arXiv, Hugging Face, Python, LaTeX)\
+  \ and **checkpoint‑style state saving**, enabling reproducible, restartable research\
+  \ runs.[1](https://github.com/SamuelSchmidgall/AgentLaboratory)[2](https://arxiv.org/abs/2501.04227)\n\
+  \n- **Anti‑patterns / technical debt:**  \n  - Python‑only, monolithic script structure;\
+  \ heavy “one‑big‑script” style in `ai_lab_repo.py` makes component reuse and testing\
+  \ harder.[1](https://github.com/SamuelSchmidgall/AgentLaboratory)\n  - Assumes Unix‑like\
+  \ tooling (e.g., `pdflatex`) and rich local compute; less robust for constrained\
+  \ / cloud‑only environments out of the box.[1](https://github.com/SamuelSchmidgall/AgentLaboratory)\n\
+  \n***\n\n### 2. **data‑to‑paper**  \n- **GitHub URL:** https://github.com/Technion-Kishony-lab/data-to-paper\
+  \  \n- **Star count:** ~1,500–2,000 stars (exact count not published, but widely\
+  \ cited in “AI‑driven research” threads)[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)\n\
+  \n- **Key architectural decisions (state‑of‑the‑art):**  \n  - **End‑to‑end scientific\
+  \ workflow** from raw data → hypothesis generation → code → results → traceable\
+  \ paper, explicitly designed for human‑verifiable research.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)\n\
+  \  - **Backward‑traceable “data‑chaining”**: numeric values in the paper link back\
+  \ to specific code lines, improving reproducibility and auditability.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)\n\
+  \  - Multi‑agent style via LLM + rule‑based agents, guided by the “living guidelines”\
+  \ approach to keep research aligned with scientific norms.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)\n\
+  \n- **Anti‑patterns / technical debt:**  \n  - Tightly tied to a specific Python‑based\
+  \ scientific stack; adapting to non‑Python or proprietary ML stacks requires substantial\
+  \ refactoring.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)\n\
+  \  - Documentation and config are spread across README and living guidelines; no\
+  \ clear single “app config” schema, which complicates parameter tuning.[3](https://github.com/Technion-Kishony-lab/data-to-paper/tree/main)\n\
+  \n***\n\n### 3. **AutoGen** (Microsoft)  \n- **GitHub URL:** https://github.com/microsoft/autogen\
+  \  \n- **Star count:** ~54,897+ stars (as of Feb 2026)[4](https://theagenttimes.com/articles/autogen-blows-past-54000-github-stars-cementing-its-grip-on-multi-agent-orchestr)\n\
+  \n- **Key architectural decisions (state‑of‑the‑the‑art):**  \n  - **Multi‑agent\
+  \ conversations** as first‑class primitives; agents can autonomously chat, delegate,\
+  \ and critique each other’s code or reasoning.[4](https://theagenttimes.com/articles/autogen-blows-past-54000-github-stars-cementing-its-grip-on-multi-agent-orchestr)\n\
+  \  - **Pluggable model backends and tooling**; supports OpenAI‑style APIs, Azure,\
+  \ and local LLMs via Unified API, making it easy to swap models and experiment.[4](https://theagenttimes.com/articles/autogen-blows-past-54000-github-stars-cementing-its-grip-on-multi-agent-orchestr)\n\
+  \  - Strong **caching and context‑programming** features that reduce cost and latency,\
+  \ critical for research‑scale experiments.[4](https://theagenttimes.com/articles/autogen-blows-past-54000-github-stars-cementing-its-grip-on-multi-agent-orchestr)\n\
+  \n- **Anti‑patterns / technical debt:**  \n  - Some complex examples embed “meta”\
+  \ control logic directly in orchestration code, creating a form of implicit “control‑flow\
+  \ spaghetti” that is hard to debug.[4](https://theagenttimes.com/articles/autogen-blows-past-54000-github-stars-cementing-its-grip-on-multi-agent-orchestr)\n\
+  \  - Heavy reliance on OpenAI‑style APIs; running with local or non‑standard models\
+  \ sometimes requires custom wrapper glue.[4](https://theagenttimes.com/articles/autogen-blows-past-54000-github-stars-cementing-its-grip-on-multi-agent-orchestr)\n\
+  \n***\n\n### 4. **CrewAI**  \n- **GitHub URL:** https://github.com/crewAIInc/crewAI\
+  \  \n- **Star count:** ~44,000+ stars (as of Feb 2026)[5](https://theagenttimes.com/articles/crewai-44-285-stars)\n\
+  \n- **Key architectural decisions (state‑of‑the‑art):**  \n  - **Role‑based agent\
+  \ orchestration** (e.g., “researcher,” “writer,” “reviewer”) as a first‑class concept,\
+  \ which is very natural for research‑team‑style workflows.[6](https://news.aibase.com/news/19799)[5](https://theagenttimes.com/articles/crewai-44-285-stars)\n\
+  \  - **Crews + Flows** abstraction lets you declaratively define multi‑agent workflows\
+  \ (including research pipelines) and then run them with minimal imperative code.[6](https://news.aibase.com/news/19799)[5](https://theagenttimes.com/articles/crewai-44-285-stars)\n\
+  \  - Can be layered on top of AutoGen or Standalone, which gives flexibility for\
+  \ research projects that want polished UX or deeper customization.[6](https://news.aibase.com/news/19799)\n\
+  \n- **Anti‑patterns / technical debt:**  \n  - Heavy abstraction layer can obscure\
+  \ the underlying LLM calls and tool behavior, making performance profiling and debugging\
+  \ harder for research‑grade audits.[5](https://theagenttimes.com/articles/crewai-44-285-stars)[6](https://news.aibase.com/news/19799)\n\
+  \  - Some production‑oriented features (e.g., high‑level “Certified developer” ecosystem)\
+  \ sit alongside research APIs, which can be confusing for pure‑research usage.[6](https://news.aibase.com/news/19799)\n\
+  \n***\n\n### 5. **Agents** (AIWaves Inc.)  \n- **GitHub URL:** https://github.com/agents-inc/agents\
+  \ (often referenced as `agents` or `aiwaves‑cn/agents`)[7](https://github.com/e2b-dev/awesome-ai-agents)[8](https://archive.org/details/github.com-aiwaves-cn-agents_-_2023-09-18_06-58-23)\n\
+  \n- **Star count:** ~1,000–2,000 stars (varies by fork; original is a major open‑source\
+  \ multi‑agent framework)[8](https://archive.org/details/github.com-aiwaves-cn-agents_-_2023-09-18_06-58-23)[7](https://github.com/e2b-dev/awesome-ai-agents)\n\
+  \n- **Key architectural decisions (state‑of‑the‑art):**  \n  - **Long‑/short‑term\
+  \ memory split**: Vector‑DB‑backed long‑term memory plus LLM‑managed short‑term\
+  \ memory, enabling persistent research‑agent state across runs.[7](https://github.com/e2b-dev/awesome-ai-agents)\n\
+  \  - **Controller‑based multi‑agent orchestration**: an LLM‑powered “controller”\
+  \ dynamically decides which agent acts next, enabling emergent workflow behavior\
+  \ instead of fixed DAGs.[7](https://github.com/e2b-dev/awesome-ai-agents)\n  - **SOP‑style\
+  \ workflows** (Standard Operation Process) let you define subtasks and workflows,\
+  \ very useful for structured research protocols.[7](https://github.com/e2b-dev/awesome-ai-agents)\n\
+  \n- **Anti‑patterns / technical debt:**  \n  - Memory and tool code is somewhat\
+  \ spread across different modules; debugging memory leaks or inconsistent state\
+  \ during long‑running research agents can be tricky.[7](https://github.com/e2b-dev/awesome-ai-agents)\n\
+  \  - Examples are diverse but not always research‑focused; mapping them to “research\
+  \ agent” templates requires extra scaffolding.[7](https://github.com/e2b-dev/awesome-ai-agents)\n\
+  \n***\n\n### 6. **DeepResearch (Tongyi Deep Research)**  \n- **GitHub URL:** https://github.com/Alibaba-NLP/DeepResearch\
+  \  \n- **Star count:** ~3,000–4,000 stars (widely promoted as “leading open‑source\
+  \ deep research agent” in language circles)[9](https://github.com/Alibaba-NLP/DeepResearch)\n\
+  \n- **Key architectural decisions (state‑of‑the‑art):**  \n  - **End‑to‑end “deep\
+  \ research” agent** built on Qwen‑series models, optimized for multi‑step reasoning\
+  \ over research‑like documents and code.[9](https://github.com/Alibaba-NLP/DeepResearch)\n\
+  \  - Tight integration with **document retrieval, code execution, and revision loops**,\
+  \ enabling iterative research without heavy manual prompt engineering.[9](https://github.com/Alibaba-NLP/DeepResearch)\n\
+  \  - Designed specifically for **long‑context research tasks**, pushing the boundary\
+  \ of how deep a single research‑agent can drill into papers and datasets.[9](https://github.com/Alibaba-NLP/DeepResearch)\n\
+  \n- **Anti‑patterns / technical debt:**  \n  - Heavily tied to Alibaba/Qwen stack;\
+  \ adapting to other LLMs or cloud providers requires substantial refactoring.[9](https://github.com/Alibaba-NLP/DeepResearch)\n\
+  \  - Some components are still in early‑release / blog‑style releases; documentation\
+  \ depth lags behind marketing visibility.[9](https://github.com/Alibaba-NLP/DeepResearch)\n\
+  \n***\n\n### 7. **AutoGPT**  \n- **GitHub URL:** https://github.com/Significant-Gravitas/AutoGPT\
+  \  \n- **Star count:** ~140,000+ stars (one of the most‑starred agent repos)[7](https://github.com/e2b-dev/awesome-ai-agents)\n\
+  \n- **Key architectural decisions (state‑of‑the‑art):**  \n  - **Fully autonomous\
+  \ goal‑driven agent** with memory, tool‑use, and planning loops; often used as a\
+  \ “base” layer for research‑oriented agents that want open‑loop autonomy.[7](https://github.com/e2b-dev/awesome-ai-agents)\n\
+  \  - **Extensible plugin architecture** lets you plug in research tools (code exec,\
+  \ web search, data‑analysis tools), making it easy to bootstrap research‑agent prototypes.[7](https://github.com/e2b-dev/awesome-ai-agents)\n\
+  \  - Popular starting point for “replicate a paper” projects because of its clear,\
+  \ modular agent design and rich ecosystem of plugins.[7](https://github.com/e2b-dev/awesome-ai-agents)\n\
+  \n- **Anti‑patterns / technical debt:**  \n  - **High‑level brittleness** under\
+  \ long‑running research tasks: loops can diverge, and observability is limited unless\
+  \ you add custom logging or wrappers.[7](https://github.com/e2b-dev/awesome-ai-agents)\n\
+  \  - Many plugins and forks are maintenance‑mode; keeping a research‑stable, reproducible\
+  \ version is nontrivial if you depend on the latest plugins.[7](https://github.com/e2b-dev/awesome-ai-agents)\n\
+  \n***\n\nIf you want, I can narrow this to **5–8 repos that are *specifically* pitched\
+  \ as “research‑assistant” or “paper‑generation” agents** (e.g., only Agent Laboratory,\
+  \ data‑to‑paper, DeepResearch, and a few others), and then walk you through how\
+  \ to structure a minimal “replicate the paper” repo around one of them. Which paper’s\
+  \ architecture are you trying to replicate first?"
+raw_compute_text: "For a typical “LLM‑powered autonomous agents for research”‑style\
+  \ experiment (e.g., small‑scale LLM fine‑tuning or repeated nano‑experiments driven\
+  \ by an agent), the ballpark requirements are:\n\n- **GPU memory (VRAM)**: around\
+  \ **6–12 GB** per GPU for a small‑to‑medium model (e.g., 7B–13B parameter, often\
+  \ quantized or with small batch sizes).[1](https://www.flowhunt.io/blog/large-language-models-gpu-requirements/)[2](https://arxiv.org/html/2506.06472v1)[3](https://byteiota.com/autoresearch-ai-agents-run-100-ml-experiments-overnight/)\n\
+  - **Training / experiment‑loop time**: roughly **5–20 minutes per experiment cycle**\
+  \ in frameworks like Karpathy‑style autoresearch, yielding **dozens of experiments\
+  \ per night** on a single GPU.[4](https://modelslab.com/blog/llm/karpathy-autoresearch-h100-gpu-autonomous-ml-experiments)[5](https://www.reddit.com/r/LocalLLaMA/comments/1ro00p2/project_karpathy_autoresearch_project_let_ai/)[3](https://byteiota.com/autoresearch-ai-agents-run-100-ml-experiments-overnight/)[6](https://www.linkedin.com/pulse/autoresearch-100-experiments-overnight-single-gpu-why-matteo-sorci-fki1e)\n\
+  \nIn practice many recent “autoresearch” or “agent‑run‑experiments” papers use **A100**\
+  \ or **H100** clusters for large‑scale runs, but the core agent loop (planning,\
+  \ modifying `train.py`, running small LLM or ML experiments) is explicitly designed\
+  \ to fit on **a single high‑end GPU** (e.g., RTX 4090, L40S, A100, H100).[7](https://jarvislabs.ai/ai-faqs/why_choose_an_h100_over_an_a100_for_llm)[8](https://cyfuture.ai/gpu-clusters)[9](https://dev.to/elianalamhost/run-oss-llms-on-a-single-h100-smarter-cheaper-faster-47j)[3](https://byteiota.com/autoresearch-ai-agents-run-100-ml-experiments-overnight/)[4](https://modelslab.com/blog/llm/karpathy-autoresearch-h100-gpu-autonomous-ml-experiments)\n\
+  \n### Typical GPU in recent papers\n\n- **Most commonly used GPUs**:  \n  - For\
+  \ **large‑scale training / inference clusters**: **A100 40/80 GB** and **H100 80\
+  \ GB** are now standard in recent LLM and autoresearch‑style papers and cloud setups.[10](https://nvidia.github.io/TensorRT-LLM/blogs/H100vsA100.html)[8](https://cyfuture.ai/gpu-clusters)[9](https://dev.to/elianalamhost/run-oss-llms-on-a-single-h100-smarter-cheaper-faster-47j)[7](https://jarvislabs.ai/ai-faqs/why_choose_an_h100_over_an_a100_for_llm)\n\
+  \  - For **small‑scale or budget‑friendly reproduction** (e.g., nanochat‑style autoresearch),\
+  \ experiments are often run on **single‑GPU setups** such as **RTX 4090 (24 GB)**\
+  \ or **L40S (48 GB)**, but not specifically T4‑class.[9](https://dev.to/elianalamhost/run-oss-llms-on-a-single-h100-smarter-cheaper-faster-47j)[3](https://byteiota.com/autoresearch-ai-agents-run-100-ml-experiments-overnight/)\n\
+  \n### Feasibility on a free Google Colab T4\n\n- **T4 specs**: ~**16 GB VRAM** and\
+  \ moderate FP16 performance, which is **enough** for  \n  - small LLMs (e.g., 7B–13B\
+  \ in 4‑bit / 8‑bit),  \n  - light agent‑orchestration (e.g., 1–2 LLM–agent workers,\
+  \ not heavy multi‑agent graphs).[11](https://haikel-fazzani.deno.dev/blog/l40s-vs-a100-vs-h100-vs-t4-gpu)[1](https://www.flowhunt.io/blog/large-language-models-gpu-requirements/)\n\
+  - **Trade‑offs**:  \n  - You can **reproduce a “small” version** of an LLM‑powered‑autonomous‑agent\
+  \ experiment (e.g., autobiographic‑style hyperparameter‑tuning or code‑generation\
+  \ loops) on Colab’s T4, but  \n  - heavy multi‑agent research swarms, large batch\
+  \ sizes, or long‑context workflows may **hit VRAM or time limits** and require quantization,\
+  \ smaller models, or cloud‑paid A100/H100.[12](https://www.spheron.network/blog/multi-agent-ai-system-gpu-infrastructure/)[13](https://io.net/blog/ai-agent-infrastructure-the-gpu-cloud-workload-nobody-planned-for)[11](https://haikel-fazzani.deno.dev/blog/l40s-vs-a100-vs-h100-vs-t4-gpu)\n\
+  \nSo: **yes, it is feasible on a free Colab T4** if you stick to a **small‑scale\
+  \ setup** (6–8 GB VRAM‑class model, 1 agent, 5–15 min experiment cycles); for the\
+  \ full‑scale “paper‑replication” level you’d usually want an **A100 or H100**‑class\
+  \ GPU.[3](https://byteiota.com/autoresearch-ai-agents-run-100-ml-experiments-overnight/)[4](https://modelslab.com/blog/llm/karpathy-autoresearch-h100-gpu-autonomous-ml-experiments)[7](https://jarvislabs.ai/ai-faqs/why_choose_an_h100_over_an_a100_for_llm)\n\
+  \nIf you tell me roughly what model size and agent count you’re targeting (e.g.,\
+  \ TinyLlama, 7B, or 13B; 1 vs 3–4 agents), I can spell out concrete VRAM (GB) and\
+  \ wall‑time (minutes) budgets for your Colab‑friendly config."

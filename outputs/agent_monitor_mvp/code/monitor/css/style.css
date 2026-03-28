@@ -1,0 +1,181 @@
+:root {
+  --bg: #0f1419;
+  --panel: #1a2332;
+  --text: #e8eef7;
+  --muted: #8b9cb3;
+  --accent: #3d9eff;
+  --ok: #3ecf8e;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #243044;
+}
+
+.top h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.sub {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.nav-game {
+  margin: 0.5rem 0 0;
+}
+
+.nav-game a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.nav-game a:hover {
+  text-decoration: underline;
+}
+
+.stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  min-width: 5rem;
+}
+
+.stat-card strong {
+  display: block;
+  font-size: 1.4rem;
+  color: var(--accent);
+}
+
+.stat-card span {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  background: #121a26;
+  border-bottom: 1px solid #243044;
+}
+
+.toolbar label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.toolbar input,
+.toolbar select {
+  background: var(--panel);
+  border: 1px solid #2c3a50;
+  color: var(--text);
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  min-width: 12rem;
+}
+
+.btn {
+  align-self: flex-end;
+  background: var(--accent);
+  color: #0a0e14;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:hover {
+  filter: brightness(1.08);
+}
+
+.layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  min-height: 420px;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.map {
+  min-height: 360px;
+  background: #0a0e14;
+}
+
+.panel {
+  background: var(--panel);
+  padding: 1rem;
+  overflow: auto;
+  border-left: 1px solid #243044;
+}
+
+.panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.event-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.event-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #2c3a50;
+  font-size: 0.85rem;
+}
+
+.event-list li strong {
+  color: var(--ok);
+}
+
+.foot {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  border-top: 1px solid #243044;
+}
+
+.leaflet-container {
+  font-family: inherit;
+}

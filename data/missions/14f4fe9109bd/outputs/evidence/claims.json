@@ -1,0 +1,26 @@
+[
+  {
+    "claim_id": "line_9",
+    "line": 9,
+    "text": "<!-- section=gaps generated=2026-03-27T14:47:08.441894+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_49",
+    "line": 49,
+    "text": "<!-- section=methodology generated=2026-03-27T14:48:09.278462+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_143",
+    "line": 143,
+    "text": "- For each, define a *target* (e.g., “recover the main metric to within ±1%” or “reproduce the central figure qualitatively”).",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_165",
+    "line": 165,
+    "text": "<!-- section=experiments generated=2026-03-27T14:48:49.717925+00:00 model=best -->",
+    "type": "literature_or_performance"
+  }
+]

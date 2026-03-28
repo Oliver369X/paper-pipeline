@@ -1,0 +1,61 @@
+{
+  "generated": "2026-03-24T00:00:00Z",
+  "note": "Datos demo — no representan uso real de Cursor",
+  "events": [
+    {
+      "id": "evt-1",
+      "ts": "2026-03-24T08:12:00Z",
+      "label": "agent_session",
+      "model": "composer-2-fast",
+      "duration_s": 42,
+      "lat": -17.783,
+      "lng": -63.182,
+      "region": "Santa Cruz",
+      "detail": "Iteración paper-loop — edición monitor/"
+    },
+    {
+      "id": "evt-2",
+      "ts": "2026-03-24T09:01:00Z",
+      "label": "meta_review",
+      "model": "claude-sonnet-4.6-thinking",
+      "duration_s": 28,
+      "lat": -16.5,
+      "lng": -68.15,
+      "region": "La Paz",
+      "detail": "Ronda meta-loop — next_instruction"
+    },
+    {
+      "id": "evt-3",
+      "ts": "2026-03-24T10:33:00Z",
+      "label": "agent_session",
+      "model": "composer-2-fast",
+      "duration_s": 95,
+      "lat": -19.033,
+      "lng": -65.259,
+      "region": "Cochabamba",
+      "detail": "Refinamiento UI / filtros"
+    },
+    {
+      "id": "evt-4",
+      "ts": "2026-03-24T11:05:00Z",
+      "label": "lint",
+      "model": "composer-2-fast",
+      "duration_s": 12,
+      "lat": -17.783,
+      "lng": -63.182,
+      "region": "Santa Cruz",
+      "detail": "Verificación estática local"
+    },
+    {
+      "id": "evt-5",
+      "ts": "2026-03-24T12:40:00Z",
+      "label": "meta_review",
+      "model": "claude-sonnet-4.6-thinking",
+      "duration_s": 31,
+      "lat": -17.783,
+      "lng": -63.182,
+      "region": "Santa Cruz",
+      "detail": "Auditoría ronda ≥5"
+    }
+  ]
+}

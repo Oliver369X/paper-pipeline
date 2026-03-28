@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "nodes": [
+    {
+      "id": "root-1",
+      "parent_id": null,
+      "description": "Exploración inicial de literatura sobre: E2E matriz: pipeline v2 + triaje hipervisor + modo autonomía (smoke)",
+      "goal_type": "literature",
+      "status": "pending",
+      "priority": 0.5,
+      "source_artifacts": [
+        "goals.json"
+      ]
+    }
+  ],
+  "mission_topic_hint": "E2E matriz: pipeline v2 + triaje hipervisor + modo autonomía (smoke)"
+}

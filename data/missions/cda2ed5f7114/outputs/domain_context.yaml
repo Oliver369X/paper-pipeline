@@ -1,0 +1,386 @@
+topic: Análisis de la curvatura de pérdida en la transición memorización-razonamiento
+venue_target: arXiv:2510.24256
+sota_techniques: []
+mathematical_constraints: []
+known_pitfalls:
+- description: Common pitfalls in implementing loss curvature analysis for the memorization-reasoning
+    transition in PyTorch involve approximations like K-FAC or Hessian computations
+    on transformer MLPs. These often arise during covariance collection or eigendecomposition
+    for decomposing weights into curvature-ordered components.[1](https://arxiv.org/abs/2510.24256)[2](https://news.ycombinator.com/item?id=45845800)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '## NaN in Covariance Matrices'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Loss curvature computation yields NaN values during activation/gradient
+    covariance accumulation (A = x^T x / N, G = g^T g / N).
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'Root cause: Division by near-zero norms or log(0) in unnormalized
+    activations/gradients from rare tokens or exploding/vanishing signals in long
+    sequences.[3](https://discuss.pytorch.org/t/losses-end-up-becoming-nan-during-training-how-to-debug-and-fix-them/99291)[4](https://discuss.pytorch.org/t/why-did-my-customized-kl-divergence-cause-nan/214339)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'Verified fix: Add epsilon (1e-8) before normalization, clip activations/gradients
+    to [1e-8, 1e2], and use torch.clamp on eigenvalues post-eigendecomposition.[5](https://www.lesswrong.com/posts/mwBaS2qE9RNNfqYBC/recipe-hessian-eigenvector-computation-for-pytorch-models)'
+  source_paper: ''
+  symptom: ''
+  fix: Add epsilon (1e-8) before normalization, clip activations/gradients to [1e-8,
+    1e2], and use torch
+- description: '## Device Mismatch Errors'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'RuntimeError: Tensors on different devices (e.g., model on GPU, reference
+    params on CPU) during normalization in interpolation or projection.'
+  source_paper: ''
+  symptom: Tensors on different devices (e
+  fix: ''
+- description: 'Root cause: Incomplete .to(device) on model copies or data loaders
+    in loss landscape tools like loss-landscapes library.[6](https://discuss.pytorch.org/t/loss-surface-landscape-by-gpu/130990)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'Verified fix: Ensure deepcopy_model=True and explicitly move all params/data
+    with .to(device); wrap in torch.no_grad() for metrics.[6](https://discuss.pytorch.org/t/loss-surface-landscape-by-gpu/130990)'
+  source_paper: ''
+  symptom: ''
+  fix: Ensure deepcopy_model=True and explicitly move all params/data with
+- description: '## Exploding Gradients in HVP'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+reference_implementations:
+- name: purdue-nrl/Memorization-Curvature
+  github_url: https://github.com/purdue-nrl/Memorization-Curvature
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: DeepakTatachar/Curvature-Clues
+  github_url: https://github.com/DeepakTatachar/Curvature-Clues
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: goodfire-ai/r1-interpretability
+  github_url: https://github.com/goodfire-ai/r1-interpretability
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: r1-interpretability/releases
+  github_url: https://github.com/goodfire-ai/r1-interpretability/releases
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: DeepakTatachar/Privacy-Memorization-Curvature
+  github_url: https://github.com/DeepakTatachar/Privacy-Memorization-Curvature
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: gauravfs-14/awesome-mechanistic-interpretability
+  github_url: https://github.com/gauravfs-14/awesome-mechanistic-interpretability
+  key_design_decisions: []
+  what_not_to_copy: []
+compute_requirements:
+  estimated_gpu_memory_gb: 24.0
+  estimated_training_time_minutes: 180.0
+  requires_gpu: true
+  delegate_to_colab: true
+  colab_accelerator: A100
+poison_pills:
+- false_claim: The standard evaluation metric for 'Análisis de la curvatura de pérdida
+    en la transición memorización-razonamiento' is pixel accuracy.
+  reason_it_is_false: Pixel accuracy is a segmentation metric unrelated to most ML
+    research topics.
+  detection_query: Is pixel accuracy the standard evaluation metric for Análisis de
+    la curvatura de pérdida en la transición memorización-razonamiento?
+- false_claim: The Transformer architecture used in 'Análisis de la curvatura de pérdida
+    en la transición memorización-razonamiento' was invented by Yann LeCun in 1998.
+  reason_it_is_false: The Transformer was introduced by Vaswani et al. in 2017 ('Attention
+    Is All You Need').
+  detection_query: Who invented the Transformer architecture and in what year?
+- false_claim: Standard practice in 'Análisis de la curvatura de pérdida en la transición
+    memorización-razonamiento' is to use a learning rate greater than 1.0.
+  reason_it_is_false: Learning rates > 1.0 destabilise training; typical range is
+    1e-5 to 1e-2.
+  detection_query: Is a learning rate greater than 1.0 standard practice in Análisis
+    de la curvatura de pérdida en la transición memorización-razonamiento?
+perplexity_sources:
+- https://arxiv.org/abs/2510.24256
+- https://kclpure.kcl.ac.uk/ws/portalfiles/portal/219855366/2212.04985v1.pdf
+- https://arxiv.org/html/2601.16979v1
+- https://arxiv.org/abs/2601.16979
+- https://icml.cc/virtual/2025/poster/46001
+- https://arxiv.org/abs/2502.19002
+- https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature
+- https://news.ycombinator.com/item?id=45845800
+- https://www.youtube.com/watch?v=5kWG5Hpi-Uo
+- https://github.com/purdue-nrl/Memorization-Curvature
+- https://proceedings.mlr.press/v235/garg24a.html
+- https://github.com/DeepakTatachar/Curvature-Clues
+- https://github.com/goodfire-ai/r1-interpretability
+- https://github.com/goodfire-ai/r1-interpretability/releases
+- https://github.com/DeepakTatachar/Privacy-Memorization-Curvature
+- https://github.com/gauravfs-14/awesome-mechanistic-interpretability
+- https://arxiv.org/html/2510.24256v1
+- https://arxiv.org/html/2510.24256v2
+generation_timestamp: '2026-03-27T20:36:39.492137+00:00'
+dca_version: '2.0'
+raw_sota_papers_text: 'Recent research on loss curvature analysis in the memorization-to-reasoning
+  transition in neural networks, particularly transformers, has centered on a few
+  key arXiv papers from 2025-2026. These works explore how curvature in the loss landscape
+  distinguishes memorized from generalized knowledge, with the target paper arXiv:2510.24256
+  being highly influential. Below are the top 4 most relevant and cited papers matching
+  the criteria, as broader top-15-20 lists are sparse in this niche; they target arXiv-level
+  venues and focus on the specified transition.
+
+
+  ## Key Papers Overview
+
+
+  | Title | Authors | Year | Key Technical Finding | Main Mathematical Contribution
+  |
+
+  |-------|---------|------|-----------------------|-------------------------------|
+
+  | From Memorization to Reasoning in the Spectrum of Loss Curvature [1](https://arxiv.org/abs/2510.24256)
+  | Jack Merullo, Srihita Vatsavaya, Lucius Bushnaq, Owen Lewis | 2025 | Memorization
+  directions in weights are flatter on average across examples than generalization
+  directions, enabling unsupervised editing to suppress recitation while preserving
+  reasoning in LMs and ViTs. | K-FAC approximation of Fisher Information Matrix (FIM):
+  $$ F_W \approx G \otimes A = \mathbb{E}[gg^T] \otimes \mathbb{E}[aa^T] $$, with
+  eigenvalues $$\lambda_i \mu_j$$; reconstruct weights by selecting top curvature
+  mass $$\rho$$: $$ W_{\text{pairs}} = \sum_{(i,j) \in S} C_{ij} u_i v_j^T $$ [2](https://kclpure.kcl.ac.uk/ws/portalfiles/portal/219855366/2212.04985v1.pdf).
+  |
+
+  | A Scalable Measure of Loss Landscape Curvature for Analyzing the Training Dynamics
+  of LLMs [1](https://arxiv.org/abs/2510.24256)[3](https://arxiv.org/html/2601.16979v1)
+  | Dayal Singh Kalra, Jean-Christophe Gagnon-Audet, Andrey Gromov, Ishita Mediratta,
+  Kelvin Niu, Alexander H Miller, Michael Shvartsman | 2026 | Critical sharpness $$\lambda_c$$
+  scales to 7B LLMs, capturing progressive sharpening and Edge of Stability; relative
+  sharpness guides pretrain-to-finetune transitions. | Critical sharpness: $$\lambda_c
+  = \Delta\theta^T H \Delta\theta / \|\Delta\theta\|^2$$ along update $$\Delta\theta$$,
+  approximating max Hessian eigenvalue $$\lambda_{\max}^H$$; relative version $$\lambda_c^{1\to2}$$
+  for cross-landscape curvature [4](https://arxiv.org/abs/2601.16979)[1](https://arxiv.org/abs/2510.24256).
+  |
+
+  | The Sharpness Disparity Principle in Transformers for Accelerating LLM Pre-training
+  [5](https://icml.cc/virtual/2025/poster/46001)[6](https://arxiv.org/abs/2502.19002)
+  | (Not specified in sources) | 2025 | Transformers show persistent sharpness disparity
+  across blocks (e.g., attention vs. FFN), enabling 2x faster training via blockwise
+  learning rates. | Blockwise sharpness from Hessian eigenvalues, integrated into
+  AdamW for adaptive LR per block, reducing terminal loss [5](https://icml.cc/virtual/2025/poster/46001).
+  |
+
+  | Understanding Memorization via Loss Curvature [7](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)
+  | (Goodfire AI team; linked to arXiv:2510.24256) | 2025 | Curvature decomposition
+  disentangles memorization from computation, allowing selective editing to reduce
+  memorization without losing reasoning. | Eigen decomposition of loss curvature basis
+  via K-FAC, ordering components high-to-low curvature to isolate flat memorization
+  subspaces [7](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[8](https://news.ycombinator.com/item?id=45845800).
+  |
+
+
+  These papers build directly on the target arXiv:2510.24256, which sparked discussion
+  (e.g., HN, YouTube) and citations in 2025-2026 works. No extensive top-15-20 lists
+  emerged for this exact Spanish-phrased topic (translating to "analysis of loss curvature
+  in the memorization-reasoning transition"), but these represent the core influential
+  cluster at arXiv caliber.[1](https://arxiv.org/abs/2510.24256)[9](https://www.youtube.com/watch?v=5kWG5Hpi-Uo)'
+raw_pitfalls_text: 'Common pitfalls in implementing loss curvature analysis for the
+  memorization-reasoning transition in PyTorch involve approximations like K-FAC or
+  Hessian computations on transformer MLPs. These often arise during covariance collection
+  or eigendecomposition for decomposing weights into curvature-ordered components.[1](https://arxiv.org/abs/2510.24256)[2](https://news.ycombinator.com/item?id=45845800)
+
+
+  ## NaN in Covariance Matrices
+
+
+  Loss curvature computation yields NaN values during activation/gradient covariance
+  accumulation (A = x^T x / N, G = g^T g / N).
+
+
+  Root cause: Division by near-zero norms or log(0) in unnormalized activations/gradients
+  from rare tokens or exploding/vanishing signals in long sequences.[3](https://discuss.pytorch.org/t/losses-end-up-becoming-nan-during-training-how-to-debug-and-fix-them/99291)[4](https://discuss.pytorch.org/t/why-did-my-customized-kl-divergence-cause-nan/214339)
+
+
+  Verified fix: Add epsilon (1e-8) before normalization, clip activations/gradients
+  to [1e-8, 1e2], and use torch.clamp on eigenvalues post-eigendecomposition.[5](https://www.lesswrong.com/posts/mwBaS2qE9RNNfqYBC/recipe-hessian-eigenvector-computation-for-pytorch-models)
+
+
+  ## Device Mismatch Errors
+
+
+  RuntimeError: Tensors on different devices (e.g., model on GPU, reference params
+  on CPU) during normalization in interpolation or projection.
+
+
+  Root cause: Incomplete .to(device) on model copies or data loaders in loss landscape
+  tools like loss-landscapes library.[6](https://discuss.pytorch.org/t/loss-surface-landscape-by-gpu/130990)
+
+
+  Verified fix: Ensure deepcopy_model=True and explicitly move all params/data with
+  .to(device); wrap in torch.no_grad() for metrics.[6](https://discuss.pytorch.org/t/loss-surface-landscape-by-gpu/130990)
+
+
+  ## Exploding Gradients in HVP
+
+
+  Hessian-vector products (HVP) for curvature produce inf/NaN, halting eigsh or decomposition.
+
+
+  Root cause: Higher-order gradients (torch.autograd.grad with create_graph=True)
+  amplify noise, especially >2nd order or with pow/log ops.[7](https://discuss.pytorch.org/t/calculating-the-hessian-of-loss-function-wrt-torch-network-parameters/119241)[8](https://discuss.pytorch.org/t/pow-return-nan-instead-of-expected-value-for-second-and-higher-order-deriviative-orders/214421)
+
+
+  Verified fix: Use torch.autograd.set_detect_anomaly(True) to debug, gradient clipping
+  (torch.nn.utils.clip_grad_norm_(params, 1.0)), and K-FAC approximation instead of
+  full Hessian.[9](https://discuss.pytorch.org/t/nan-loss-coming-after-some-time/11568)[5](https://www.lesswrong.com/posts/mwBaS2qE9RNNfqYBC/recipe-hessian-eigenvector-computation-for-pytorch-models)
+
+
+  ## Incorrect Weight Decomposition
+
+
+  Decomposed weights (W_pairs = U_G (C ⊙ M) U_A^T) fail to suppress low-curvature
+  (memorization) directions, retaining high recitation rates.
+
+
+  Root cause: Sorting pairs by λ_i * μ_j without cumulative mass check, or applying
+  to wrong layers (not late MLPs like 23-25).
+
+
+  Verified fix: Select pairs until ρ * total_mass (e.g., ρ=0.6), target MLP up/gate_proj
+  in late layers per dataset stats (~20M tokens).[2](https://news.ycombinator.com/item?id=45845800)
+
+
+  ## Memory Overflow on Large Models
+
+
+  Eigendecomposition of A/G matrices OOMs for 7B+ transformers (e.g., OLMo-7B MLPs).
+
+
+  Root cause: Full eig on high-dim covars (e.g., d_model=4096); no batching or low-rank
+  approx.[10](https://github.com/deepqmc/torch-kfac)
+
+
+  Verified fix: Use torch.linalg.eigh with batching or partial eigsh via scipy.sparse
+  (top-k only), collect stats on subsets (10k images/20M tokens).[5](https://www.lesswrong.com/posts/mwBaS2qE9RNNfqYBC/recipe-hessian-eigenvector-computation-for-pytorch-models)'
+raw_repos_text: 'No highly popular open-source GitHub repositories directly address
+  "Análisis de la curvatura de pérdida en la transición memorización-razonamiento"
+  (loss curvature analysis in the memorization-reasoning transition), a niche topic
+  from recent mechanistic interpretability research on LLMs. The most relevant projects
+  focus on related loss curvature for memorization detection or broader interpretability,
+  but none exceed modest popularity (under 100 stars based on available data). Here''s
+  a curated list of the top 5 related repos, prioritized by relevance to loss curvature,
+  memorization, and reasoning transitions in transformers.
+
+
+  ## Key Repositories
+
+
+  | Repository | GitHub URL | Stars (approx.) | Key Architectural Decisions | Known
+  Anti-Patterns/Technical Debt |
+
+  |------------|------------|-----------------|-----------------------------|------------------------------------|
+
+  | purdue-nrl/Memorization-Curvature | https://github.com/purdue-nrl/Memorization-Curvature
+  [1](https://github.com/purdue-nrl/Memorization-Curvature) | ~50 | Uses per-sample
+  loss curvature averaging over epochs via Hessian approximation; detects long-tail/mislabeled
+  data as high-curvature for memorization scoring. SOTA for unsupervised memorization
+  proxy without labels [2](https://proceedings.mlr.press/v235/garg24a.html). | Limited
+  to vision tasks (CIFAR/ImageNet); no transformer/LLM support; duplicated image failure
+  mode unhandled [2](https://proceedings.mlr.press/v235/garg24a.html). |
+
+  | DeepakTatachar/Curvature-Clues | https://github.com/DeepakTatachar/Curvature-Clues
+  [3](https://github.com/DeepakTatachar/Curvature-Clues) | ~30 | Input loss curvature
+  decoding for privacy/memorization in deep nets; NeurIPS 2024 Spotlight with efficient
+  curvature estimation. Extends to reasoning via sharpness distinctions [3](https://github.com/DeepakTatachar/Curvature-Clues).
+  | Privacy-focused, not reasoning-optimized; lacks bulk memorization averaging for
+  LLM transitions [3](https://github.com/DeepakTatachar/Curvature-Clues). |
+
+  | goodfire-ai/r1-interpretability | https://github.com/goodfire-ai/r1-interpretability
+  [4](https://github.com/goodfire-ai/r1-interpretability) | <20 (new) | SAEs on DeepSeek
+  R1 (671B) for reasoning interpretability; links to "loss curvature" papers via Goodfire''s
+  memorization-reasoning spectrum work. K-FAC decomposition for flat vs. sharp directions
+  [5](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[4](https://github.com/goodfire-ai/r1-interpretability).
+  | No direct curvature code; relies on HF models/SQL dumps; early-stage, no releases
+  [6](https://github.com/goodfire-ai/r1-interpretability/releases). |
+
+  | DeepakTatachar/Privacy-Memorization-Curvature | https://github.com/DeepakTatachar/Privacy-Memorization-Curvature
+  [7](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature) | ~20 | Unveils
+  privacy via input loss curvature; correlates with memorization sharpness. Prototype
+  for transition analysis [7](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature).
+  | Narrow scope (privacy); no reasoning benchmarks or bulk edits [7](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature).
+  |
+
+  | gauravfs-14/awesome-mechanistic-interpretability | https://github.com/gauravfs-14/awesome-mechanistic-interpretability
+  [8](https://github.com/gauravfs-14/awesome-mechanistic-interpretability) | ~100+
+  | Curated list including curvature papers/tools for memorization-reasoning (e.g.,
+  Goodfire, K-FAC); central hub for SOTA like spectrum decomposition [8](https://github.com/gauravfs-14/awesome-mechanistic-interpretability).
+  | Not implementation-focused; links outdated quickly; no original code [8](https://github.com/gauravfs-14/awesome-mechanistic-interpretability).
+  |
+
+
+  ## Relevance Context
+
+  These repos stem from papers like Goodfire''s "From Memorization to Reasoning in
+  the Spectrum of Loss Curvature" (arXiv 2510.24256), which inverts per-example sharpness:
+  bulk memorization shows flat curvatures (low K-FAC eigenvalues) vs. higher for reasoning.
+  Purdue''s ICML 2024 work pioneered sample curvature for memorization. No Spanish-specific
+  ("Análisis de la...") repos found; English dominates.[9](https://arxiv.org/html/2510.24256v1)[10](https://arxiv.org/html/2510.24256v2)[1](https://github.com/purdue-nrl/Memorization-Curvature)
+
+
+  For your YAIS Lab research, start with Purdue''s code for baselines and extend to
+  transformers using K-FAC from Goodfire insights. What''s your target model size
+  or dataset for replication?[5](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[11](https://news.ycombinator.com/item?id=45845800)'
+raw_compute_text: "For a “Análisis de la curvatura de pérdida en la transición memorización‑razonamiento”‑style\
+  \ experiment (as in the recent “From Memorization to Reasoning in the Spectrum of\
+  \ Loss Curvature” paper), the typical GPU‑memory and training‑time scales are modest\
+  \ compared with full‑scale LLM training, but they are still heavier than a tiny\
+  \ toy notebook.[1](https://arxiv.org/abs/2510.24256)[2](https://arxiv.org/abs/2307.05831)[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)\n\
+  \n***\n\n### GPU memory and time scales (experiment‑level)\n\nThe core expense is\
+  \ not “training a model from scratch” but:\n\n1. **collecting K‑FAC / Hessian‑approximate\
+  \ curvature statistics** over many training steps (forward + backward passes) on\
+  \ a medium‑scale model (e.g., OLMo‑2‑7B, ~7B parameters), and  \n2. **weight‑editing\
+  \ / ablation** in specific MLP layers (e.g., layers 23–25 in the 7B model).[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[1](https://arxiv.org/abs/2510.24256)\n\
+  \nTypical resource demands in practice:\n\n- **GPU memory**:  \n  - Published setups\
+  \ use **OLMo‑2‑7B**‑like models, which fit in **~16–24 GB VRAM** for inference and\
+  \ single‑GPU fine‑tuning‑scale workloads.[1](https://arxiv.org/abs/2510.24256)[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)\n\
+  \  - With FP16 mixed‑precision and K‑FAC‑style statistics buffers, you are usually\
+  \ in the **~16–24 GB VRAM** range per GPU for a “standard” curvature‑analysis experiment.[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[1](https://arxiv.org/abs/2510.24256)\n\
+  \  - For a very lightweight version (much smaller model, small batch, reduced K‑FAC\
+  \ coverage) you can squeeze into **≤12 GB**, but this is not the “standard” scale\
+  \ in the recent papers.\n\n- **Training / compute time**:  \n  - In the Goodfire\
+  \ paper, K‑FAC statistics are collected over **~20M tokens** (OLMo/OLMo‑style pretraining)\
+  \ with sequence length 512, using a small number of training epochs.[1](https://arxiv.org/abs/2510.24256)[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)\n\
+  \  - For a **single‑GPU experiment** (e.g., A100 or H100), this k‑FAC‑acquisition\
+  \ phase typically takes on the order of **~60–180 minutes** wall‑time, depending\
+  \ on batch size, token budget, and whether you reuse existing checkpoints.[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[1](https://arxiv.org/abs/2510.24256)\n\
+  \  - Lighter runs (smaller dataset, fewer tokens, smaller model) can drop to **~10–30\
+  \ minutes**, but that is more of a “small‑scale” variant than the “standard” experiment.\n\
+  \nIn units you asked for:\n- Typical GPU memory: **~16–24 GB** (per‑GPU, for a 7B‑scale\
+  \ model with K‑FAC buffers).  \n- Typical wall‑time: **~60–180 minutes** (single\
+  \ GPU, standard‑scale experiment).[1](https://arxiv.org/abs/2510.24256)[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)\n\
+  \n***\n\n### Most commonly used GPU in recent papers\n\nRecent curvature‑based memorization‑analysis\
+  \ work (e.g., “From Memorization to Reasoning in the Spectrum of Loss Curvature”,\
+  \ prior K‑FAC‑style curvature studies) usually runs on:\n\n- **NVIDIA A100** (40\
+  \ GB or 80 GB) as the default “standard” GPU in clusters and cloud papers.[4](https://www.thundercompute.com/blog/how-to-choose-right-gpu-ai-workloads)[1](https://arxiv.org/abs/2510.24256)\n\
+  - Some newer work (e.g., follow‑ups and large‑scale curvature‑sweep experiments)\
+  \ uses **H100**, especially when scaling to larger models or multi‑GPU.[5](https://www.lesswrong.com/posts/Wti4Wr7Cf5ma3FGWa/shallow-review-of-technical-ai-safety-2025-2)[4](https://www.thundercompute.com/blog/how-to-choose-right-gpu-ai-workloads)\n\
+  - **T4** is used in many of the listed cloud‑guides and Colab‑style setups, but\
+  \ it is mainly for **prototyping, inference, or small‑model experiments**, not heavy\
+  \ curvature‑analysis on 7B‑class models.[6](https://pattersonconsultingtn.com/blog/forecasting_your_aws_gpu_cloud_spend.html)[4](https://www.thundercompute.com/blog/how-to-choose-right-gpu-ai-workloads)\n\
+  \nSo the **most commonly used GPU in recent papers** of this flavor is the **A100**\
+  \ (often 40 GB), with H100 appearing in newer, larger‑scale variants.[4](https://www.thundercompute.com/blog/how-to-choose-right-gpu-ai-workloads)[5](https://www.lesswrong.com/posts/Wti4Wr7Cf5ma3FGWa/shallow-review-of-technical-ai-safety-2025-2)[1](https://arxiv.org/abs/2510.24256)\n\
+  \n***\n\n### Feasibility on a free Google Colab T4?\n\nA **free Colab T4** (16 GB\
+  \ VRAM, modest compute, limited session duration) is:\n\n- **Feasible for a small‑scale,\
+  \ reduced‑version** of the experiment, but **not for the full 7B‑scale “standard”\
+  \ setup**.[6](https://pattersonconsultingtn.com/blog/forecasting_your_aws_gpu_cloud_spend.html)[4](https://www.thundercompute.com/blog/how-to-choose-right-gpu-ai-workloads)[1](https://arxiv.org/abs/2510.24256)\n\
+  - You can realistically:\n  - Use a **small model** (e.g., ≤1–3B params) or a distilled\
+  \ version.  \n  - Use **much smaller token budgets** and **fewer layers** for K‑FAC\
+  \ analysis.  \n  - Accept **shorter runs** (lower‑precision experiments, fewer training\
+  \ steps).[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[1](https://arxiv.org/abs/2510.24256)\n\
+  - On a full 7B‑class model with large‑scale K‑FAC statistics, you will likely:\n\
+  \  - Hit **OOM** from weights + gradients + K‑FAC‑covariance matrices, or  \n  -\
+  \ be throttled by **Colab runtime limits** during the 1–3 hour‑scale compute phase.[4](https://www.thundercompute.com/blog/how-to-choose-right-gpu-ai-workloads)[6](https://pattersonconsultingtn.com/blog/forecasting_your_aws_gpu_cloud_spend.html)\n\
+  \nIn short: **Yes, it is *feasible* on a free Colab T4 if you significantly scale\
+  \ down the model and data**, but the **standard** “Análisis de la curvatura”‑style\
+  \ experiment (7B‑scale, full‑scale K‑FAC) is **not comfortably feasible** on a single\
+  \ free T4.[4](https://www.thundercompute.com/blog/how-to-choose-right-gpu-ai-workloads)[1](https://arxiv.org/abs/2510.24256)[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)"

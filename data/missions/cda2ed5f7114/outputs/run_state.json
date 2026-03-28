@@ -1,0 +1,23 @@
+{
+  "last_run": "2026-03-27T20:40:00.649759+00:00",
+  "completed_steps": [
+    "perplexity:abstract",
+    "perplexity:methodology",
+    "perplexity:experiments",
+    "perplexity:related_code",
+    "perplexity:gaps",
+    "perplexity:sota",
+    "step:quality_check",
+    "step:cursor_cli"
+  ],
+  "pending_steps": [],
+  "errors": [],
+  "draft_version": 1,
+  "draft_hash": "fb10f90f7c2e",
+  "meta_loop_cycles": 0,
+  "perplexity_backend_uuid": null,
+  "perplexity_read_write_token": null,
+  "last_critical_failure": "",
+  "empirical_fingerprint": "a4be8eb12dcb6628645e",
+  "experiment_runner_config_hash": "2e4976316b74ccea"
+}

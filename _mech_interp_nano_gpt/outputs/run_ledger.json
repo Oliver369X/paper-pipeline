@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-03-26T19-39-33Z__e8258ead",
+  "mission_id": "_mech_interp_nano_gpt",
+  "mission_version": 1,
+  "status": "completed",
+  "current_phase": null,
+  "started_at": "2026-03-26T19:39:33.055876+00:00",
+  "ended_at": "2026-03-26T19:41:46.771416+00:00",
+  "phases": [
+    {
+      "name": "mission_validation",
+      "status": "done",
+      "started_at": null,
+      "ended_at": "2026-03-26T19:39:33.057876+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "preflight",
+      "status": "done",
+      "started_at": "2026-03-26T19:39:33.061337+00:00",
+      "ended_at": "2026-03-26T19:39:33.064334+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "perplexity_sections",
+      "status": "done",
+      "started_at": "2026-03-26T19:39:33.065941+00:00",
+      "ended_at": "2026-03-26T19:40:40.028095+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "assembly_draft",
+      "status": "done",
+      "started_at": "2026-03-26T19:40:40.028095+00:00",
+      "ended_at": "2026-03-26T19:40:40.111757+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "quality_check",
+      "status": "done",
+      "started_at": "2026-03-26T19:40:40.112754+00:00",
+      "ended_at": "2026-03-26T19:41:46.635951+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "notion_sync",
+      "status": "done",
+      "started_at": "2026-03-26T19:41:46.636954+00:00",
+      "ended_at": "2026-03-26T19:41:46.637957+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "cursor_cli",
+      "status": "skipped",
+      "started_at": null,
+      "ended_at": "2026-03-26T19:41:46.640331+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "final_decision",
+      "status": "done",
+      "started_at": null,
+      "ended_at": "2026-03-26T19:41:46.768145+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {
+        "publishable_hint": true
+      }
+    }
+  ],
+  "integrations": {
+    "perplexity": {},
+    "notion": {},
+    "cursor_cli": {}
+  },
+  "decision": {
+    "triage_tier": null,
+    "publishable": false,
+    "blocking_reasons": []
+  },
+  "artifacts_index": {},
+  "meta": {
+    "mission_path": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\_mech_interp_nano_gpt\\mission.md"
+  }
+}

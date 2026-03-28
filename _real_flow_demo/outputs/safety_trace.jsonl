@@ -1,0 +1,1 @@
+{"ts": "2026-03-26T19:02:13.020392+00:00", "candidate_action": "publish_consolidation", "decision": "ALLOW", "rule_id": "allow_default", "reasons": ["No hard safety constraints triggered."], "source_artifacts": ["publication/publish_decision.json"], "mission_id": null, "run_id": null}

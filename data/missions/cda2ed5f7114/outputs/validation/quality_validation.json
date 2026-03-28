@@ -1,0 +1,50 @@
+{
+  "mission_version": 1,
+  "all_passed": true,
+  "gates": [
+    {
+      "id": "structural_draft",
+      "passed": true,
+      "detail": "word_count=4217"
+    },
+    {
+      "id": "structural_sections",
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "id": "epistemic_claim_candidates",
+      "passed": true,
+      "detail": "claim_candidates=34"
+    },
+    {
+      "id": "epistemic_alignment",
+      "passed": true,
+      "detail": {
+        "replication_tier": "planning_only",
+        "mode": "off"
+      }
+    },
+    {
+      "id": "fallback_transparency",
+      "passed": true,
+      "detail": {
+        "fallback_from_hf_import": true,
+        "has_replication_status_md": true,
+        "draft_mentions_degraded": true
+      }
+    },
+    {
+      "id": "downstream_metrics_declared",
+      "passed": true,
+      "detail": {
+        "keyword_hits": 6,
+        "replication_fidelity": "extension_exploratory",
+        "mode": "off"
+      }
+    }
+  ],
+  "blocking_reasons": [],
+  "warnings": [],
+  "publishable": true
+}

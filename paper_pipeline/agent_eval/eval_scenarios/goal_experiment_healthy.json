@@ -1,0 +1,23 @@
+{
+  "id": "goal_experiment_healthy",
+  "description": "Healthy run with room for empirical improvement → experiment.",
+  "target": "goal_selection",
+  "axis": ["capacity"],
+  "goal_inputs": {
+    "objective_state": {
+      "status": "healthy",
+      "gates": {"publishable": false},
+      "terms": {"contribution_estimate": 0.4}
+    },
+    "memory_index": {
+      "latest_by_kind": {
+        "publish": {"payload": {"eligible_for_publication": true}}
+      }
+    },
+    "safety_latest": {},
+    "loop_state": {}
+  },
+  "expectations": {
+    "selected_goal_type": "experiment"
+  }
+}

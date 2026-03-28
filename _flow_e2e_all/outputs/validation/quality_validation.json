@@ -1,0 +1,23 @@
+{
+  "mission_version": 1,
+  "all_passed": true,
+  "gates": [
+    {
+      "id": "structural_draft",
+      "passed": true,
+      "detail": "word_count=472"
+    },
+    {
+      "id": "structural_sections",
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "id": "epistemic_claim_candidates",
+      "passed": true,
+      "detail": "claim_candidates=4"
+    }
+  ],
+  "blocking_reasons": [],
+  "publishable": true
+}

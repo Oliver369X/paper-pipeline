@@ -1,0 +1,19 @@
+{
+  "id": "goal_literature_ambiguity",
+  "description": "Weak signals default to literature exploration.",
+  "target": "goal_selection",
+  "axis": ["capacity", "research_quality"],
+  "goal_inputs": {
+    "objective_state": {
+      "status": "healthy",
+      "gates": {},
+      "terms": {"contribution_estimate": 0.0}
+    },
+    "memory_index": {"latest_by_kind": {}},
+    "safety_latest": {},
+    "loop_state": {}
+  },
+  "expectations": {
+    "selected_goal_type": "literature"
+  }
+}

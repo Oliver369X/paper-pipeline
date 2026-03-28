@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agent Monitor — demo</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div>
+        <h1>Monitor de uso de agente (demo)</h1>
+        <p class="sub">
+          Datos sintéticos · solo frontend · Cursor Composer 2 Fast + Perplexity Sonnet 4.6 Thinking
+        </p>
+        <p class="nav-game">
+          <a href="game.html">Juego 3D con físicas →</a>
+        </p>
+      </div>
+      <div class="stats" id="stats"></div>
+    </header>
+
+    <section class="toolbar">
+      <label>
+        Filtrar tipo
+        <select id="filterType">
+          <option value="all">Todos</option>
+        </select>
+      </label>
+      <label>
+        Buscar
+        <input type="search" id="filterQuery" placeholder="etiqueta o modelo" />
+      </label>
+      <button type="button" id="btnExport" class="btn">Exportar JSON</button>
+    </section>
+
+    <main class="layout">
+      <div id="map" class="map" role="application" aria-label="Mapa de eventos"></div>
+      <aside class="panel">
+        <h2>Eventos</h2>
+        <ul id="eventList" class="event-list"></ul>
+      </aside>
+    </main>
+
+    <footer class="foot">
+      <span id="status" aria-live="polite" aria-atomic="true">Cargando datos…</span>
+    </footer>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="js/app.js" type="module"></script>
+  </body>
+</html>

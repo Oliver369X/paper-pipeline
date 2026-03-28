@@ -1,0 +1,17 @@
+# Postgres con extensión pgvector (desarrollo local). Arranque: docker compose up -d
+# URL típica: postgresql://paper:paper@localhost:5433/paper_pipeline
+services:
+  pgvector:
+    image: pgvector/pgvector:pg16
+    container_name: paper-pipeline-pgvector
+    environment:
+      POSTGRES_USER: paper
+      POSTGRES_PASSWORD: paper
+      POSTGRES_DB: paper_pipeline
+    ports:
+      - "5433:5432"
+    volumes:
+      - paper_pg_data:/var/lib/postgresql/data
+
+volumes:
+  paper_pg_data:

@@ -1,0 +1,16 @@
+{"event": "section_start", "ts": "2026-03-26T19:28:51.001507+00:00", "section": "related_work", "step": "perplexity:related_work"}
+{"event": "section_done", "ts": "2026-03-26T19:30:00.283033+00:00", "section": "related_work", "duration_s": 69.281, "chars": 15129}
+{"event": "section_start", "ts": "2026-03-26T19:30:00.285030+00:00", "section": "gaps", "step": "perplexity:gaps"}
+{"event": "section_done", "ts": "2026-03-26T19:30:30.230228+00:00", "section": "gaps", "duration_s": 29.938, "chars": 6987}
+{"event": "section_start", "ts": "2026-03-26T19:30:30.232381+00:00", "section": "methodology", "step": "perplexity:methodology"}
+{"event": "section_done", "ts": "2026-03-26T19:31:17.252790+00:00", "section": "methodology", "duration_s": 47.031, "chars": 9983}
+{"event": "section_start", "ts": "2026-03-26T19:31:17.255817+00:00", "section": "experiments", "step": "perplexity:experiments"}
+{"event": "section_done", "ts": "2026-03-26T19:31:48.391915+00:00", "section": "experiments", "duration_s": 31.125, "chars": 6606}
+{"event": "draft_assembled", "ts": "2026-03-26T19:31:48.521625+00:00", "path": "_mech_interp_nano_gpt\\outputs\\draft_paper.md"}
+{"event": "section_start", "ts": "2026-03-26T19:39:33.070351+00:00", "section": "abstract", "step": "perplexity:abstract"}
+{"event": "section_done", "ts": "2026-03-26T19:39:58.056621+00:00", "section": "abstract", "duration_s": 24.985, "chars": 4263}
+{"event": "section_start", "ts": "2026-03-26T19:39:58.059343+00:00", "section": "conclusion", "step": "perplexity:conclusion"}
+{"event": "section_done", "ts": "2026-03-26T19:40:11.358609+00:00", "section": "conclusion", "duration_s": 13.297, "chars": 1882}
+{"event": "section_start", "ts": "2026-03-26T19:40:11.360609+00:00", "section": "limitations", "step": "perplexity:limitations"}
+{"event": "section_done", "ts": "2026-03-26T19:40:40.024724+00:00", "section": "limitations", "duration_s": 28.657, "chars": 4714}
+{"event": "draft_assembled", "ts": "2026-03-26T19:40:40.109755+00:00", "path": "_mech_interp_nano_gpt\\outputs\\draft_paper.md"}

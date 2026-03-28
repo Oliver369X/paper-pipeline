@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "nodes": [
+    {
+      "id": "root-1",
+      "parent_id": null,
+      "description": "Exploración inicial de literatura sobre: Replicación de paper: LLM-powered Autonomous Agents for Research",
+      "goal_type": "literature",
+      "status": "pending",
+      "priority": 0.5,
+      "source_artifacts": [
+        "goals.json"
+      ]
+    }
+  ],
+  "mission_topic_hint": "Replicación de paper: LLM-powered Autonomous Agents for Research"
+}

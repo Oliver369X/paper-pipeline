@@ -1,0 +1,191 @@
+{
+  "version": 1,
+  "counts_by_kind": {
+    "brain_brief": 1,
+    "triage": 3,
+    "publish": 4,
+    "run_consolidation": 4,
+    "quality": 2
+  },
+  "last_event": {
+    "ts": "2026-03-27T19:18:39.192719+00:00",
+    "memory_id": "48abf81002d2",
+    "kind": "run_consolidation",
+    "mission_id": null,
+    "run_id": null,
+    "summary": "Consolidación post-hypervisor en orquestador v2",
+    "confidence": 0.85,
+    "source_artifacts": [
+      "triage/triage_report.json",
+      "publication/publish_decision.json",
+      "run_ledger.json",
+      "objective_state.json"
+    ],
+    "tags": [
+      "run",
+      "hypervisor"
+    ],
+    "payload": {
+      "phase": "post_hypervisor"
+    }
+  },
+  "latest_by_kind": {
+    "brain_brief": {
+      "ts": "2026-03-27T18:02:47.895293+00:00",
+      "memory_id": "40e95fc2f97a",
+      "kind": "brain_brief",
+      "mission_id": "9f7e5c88bd45",
+      "run_id": null,
+      "summary": "# Brief Doctoral: Curvatura de Pérdida y Supresión de Memorización (K-FAC)\n\n## 1. Visión General del Paper (arXiv:2510.24256)\nEl trabajo de Merullo et al. propone un cambio de paradigma en el análisis de la memorización: en lugar de buscar 'neuronas' de memoria, analizan la **curvatura del paisaje de pérdida**. Utilizando la aproximación **K-FAC (Kronecker-factored Approximate Curvature)** de la m",
+      "confidence": 0.7,
+      "source_artifacts": [
+        "outputs/brain_brief.md"
+      ],
+      "tags": [
+        "brain",
+        "brief"
+      ],
+      "payload": {
+        "mission_id": "9f7e5c88bd45",
+        "paper_target": "arXiv:2510.24256"
+      }
+    },
+    "triage": {
+      "ts": "2026-03-27T19:18:39.065656+00:00",
+      "memory_id": "2802db1d29ab",
+      "kind": "triage",
+      "mission_id": null,
+      "run_id": null,
+      "summary": "Triage insufficient_metrics (tier 2)",
+      "confidence": 0.8,
+      "source_artifacts": [
+        "triage/triage_report.json"
+      ],
+      "tags": [
+        "triage",
+        "tier_2",
+        "insufficient_metrics"
+      ],
+      "payload": {
+        "version": 1,
+        "tier": 2,
+        "label": "insufficient_metrics",
+        "reason": "No primary metric; classified as neutral match (no breakthrough claim)",
+        "detail": {},
+        "metrics": {
+          "exit_code": 0,
+          "main": null,
+          "baseline": null,
+          "coverage": null,
+          "math_checks": null,
+          "anomaly_detected": false,
+          "oom_error": false,
+          "notes": ""
+        },
+        "quality_gates": {
+          "target_metric": "",
+          "higher_is_better": true,
+          "sota_baseline_value": 0.0,
+          "breakthrough_margin": 0.02,
+          "replication_tolerance": 0.01,
+          "require_statistical_significance": true
+        }
+      }
+    },
+    "publish": {
+      "ts": "2026-03-27T19:18:39.111777+00:00",
+      "memory_id": "d549ea2a94de",
+      "kind": "publish",
+      "mission_id": null,
+      "run_id": null,
+      "summary": "Publish elegible",
+      "confidence": 0.8,
+      "source_artifacts": [
+        "publication/publish_decision.json",
+        "triage/triage_report.json"
+      ],
+      "tags": [
+        "publish",
+        "insufficient_metrics"
+      ],
+      "payload": {
+        "eligible_for_publication": true,
+        "blocking_reasons": [],
+        "mission_version": 1,
+        "quality_publishable": true,
+        "triage_tier": 2,
+        "triage_label": "insufficient_metrics"
+      }
+    },
+    "run_consolidation": {
+      "ts": "2026-03-27T19:18:39.192719+00:00",
+      "memory_id": "48abf81002d2",
+      "kind": "run_consolidation",
+      "mission_id": null,
+      "run_id": null,
+      "summary": "Consolidación post-hypervisor en orquestador v2",
+      "confidence": 0.85,
+      "source_artifacts": [
+        "triage/triage_report.json",
+        "publication/publish_decision.json",
+        "run_ledger.json",
+        "objective_state.json"
+      ],
+      "tags": [
+        "run",
+        "hypervisor"
+      ],
+      "payload": {
+        "phase": "post_hypervisor"
+      }
+    },
+    "quality": {
+      "ts": "2026-03-27T19:17:28.292185+00:00",
+      "memory_id": "0f68d269a257",
+      "kind": "quality",
+      "mission_id": null,
+      "run_id": null,
+      "summary": "Quality gates OK",
+      "confidence": 0.8,
+      "source_artifacts": [
+        "validation/quality_validation.json"
+      ],
+      "tags": [
+        "quality",
+        "publishable"
+      ],
+      "payload": {
+        "mission_version": 1,
+        "all_passed": true,
+        "gates": [
+          {
+            "id": "structural_draft",
+            "passed": true,
+            "detail": "word_count=2773"
+          },
+          {
+            "id": "structural_sections",
+            "passed": true,
+            "detail": "ok"
+          },
+          {
+            "id": "epistemic_claim_candidates",
+            "passed": true,
+            "detail": "claim_candidates=20"
+          }
+        ],
+        "blocking_reasons": [],
+        "publishable": true
+      }
+    }
+  },
+  "source_artifacts": [
+    "outputs/brain_brief.md",
+    "triage/triage_report.json",
+    "publication/publish_decision.json",
+    "run_ledger.json",
+    "objective_state.json",
+    "validation/quality_validation.json"
+  ],
+  "last_updated_at": "2026-03-27T19:18:39.211682+00:00"
+}

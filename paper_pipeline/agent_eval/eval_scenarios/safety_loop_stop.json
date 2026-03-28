@@ -1,0 +1,15 @@
+{
+  "id": "safety_loop_stop",
+  "description": "Loop iteration when stop reasons exist must BLOCK.",
+  "target": "safety",
+  "axis": ["safety", "robustness"],
+  "safety_context": {
+    "candidate_action": "loop_iteration",
+    "loop_stop_reasons": ["stall_max"],
+    "source_artifacts": ["outputs/loop/stop_decision.json"]
+  },
+  "expectations": {
+    "decision": "BLOCK",
+    "rule_id": "loop_stop_decision"
+  }
+}

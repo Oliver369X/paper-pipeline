@@ -1,0 +1,15 @@
+{
+  "id": "safety_publish_blocking",
+  "description": "Blocking reasons in publish path must BLOCK consolidation.",
+  "target": "safety",
+  "axis": ["safety"],
+  "safety_context": {
+    "candidate_action": "publish_consolidation",
+    "publish_blocking_reasons": ["tier3_without_quality_gates"],
+    "eligible_for_publication": true
+  },
+  "expectations": {
+    "decision": "BLOCK",
+    "rule_id": "publish_blocking_reasons"
+  }
+}

@@ -1,0 +1,5 @@
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\_real_flow_demo\\mission.md", "topic": "Smoke test flujo real: una sección breve sobre atención en transformers", "dry_run": false, "ts": "2026-03-26T19:01:51.456465+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_start", "step": "perplexity:gaps", "model": "best", "ts": "2026-03-26T19:01:51.465466+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_ok", "step": "perplexity:gaps", "duration_s": 21.41, "chars": 3062, "perplexity_backend_uuid": "b9058521-ffc2-456f-842f-7e9ab57d7c6d", "ts": "2026-03-26T19:02:12.863477+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "draft_snapshot", "hash": "75bea054ba3b", "chars": 3315, "ts": "2026-03-26T19:02:12.912401+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_ok", "step": "pipeline", "duration_s": 21.5, "calls_used": 1, "max_calls": 2, "ts": "2026-03-26T19:02:12.957904+00:00", "level": "info", "module": "paper_pipeline.logger"}

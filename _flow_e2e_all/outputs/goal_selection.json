@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "selected_goal_type": "wait_human",
+  "goal_text": "Esperar aprobación humana para continuar.",
+  "priority": 1.0,
+  "reason": "El estado requiere aprobación humana explícita.",
+  "source_signals": [
+    "objective_state.json",
+    "safety_trace.jsonl"
+  ],
+  "gates": {
+    "metrics_valid": true,
+    "publishable": true,
+    "loop_stopped": false,
+    "requires_human_approval": true
+  },
+  "last_updated_at": "2026-03-26T19:17:54.420170+00:00"
+}

@@ -1,0 +1,146 @@
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\75bced514d93\\mission.md", "topic": "Research y build", "dry_run": false, "ts": "2026-03-24T02:20:31.446482+00:00"}
+{"event": "step_skip", "step": "perplexity:reashing", "reason": "unknown section key", "ts": "2026-03-24T02:20:31.447835+00:00"}
+{"event": "step_start", "step": "perplexity:gaps", "model": "claude-sonnet-4.6-thinking", "ts": "2026-03-24T02:20:31.449345+00:00"}
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\75bced514d93\\mission.md", "topic": "Research y build", "dry_run": false, "ts": "2026-03-24T02:21:17.909408+00:00"}
+{"event": "step_skip", "step": "perplexity:reashing", "reason": "unknown section key", "ts": "2026-03-24T02:21:17.923754+00:00"}
+{"event": "step_start", "step": "perplexity:gaps", "model": "claude-sonnet-4.6-thinking", "ts": "2026-03-24T02:21:17.925030+00:00"}
+{"event": "step_ok", "step": "perplexity:gaps", "duration_s": 47.5, "chars": 5016, "ts": "2026-03-24T02:21:18.939503+00:00"}
+{"event": "step_start", "step": "perplexity:methodology", "model": "claude-sonnet-4.6-thinking", "ts": "2026-03-24T02:21:18.941314+00:00"}
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\75bced514d93\\mission.md", "topic": "Research y build", "dry_run": false, "ts": "2026-03-24T02:21:49.078772+00:00"}
+{"event": "step_skip", "step": "perplexity:reashing", "reason": "unknown section key", "ts": "2026-03-24T02:21:49.082740+00:00"}
+{"event": "step_skip", "step": "perplexity:gaps", "reason": "already completed in previous run", "ts": "2026-03-24T02:21:49.084736+00:00"}
+{"event": "step_start", "step": "perplexity:methodology", "model": "claude-sonnet-4.6-thinking", "ts": "2026-03-24T02:21:49.085995+00:00"}
+{"event": "step_ok", "step": "perplexity:methodology", "duration_s": 52.39, "chars": 6155, "ts": "2026-03-24T02:22:11.328420+00:00"}
+{"event": "step_start", "step": "perplexity:experiments", "model": "claude-sonnet-4.6-thinking", "ts": "2026-03-24T02:22:11.332174+00:00"}
+{"event": "step_ok", "step": "perplexity:gaps", "duration_s": 58.19, "chars": 5209, "ts": "2026-03-24T02:22:16.118407+00:00"}
+{"event": "step_start", "step": "perplexity:methodology", "model": "claude-sonnet-4.6-thinking", "ts": "2026-03-24T02:22:16.120409+00:00"}
+{"event": "step_ok", "step": "perplexity:methodology", "duration_s": 52.78, "chars": 5573, "ts": "2026-03-24T02:22:41.870466+00:00"}
+{"event": "step_start", "step": "perplexity:experiments", "model": "claude-sonnet-4.6-thinking", "ts": "2026-03-24T02:22:41.873468+00:00"}
+{"event": "step_ok", "step": "perplexity:experiments", "duration_s": 46.55, "chars": 6460, "ts": "2026-03-24T02:22:57.886974+00:00"}
+{"event": "step_skip", "step": "perplexity:building", "reason": "unknown section key", "ts": "2026-03-24T02:22:57.905965+00:00"}
+{"event": "step_skip", "step": "perplexity:test", "reason": "unknown section key", "ts": "2026-03-24T02:22:57.906981+00:00"}
+{"event": "step_skip", "step": "perplexity:QA", "reason": "unknown section key", "ts": "2026-03-24T02:22:57.907980+00:00"}
+{"event": "step_skip", "step": "perplexity:mas invetigaicaon y ve resultados", "reason": "unknown section key", "ts": "2026-03-24T02:22:57.908983+00:00"}
+{"event": "draft_snapshot", "hash": "e99d96b2dcf7", "chars": 17723, "ts": "2026-03-24T02:22:58.015043+00:00"}
+{"event": "step_start", "step": "step:quality_check", "model": "claude-sonnet-4.6-thinking", "ts": "2026-03-24T02:22:58.019554+00:00"}
+{"event": "step_ok", "step": "perplexity:methodology", "duration_s": 42.8, "chars": 5375, "ts": "2026-03-24T02:22:58.916076+00:00"}
+{"event": "step_start", "step": "perplexity:experiments", "model": "claude-sonnet-4.6-thinking", "ts": "2026-03-24T02:22:58.921147+00:00"}
+{"event": "step_ok", "step": "perplexity:experiments", "duration_s": 46.97, "chars": 6024, "ts": "2026-03-24T02:23:28.852635+00:00"}
+{"event": "step_skip", "step": "perplexity:building", "reason": "unknown section key", "ts": "2026-03-24T02:23:28.855448+00:00"}
+{"event": "step_skip", "step": "perplexity:test", "reason": "unknown section key", "ts": "2026-03-24T02:23:28.856470+00:00"}
+{"event": "step_skip", "step": "perplexity:QA", "reason": "unknown section key", "ts": "2026-03-24T02:23:28.857467+00:00"}
+{"event": "step_skip", "step": "perplexity:mas invetigaicaon y ve resultados", "reason": "unknown section key", "ts": "2026-03-24T02:23:28.859493+00:00"}
+{"event": "draft_snapshot", "hash": "e90c5bc1e7eb", "chars": 17089, "ts": "2026-03-24T02:23:28.943901+00:00"}
+{"event": "step_start", "step": "step:quality_check", "model": "claude-sonnet-4.6-thinking", "ts": "2026-03-24T02:23:28.948085+00:00"}
+{"event": "step_ok", "step": "perplexity:experiments", "duration_s": 45.64, "chars": 5633, "ts": "2026-03-24T02:23:44.566284+00:00"}
+{"event": "step_skip", "step": "perplexity:building", "reason": "unknown section key", "ts": "2026-03-24T02:23:44.571110+00:00"}
+{"event": "step_skip", "step": "perplexity:test", "reason": "unknown section key", "ts": "2026-03-24T02:23:44.572109+00:00"}
+{"event": "step_skip", "step": "perplexity:QA", "reason": "unknown section key", "ts": "2026-03-24T02:23:44.573651+00:00"}
+{"event": "step_skip", "step": "perplexity:mas invetigaicaon y ve resultados", "reason": "unknown section key", "ts": "2026-03-24T02:23:44.575663+00:00"}
+{"event": "draft_snapshot", "hash": "03e7c2c5755b", "chars": 16698, "ts": "2026-03-24T02:23:44.639065+00:00"}
+{"event": "step_start", "step": "step:quality_check", "model": "claude-sonnet-4.6-thinking", "ts": "2026-03-24T02:23:44.642064+00:00"}
+{"event": "step_ok", "step": "step:quality_check", "duration_s": 98.03, "chars": 7319, "ts": "2026-03-24T02:24:36.055719+00:00"}
+{"event": "step_start", "step": "step:cursor_cli", "ts": "2026-03-24T02:24:36.059718+00:00"}
+{"event": "step_error", "step": "step:cursor_cli", "error": "cursor_cli_failed", "duration_s": 0.05, "exit_code": 5, "ts": "2026-03-24T02:24:36.098789+00:00"}
+{"event": "step_ok", "step": "step:quality_check", "duration_s": 71.86, "chars": 6567, "ts": "2026-03-24T02:24:40.797028+00:00"}
+{"event": "step_start", "step": "step:cursor_cli", "ts": "2026-03-24T02:24:40.800080+00:00"}
+{"event": "step_error", "step": "step:cursor_cli", "error": "cursor_cli_failed", "duration_s": 0.03, "exit_code": 5, "ts": "2026-03-24T02:24:40.827739+00:00"}
+{"event": "step_ok", "step": "step:quality_check", "duration_s": 104.3, "chars": 6809, "ts": "2026-03-24T02:25:28.943262+00:00"}
+{"event": "step_start", "step": "step:cursor_cli", "ts": "2026-03-24T02:25:28.947275+00:00"}
+{"event": "step_error", "step": "step:cursor_cli", "error": "cursor_cli_failed", "duration_s": 0.03, "exit_code": 5, "ts": "2026-03-24T02:25:28.980021+00:00"}
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\75bced514d93\\mission.md", "topic": "Research y build", "dry_run": false, "ts": "2026-03-24T02:27:40.255729+00:00"}
+{"event": "step_skip", "step": "perplexity:reashing", "reason": "unknown section key", "ts": "2026-03-24T02:27:40.257730+00:00"}
+{"event": "step_skip", "step": "perplexity:gaps", "reason": "already completed in previous run", "ts": "2026-03-24T02:27:40.258809+00:00"}
+{"event": "step_skip", "step": "perplexity:methodology", "reason": "already completed in previous run", "ts": "2026-03-24T02:27:40.259809+00:00"}
+{"event": "step_skip", "step": "perplexity:experiments", "reason": "already completed in previous run", "ts": "2026-03-24T02:27:40.260810+00:00"}
+{"event": "step_skip", "step": "perplexity:building", "reason": "unknown section key", "ts": "2026-03-24T02:27:40.262294+00:00"}
+{"event": "step_skip", "step": "perplexity:test", "reason": "unknown section key", "ts": "2026-03-24T02:27:40.263662+00:00"}
+{"event": "step_skip", "step": "perplexity:QA", "reason": "unknown section key", "ts": "2026-03-24T02:27:40.268571+00:00"}
+{"event": "step_skip", "step": "perplexity:mas invetigaicaon y ve resultados", "reason": "unknown section key", "ts": "2026-03-24T02:27:40.270341+00:00"}
+{"event": "draft_snapshot", "hash": "04a02b02c7f7", "chars": 16698, "ts": "2026-03-24T02:27:40.304246+00:00"}
+{"event": "step_skip", "step": "step:quality_check", "reason": "already completed in previous run", "ts": "2026-03-24T02:27:40.308249+00:00"}
+{"event": "step_start", "step": "step:cursor_cli", "ts": "2026-03-24T02:27:40.310711+00:00"}
+{"event": "step_error", "step": "step:cursor_cli", "error": "cursor_cli_failed", "duration_s": 0.01, "exit_code": 5, "ts": "2026-03-24T02:27:40.337066+00:00"}
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\75bced514d93\\mission.md", "topic": "Research y build", "dry_run": false, "ts": "2026-03-24T02:28:35.182549+00:00"}
+{"event": "step_skip", "step": "perplexity:reashing", "reason": "unknown section key", "ts": "2026-03-24T02:28:35.183869+00:00"}
+{"event": "step_skip", "step": "perplexity:gaps", "reason": "already completed in previous run", "ts": "2026-03-24T02:28:35.184867+00:00"}
+{"event": "step_skip", "step": "perplexity:methodology", "reason": "already completed in previous run", "ts": "2026-03-24T02:28:35.186178+00:00"}
+{"event": "step_skip", "step": "perplexity:experiments", "reason": "already completed in previous run", "ts": "2026-03-24T02:28:35.187198+00:00"}
+{"event": "step_skip", "step": "perplexity:building", "reason": "unknown section key", "ts": "2026-03-24T02:28:35.188194+00:00"}
+{"event": "step_skip", "step": "perplexity:test", "reason": "unknown section key", "ts": "2026-03-24T02:28:35.190511+00:00"}
+{"event": "step_skip", "step": "perplexity:QA", "reason": "unknown section key", "ts": "2026-03-24T02:28:35.192514+00:00"}
+{"event": "step_skip", "step": "perplexity:mas invetigaicaon y ve resultados", "reason": "unknown section key", "ts": "2026-03-24T02:28:35.194513+00:00"}
+{"event": "draft_snapshot", "hash": "f12acb58a5fc", "chars": 16698, "ts": "2026-03-24T02:28:35.233675+00:00"}
+{"event": "step_skip", "step": "step:quality_check", "reason": "already completed in previous run", "ts": "2026-03-24T02:28:35.236844+00:00"}
+{"event": "step_start", "step": "step:cursor_cli", "ts": "2026-03-24T02:28:35.238460+00:00"}
+{"event": "step_error", "step": "step:cursor_cli", "error": "cursor_cli_failed", "duration_s": 0.03, "exit_code": 5, "ts": "2026-03-24T02:28:35.273027+00:00"}
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\75bced514d93\\mission.md", "topic": "Research y build", "dry_run": false, "ts": "2026-03-24T16:17:40.056670+00:00"}
+{"event": "step_skip", "step": "perplexity:reashing", "reason": "unknown section key", "ts": "2026-03-24T16:17:40.071991+00:00"}
+{"event": "step_skip", "step": "perplexity:gaps", "reason": "already completed in previous run", "ts": "2026-03-24T16:17:40.073000+00:00"}
+{"event": "step_skip", "step": "perplexity:methodology", "reason": "already completed in previous run", "ts": "2026-03-24T16:17:40.074476+00:00"}
+{"event": "step_skip", "step": "perplexity:experiments", "reason": "already completed in previous run", "ts": "2026-03-24T16:17:40.074984+00:00"}
+{"event": "step_skip", "step": "perplexity:building", "reason": "unknown section key", "ts": "2026-03-24T16:17:40.076408+00:00"}
+{"event": "step_skip", "step": "perplexity:test", "reason": "unknown section key", "ts": "2026-03-24T16:17:40.077921+00:00"}
+{"event": "step_skip", "step": "perplexity:QA", "reason": "unknown section key", "ts": "2026-03-24T16:17:40.079046+00:00"}
+{"event": "step_skip", "step": "perplexity:mas invetigaicaon y ve resultados", "reason": "unknown section key", "ts": "2026-03-24T16:17:40.081046+00:00"}
+{"event": "draft_snapshot", "hash": "8648dc5a5b7c", "chars": 16698, "ts": "2026-03-24T16:17:40.114153+00:00"}
+{"event": "step_skip", "step": "step:quality_check", "reason": "already completed in previous run", "ts": "2026-03-24T16:17:40.117614+00:00"}
+{"event": "step_start", "step": "step:cursor_cli", "ts": "2026-03-24T16:17:40.120107+00:00"}
+{"event": "step_error", "step": "cursor_version_check", "error": "agent_version_failed", "duration_s": 0.0, "detail": "[WinError 2] El sistema no puede encontrar el archivo especificado", "ts": "2026-03-24T16:17:40.168533+00:00"}
+{"event": "step_error", "step": "step:cursor_cli", "error": "cursor_cli_failed", "duration_s": 3.09, "exit_code": 1, "ts": "2026-03-24T16:17:43.204211+00:00"}
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\75bced514d93\\mission.md", "topic": "Research y build", "dry_run": false, "ts": "2026-03-24T16:18:49.487089+00:00"}
+{"event": "step_skip", "step": "perplexity:reashing", "reason": "unknown section key", "ts": "2026-03-24T16:18:49.489085+00:00"}
+{"event": "step_skip", "step": "perplexity:gaps", "reason": "already completed in previous run", "ts": "2026-03-24T16:18:49.490101+00:00"}
+{"event": "step_skip", "step": "perplexity:methodology", "reason": "already completed in previous run", "ts": "2026-03-24T16:18:49.491117+00:00"}
+{"event": "step_skip", "step": "perplexity:experiments", "reason": "already completed in previous run", "ts": "2026-03-24T16:18:49.492118+00:00"}
+{"event": "step_skip", "step": "perplexity:building", "reason": "unknown section key", "ts": "2026-03-24T16:18:49.493118+00:00"}
+{"event": "step_skip", "step": "perplexity:test", "reason": "unknown section key", "ts": "2026-03-24T16:18:49.493118+00:00"}
+{"event": "step_skip", "step": "perplexity:QA", "reason": "unknown section key", "ts": "2026-03-24T16:18:49.494277+00:00"}
+{"event": "step_skip", "step": "perplexity:mas invetigaicaon y ve resultados", "reason": "unknown section key", "ts": "2026-03-24T16:18:49.495461+00:00"}
+{"event": "draft_snapshot", "hash": "6fc0bc53cefb", "chars": 16698, "ts": "2026-03-24T16:18:49.527511+00:00"}
+{"event": "step_skip", "step": "step:quality_check", "reason": "already completed in previous run", "ts": "2026-03-24T16:18:49.530442+00:00"}
+{"event": "step_start", "step": "step:cursor_cli", "ts": "2026-03-24T16:18:49.532631+00:00"}
+{"event": "step_error", "step": "cursor_version_check", "error": "agent_version_failed", "duration_s": 0.0, "detail": "[WinError 2] El sistema no puede encontrar el archivo especificado", "ts": "2026-03-24T16:18:49.568448+00:00"}
+{"event": "step_error", "step": "step:cursor_cli", "error": "cursor_cli_failed", "duration_s": 2.69, "exit_code": 1, "ts": "2026-03-24T16:18:52.218435+00:00"}
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\75bced514d93\\mission.md", "topic": "Research y build", "dry_run": false, "ts": "2026-03-24T16:19:43.549011+00:00"}
+{"event": "step_skip", "step": "perplexity:reashing", "reason": "unknown section key", "ts": "2026-03-24T16:19:43.551535+00:00"}
+{"event": "step_skip", "step": "perplexity:gaps", "reason": "already completed in previous run", "ts": "2026-03-24T16:19:43.552538+00:00"}
+{"event": "step_skip", "step": "perplexity:methodology", "reason": "already completed in previous run", "ts": "2026-03-24T16:19:43.554010+00:00"}
+{"event": "step_skip", "step": "perplexity:experiments", "reason": "already completed in previous run", "ts": "2026-03-24T16:19:43.555008+00:00"}
+{"event": "step_skip", "step": "perplexity:building", "reason": "unknown section key", "ts": "2026-03-24T16:19:43.556062+00:00"}
+{"event": "step_skip", "step": "perplexity:test", "reason": "unknown section key", "ts": "2026-03-24T16:19:43.557086+00:00"}
+{"event": "step_skip", "step": "perplexity:QA", "reason": "unknown section key", "ts": "2026-03-24T16:19:43.558475+00:00"}
+{"event": "step_skip", "step": "perplexity:mas invetigaicaon y ve resultados", "reason": "unknown section key", "ts": "2026-03-24T16:19:43.559673+00:00"}
+{"event": "draft_snapshot", "hash": "18b30fccc2a8", "chars": 16698, "ts": "2026-03-24T16:19:43.589792+00:00"}
+{"event": "step_skip", "step": "step:quality_check", "reason": "already completed in previous run", "ts": "2026-03-24T16:19:43.592534+00:00"}
+{"event": "step_start", "step": "step:cursor_cli", "ts": "2026-03-24T16:19:43.595976+00:00"}
+{"event": "step_error", "step": "cursor_version_check", "error": "agent_version_failed", "duration_s": 0.0, "detail": "[WinError 2] El sistema no puede encontrar el archivo especificado", "ts": "2026-03-24T16:19:43.639310+00:00"}
+{"event": "step_error", "step": "step:cursor_cli", "error": "cursor_cli_failed", "duration_s": 3.73, "exit_code": 1, "ts": "2026-03-24T16:19:47.327548+00:00"}
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\75bced514d93\\mission.md", "topic": "Research y build", "dry_run": false, "ts": "2026-03-24T16:20:32.600623+00:00"}
+{"event": "step_skip", "step": "perplexity:reashing", "reason": "unknown section key", "ts": "2026-03-24T16:20:32.604015+00:00"}
+{"event": "step_skip", "step": "perplexity:gaps", "reason": "already completed in previous run", "ts": "2026-03-24T16:20:32.605015+00:00"}
+{"event": "step_skip", "step": "perplexity:methodology", "reason": "already completed in previous run", "ts": "2026-03-24T16:20:32.608220+00:00"}
+{"event": "step_skip", "step": "perplexity:experiments", "reason": "already completed in previous run", "ts": "2026-03-24T16:20:32.609223+00:00"}
+{"event": "step_skip", "step": "perplexity:building", "reason": "unknown section key", "ts": "2026-03-24T16:20:32.610660+00:00"}
+{"event": "step_skip", "step": "perplexity:test", "reason": "unknown section key", "ts": "2026-03-24T16:20:32.611866+00:00"}
+{"event": "step_skip", "step": "perplexity:QA", "reason": "unknown section key", "ts": "2026-03-24T16:20:32.612866+00:00"}
+{"event": "step_skip", "step": "perplexity:mas invetigaicaon y ve resultados", "reason": "unknown section key", "ts": "2026-03-24T16:20:32.612866+00:00"}
+{"event": "draft_snapshot", "hash": "57c9ef46e6d7", "chars": 16698, "ts": "2026-03-24T16:20:32.640693+00:00"}
+{"event": "step_skip", "step": "step:quality_check", "reason": "already completed in previous run", "ts": "2026-03-24T16:20:32.644266+00:00"}
+{"event": "step_start", "step": "step:cursor_cli", "ts": "2026-03-24T16:20:32.646477+00:00"}
+{"event": "step_error", "step": "cursor_version_check", "error": "agent_version_failed", "duration_s": 0.0, "detail": "[WinError 2] El sistema no puede encontrar el archivo especificado", "ts": "2026-03-24T16:20:32.681701+00:00"}
+{"event": "step_error", "step": "step:cursor_cli", "error": "cursor_cli_failed", "duration_s": 2.94, "exit_code": 1, "ts": "2026-03-24T16:20:35.582781+00:00"}
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\75bced514d93\\mission.md", "topic": "Research y build", "dry_run": false, "ts": "2026-03-24T16:23:32.242122+00:00"}
+{"event": "step_skip", "step": "perplexity:reashing", "reason": "unknown section key", "ts": "2026-03-24T16:23:32.244233+00:00"}
+{"event": "step_skip", "step": "perplexity:gaps", "reason": "already completed in previous run", "ts": "2026-03-24T16:23:32.255808+00:00"}
+{"event": "step_skip", "step": "perplexity:methodology", "reason": "already completed in previous run", "ts": "2026-03-24T16:23:32.258278+00:00"}
+{"event": "step_skip", "step": "perplexity:experiments", "reason": "already completed in previous run", "ts": "2026-03-24T16:23:32.261743+00:00"}
+{"event": "step_skip", "step": "perplexity:building", "reason": "unknown section key", "ts": "2026-03-24T16:23:32.262755+00:00"}
+{"event": "step_skip", "step": "perplexity:test", "reason": "unknown section key", "ts": "2026-03-24T16:23:32.264773+00:00"}
+{"event": "step_skip", "step": "perplexity:QA", "reason": "unknown section key", "ts": "2026-03-24T16:23:32.265772+00:00"}
+{"event": "step_skip", "step": "perplexity:mas invetigaicaon y ve resultados", "reason": "unknown section key", "ts": "2026-03-24T16:23:32.266862+00:00"}
+{"event": "draft_snapshot", "hash": "1be5462eb0e9", "chars": 16698, "ts": "2026-03-24T16:23:32.293806+00:00"}
+{"event": "step_skip", "step": "step:quality_check", "reason": "already completed in previous run", "ts": "2026-03-24T16:23:32.296833+00:00"}
+{"event": "step_start", "step": "step:cursor_cli", "ts": "2026-03-24T16:23:32.298833+00:00"}
+{"event": "cursor_version", "agent_bin": "C:\\Users\\OLIVER\\AppData\\Local\\cursor-agent\\agent.cmd", "version": "2026.03.20-44cb435", "mismatch_expected": false, "ts": "2026-03-24T16:23:33.908766+00:00"}
+{"event": "step_error", "step": "step:cursor_cli", "error": "cursor_cli_failed", "duration_s": 1.67, "exit_code": 1, "ts": "2026-03-24T16:23:33.971517+00:00"}

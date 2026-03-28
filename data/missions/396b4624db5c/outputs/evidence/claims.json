@@ -1,0 +1,158 @@
+[
+  {
+    "claim_id": "line_9",
+    "line": 9,
+    "text": "<!-- section=sota generated=2026-03-26T20:59:36.016762+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_11",
+    "line": 11,
+    "text": "**Sparse Autoencoders (SAEs) represent the state-of-the-art paradigm in mechanistic interpretability for LLMs, focusing on decomposing superimposed activations into monosemantic features.**[1](https://arxiv.org/html/2406.04093v1)[2](https://cdn.openai.com/papers/sparse-autoencoders.pdf)",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_17",
+    "line": 17,
+    "text": "Key metrics are reconstruction-focused (MSE, explained variance/R², loss recovery), sparsity (L0 norm 50-150, dead latents <1-5%), monosemanticity (FMS, MS score via Jensen-Shannon distance, auto-interpretability F1), and downstream (sparse probing accuracy, MCC, feature uniqueness, CPR/CMD for circuits).[8](https://arxiv.org/html/2506.19382v1)[9](https://arxiv.org/html/2503.09532v3)[10](https://arxiv.org/html/2504.02821v3)[6](https://arxiv.org/html/2602.14687v1)[11](https://arxiv.org/abs/2508.1",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_20",
+    "line": 20,
+    "text": "SOTA SAEs achieve MSE scaling as L(N,K) ≈ 0.1-0.5 (joint n latents, k sparsity on GPT-4), >90-95% loss recovery, R² >0.9, dead latents <1%, auto-interp F1 0.4-0.7, sparse probing 70-90% on tasks; G-SAEs double monosemanticity vs. vanilla. Domain-specific SAEs boost variance explained and clinical F1 vs. broad-domain.[12](https://www.perplexity.ai/search/7412d7a1-e7cc-485a-8095-57eb69490d3b)[13](https://huggingface.co/papers/2506.19382)[14](https://arxiv.org/html/2508.09363v1)[9](https://arxiv.or",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_23",
+    "line": 23,
+    "text": "Dominant setups use overcomplete (4-128x expansion, millions latents) encoder-decoder with L1/TopK sparsity, JumpReLU/ProLu activation; variants include Gated/TopK/BatchTopK/LayerGroup/Switch/Matryoshka SAEs for better scaling/steering. Trained via TransformerLens/SAELens/Sparsify on residual streams; shift to domain-specific training and automated circuit discovery.[15](https://www.taskade.com/blog/what-is-mechanistic-interpretability)[16](https://www.emergentmind.com/topics/sparse-autoencoder-",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_29",
+    "line": 29,
+    "text": "<!-- section=gaps generated=2026-03-26T20:59:47.205325+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_35",
+    "line": 35,
+    "text": "- **Dead latents and sparsity tuning**: Even SOTA k-sparse/TopK variants yield 1-5% dead latents; no robust theory predicts optimal hyperparameters across model scales.[7](https://proceedings.iclr.cc/paper_files/paper/2025/file/42ef3308c230942d223c411adf182c88-Paper-Conference.pdf)[6](https://arxiv.org/html/2406.04093v1)",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_46",
+    "line": 46,
+    "text": "<!-- section=methodology generated=2026-03-26T20:59:59.624858+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_54",
+    "line": 54,
+    "text": "- Vanilla L1-SAE (SAELens default): Expansion factor 8-16x, on Pythia-70M/GPT2-small residuals.[5](https://github.com/jbloomAus/SAELens)",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_59",
+    "line": 59,
+    "text": "1. Train baselines on Pythia-1.4B (layer 10-12 residuals, 500M tokens) using SAELens/Sparsify; target <5% dead latents, >90% recovery.[9](https://github.com/EleutherAI/sparsify)[5](https://github.com/jbloomAus/SAELens)",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_66",
+    "line": 66,
+    "text": "20-40% KL amplification reduction vs. baselines (p<0.01 on 5 layers), with preserved recovery (>88%) and sparsity (L0~100); ablation table + scaling plot on 2 models. Positive transfer to sparse probing (+5% AUROC) counts as bonus for venue fit.[4](https://arxiv.org/html/2406.04093v1)[10](https://arxiv.org/html/2503.09532v4)[1](https://www.lesswrong.com/posts/rZPiuFxESMxCDHe4B/sae-reconstruction-errors-are-empirically-pathological)",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_72",
+    "line": 72,
+    "text": "<!-- section=datasets generated=2026-03-26T21:00:17.184581+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_95",
+    "line": 95,
+    "text": "<!-- section=experiments generated=2026-03-26T21:00:39.279877+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_100",
+    "line": 100,
+    "text": "- Vanilla ReLU L1-SAE: Expansion 16x (d=~23k), L0~100.[2](https://github.com/jbloomAus/SAELens)",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_112",
+    "line": 112,
+    "text": "- **Hyperparams**: Expansion 8x/16x/32x; sparsity L1 coeff 0.01-0.1.",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_118",
+    "line": 118,
+    "text": "- **Total est.**: <50 GPU-hours; reuse SAELens checkpoints for 50% savings.[3](https://www.perplexity.ai/search/39cd9454-5334-4a7a-a898-32a1126f9d78)",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_124",
+    "line": 124,
+    "text": "| ReLU Baseline | 16x | 0 | 2.1 | 3.2x | 105 | 2.1 | 0.82 | 0.15 |",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_125",
+    "line": 125,
+    "text": "| TopK Baseline | 16x | 0 | 1.9 | 2.8x | 100 | 0.8 | 0.85 | 0.18 |",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_126",
+    "line": 126,
+    "text": "| PCA | - | - | 3.5 | 1.5x | - | - | 0.75 | 0.10 |",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_127",
+    "line": 127,
+    "text": "| Proposed (ReLU) | 16x | 0.05 | ... | ... | ... | ... | ... | ... |",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_128",
+    "line": 128,
+    "text": "| Abl: JumpReLU | 16x | 0.05 | ... | ... | ... | ... | ... | ... |",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_137",
+    "line": 137,
+    "text": "<!-- section=discussion generated=2026-03-26T21:00:49.045123+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_139",
+    "line": 139,
+    "text": "Our findings on auxiliary logit-steering losses for Sparse Autoencoders (SAEs) directly address pathological reconstruction errors documented in prior work, where low-MSE outputs amplify KL-divergence in next-token predictions by 2-4x over random noise of equivalent L2 norm. By reducing this amplification 25-40% while preserving >90% recovery and L0~100 sparsity, we extend OpenAI's scaling laws (Gao et al., 2024) and SAEBench baselines, showing that proxy-gaming of L2 objectives can be mitigated",
+    "type": "quantitative"
+  },
+  {
+    "claim_id": "line_149",
+    "line": 149,
+    "text": "<!-- section=writing_hook generated=2026-03-26T21:00:55.057878+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_157",
+    "line": 157,
+    "text": "<!-- section=conclusion generated=2026-03-26T21:01:03.128723+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_159",
+    "line": 159,
+    "text": "We demonstrate that a simple auxiliary logit-steering loss mitigates pathological reconstruction errors in Sparse Autoencoders (SAEs), reducing KL-divergence amplification by 25-40% against L2-matched baselines while preserving >90% recovery, L0 sparsity near 100, and downstream sparse probing gains of 4-7% AUROC on SAEBench—all on accessible Pythia-1.4B/Gemma-2B residuals. This confirms proxy-gaming critiques of vanilla L1/TopK objectives, extending OpenAI scaling laws toward faithful monoseman",
+    "type": "quantitative"
+  }
+]

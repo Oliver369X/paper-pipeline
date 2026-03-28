@@ -1,0 +1,20 @@
+{
+  "last_run": "2026-03-26T19:41:46.597937+00:00",
+  "completed_steps": [
+    "perplexity:related_work",
+    "perplexity:gaps",
+    "perplexity:methodology",
+    "perplexity:experiments",
+    "perplexity:abstract",
+    "perplexity:conclusion",
+    "perplexity:limitations",
+    "step:quality_check"
+  ],
+  "pending_steps": [],
+  "errors": [],
+  "draft_version": 2,
+  "draft_hash": "15ed8ac2ce5b",
+  "meta_loop_cycles": 0,
+  "perplexity_backend_uuid": "54efb4ee-a0dd-4b09-a739-e4b4c2283b92",
+  "perplexity_read_write_token": "2449269c-60b6-4ca9-bc0c-70a75bbedb3f"
+}

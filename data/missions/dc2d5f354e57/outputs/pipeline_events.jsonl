@@ -1,0 +1,20 @@
+{"event": "section_start", "ts": "2026-03-27T16:28:59.533350+00:00", "section": "methodology", "step": "perplexity:methodology"}
+{"event": "section_done", "ts": "2026-03-27T16:29:15.228598+00:00", "section": "methodology", "duration_s": 15.688, "chars": 5133}
+{"event": "section_start", "ts": "2026-03-27T16:29:15.230870+00:00", "section": "experiments", "step": "perplexity:experiments"}
+{"event": "section_done", "ts": "2026-03-27T16:29:53.987810+00:00", "section": "experiments", "duration_s": 38.765, "chars": 8795}
+{"event": "section_start", "ts": "2026-03-27T16:29:53.992454+00:00", "section": "gaps", "step": "perplexity:gaps"}
+{"event": "section_done", "ts": "2026-03-27T16:30:07.920622+00:00", "section": "gaps", "duration_s": 13.922, "chars": 1788}
+{"event": "section_start", "ts": "2026-03-27T16:30:07.925901+00:00", "section": "sota", "step": "perplexity:sota"}
+{"event": "section_done", "ts": "2026-03-27T16:30:21.710952+00:00", "section": "sota", "duration_s": 13.781, "chars": 3000}
+{"event": "section_start", "ts": "2026-03-27T16:30:21.715479+00:00", "section": "limitations", "step": "perplexity:limitations"}
+{"event": "section_done", "ts": "2026-03-27T16:30:38.134400+00:00", "section": "limitations", "duration_s": 16.422, "chars": 3879}
+{"event": "section_start", "ts": "2026-03-27T16:30:38.138178+00:00", "section": "discussion", "step": "perplexity:discussion"}
+{"event": "section_done", "ts": "2026-03-27T16:30:55.322320+00:00", "section": "discussion", "duration_s": 17.187, "chars": 3074}
+{"event": "draft_assembled", "ts": "2026-03-27T16:30:55.526328+00:00", "path": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\dc2d5f354e57\\outputs\\draft_paper.md"}
+{"event": "section_start", "ts": "2026-03-27T16:43:04.407681+00:00", "section": "datasets", "step": "perplexity:datasets"}
+{"event": "section_done", "ts": "2026-03-27T16:43:22.941025+00:00", "section": "datasets", "duration_s": 18.531, "chars": 5262}
+{"event": "section_start", "ts": "2026-03-27T16:43:22.946369+00:00", "section": "related_code", "step": "perplexity:related_code"}
+{"event": "section_done", "ts": "2026-03-27T16:43:42.095103+00:00", "section": "related_code", "duration_s": 19.141, "chars": 4271}
+{"event": "section_start", "ts": "2026-03-27T16:43:42.103808+00:00", "section": "conclusion", "step": "perplexity:conclusion"}
+{"event": "section_done", "ts": "2026-03-27T16:43:48.742855+00:00", "section": "conclusion", "duration_s": 6.64, "chars": 1415}
+{"event": "draft_assembled", "ts": "2026-03-27T16:43:48.866337+00:00", "path": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\dc2d5f354e57\\outputs\\draft_paper.md"}

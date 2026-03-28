@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "counts_by_kind": {
+    "quality": 1,
+    "publish": 1,
+    "run_consolidation": 1
+  },
+  "last_event": {
+    "ts": "2026-03-26T21:01:37.201485+00:00",
+    "memory_id": "c4afaf53cc90",
+    "kind": "run_consolidation",
+    "mission_id": null,
+    "run_id": null,
+    "summary": "Consolidación post-hypervisor en orquestador v2",
+    "confidence": 0.85,
+    "source_artifacts": [
+      "triage/triage_report.json",
+      "publication/publish_decision.json",
+      "run_ledger.json",
+      "objective_state.json"
+    ],
+    "tags": [
+      "run",
+      "hypervisor"
+    ],
+    "payload": {
+      "phase": "post_hypervisor"
+    }
+  },
+  "latest_by_kind": {
+    "quality": {
+      "ts": "2026-03-26T21:01:03.352516+00:00",
+      "memory_id": "db6bf62c3ae2",
+      "kind": "quality",
+      "mission_id": null,
+      "run_id": null,
+      "summary": "Quality gates OK",
+      "confidence": 0.8,
+      "source_artifacts": [
+        "validation/quality_validation.json"
+      ],
+      "tags": [
+        "quality",
+        "publishable"
+      ],
+      "payload": {
+        "mission_version": 1,
+        "all_passed": true,
+        "gates": [
+          {
+            "id": "structural_draft",
+            "passed": true,
+            "detail": "word_count=1792"
+          },
+          {
+            "id": "structural_sections",
+            "passed": true,
+            "detail": "ok"
+          },
+          {
+            "id": "epistemic_claim_candidates",
+            "passed": true,
+            "detail": "claim_candidates=26"
+          }
+        ],
+        "blocking_reasons": [],
+        "publishable": true
+      }
+    },
+    "publish": {
+      "ts": "2026-03-26T21:01:37.112877+00:00",
+      "memory_id": "940a08ca72e7",
+      "kind": "publish",
+      "mission_id": null,
+      "run_id": null,
+      "summary": "Publish elegible",
+      "confidence": 0.8,
+      "source_artifacts": [
+        "publication/publish_decision.json"
+      ],
+      "tags": [
+        "publish",
+        "unknown"
+      ],
+      "payload": {
+        "eligible_for_publication": true,
+        "blocking_reasons": [],
+        "mission_version": 1,
+        "quality_publishable": true,
+        "triage_tier": null,
+        "triage_label": null
+      }
+    },
+    "run_consolidation": {
+      "ts": "2026-03-26T21:01:37.201485+00:00",
+      "memory_id": "c4afaf53cc90",
+      "kind": "run_consolidation",
+      "mission_id": null,
+      "run_id": null,
+      "summary": "Consolidación post-hypervisor en orquestador v2",
+      "confidence": 0.85,
+      "source_artifacts": [
+        "triage/triage_report.json",
+        "publication/publish_decision.json",
+        "run_ledger.json",
+        "objective_state.json"
+      ],
+      "tags": [
+        "run",
+        "hypervisor"
+      ],
+      "payload": {
+        "phase": "post_hypervisor"
+      }
+    }
+  },
+  "source_artifacts": [
+    "validation/quality_validation.json",
+    "publication/publish_decision.json",
+    "triage/triage_report.json",
+    "run_ledger.json",
+    "objective_state.json"
+  ],
+  "last_updated_at": "2026-03-26T21:01:37.218698+00:00"
+}

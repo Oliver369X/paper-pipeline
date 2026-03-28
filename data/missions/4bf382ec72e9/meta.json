@@ -1,0 +1,4 @@
+{
+  "title": "Replicación: Differential Transformer",
+  "description": "Estudio y replicación del mecanismo de atención diferencial para la reducción de ruido en LLMs (Sun et al., 2024)."
+}

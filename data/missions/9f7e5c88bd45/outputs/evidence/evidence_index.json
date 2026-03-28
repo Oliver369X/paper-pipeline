@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "mission_version": 1,
+  "artifacts": {
+    "draft": [
+      "draft_paper.md"
+    ],
+    "sections": [
+      "methodology.md",
+      "experiments.md",
+      "gaps.md",
+      "sota.md",
+      "datasets.md",
+      "related_code.md",
+      "limitations.md"
+    ],
+    "metrics": [
+      "metrics.json"
+    ],
+    "triage": [
+      "triage/triage_report.json"
+    ],
+    "validation": [
+      "validation/quality_validation.json"
+    ],
+    "claims": [
+      "evidence/claims.json"
+    ]
+  },
+  "environment": {
+    "python": "3.11.1",
+    "platform": "Windows-10-10.0.26100-SP0"
+  }
+}

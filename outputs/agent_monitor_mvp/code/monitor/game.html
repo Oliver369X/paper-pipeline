@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Arena 3D — física (demo)</title>
+    <link rel="stylesheet" href="css/game3d.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/",
+          "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="hud">
+      <a class="back" href="index.html">← Monitor</a>
+      <h1>Arena 3D</h1>
+      <p>
+        <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover · <kbd>Espacio</kbd> saltar ·
+        <kbd>R</kbd> reset · <kbd>Clic</kbd> empujar caja cercana
+      </p>
+      <p class="hint">Three.js + cannon-es · solo frontend</p>
+    </div>
+    <canvas id="c"></canvas>
+    <script type="module" src="js/game3d.js"></script>
+  </body>
+</html>

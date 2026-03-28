@@ -1,0 +1,10 @@
+<!-- section=gaps generated=2026-03-27T20:38:43.136091+00:00 model=best -->
+
+- **Dynamic curvature evolution during training**: The paper uses static post-training K-FAC snapshots; tracking how curvature spectra shift from memorization-dominant to reasoning-dominant phases remains unexamined, critical for understanding training dynamics like progressive sharpening.[1](https://arxiv.org/abs/2510.24256)[2](https://arxiv.org/html/2601.16979v1)
+- **Scalability to >7B LLMs**: Analyses are limited to 7B OLMo-2 and small ViTs; gaps exist in verifying low-curvature memorization signals at frontier scales (e.g., 100B+), where compute for K-FAC becomes prohibitive.[1](https://arxiv.org/abs/2510.24256)
+- **Beyond MLP layers**: Focuses on MLP projections; underexplored how attention heads or layer norms contribute to curvature-based memorization-reasoning disentanglement.[1](https://arxiv.org/abs/2510.24256)
+- **Theoretical justification for aggregate inversion**: Empirical "flatter aggregate for memorization" lacks formal proof; proving why varying per-example sharp directions cancel in K-FAC remains open.[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[1](https://arxiv.org/abs/2510.24256)
+- **Long-term stability of edits**: Edits suppress memorization initially, but resurgence after further tuning is noted as a limitation; longitudinal studies post-editing are needed .
+- **Numerical stability of low eigenvalues**: Smallest K-FAC eigenvalues are unstable, potentially misattributing reasoning circuits; robust estimation methods for tail spectra are underexplored .
+- **Multimodal and non-English settings**: Limited to English LMs/ViTs; curvature transitions in multilingual or vision-language models (e.g., Bolivia-specific data) untested.[1](https://arxiv.org/abs/2510.24256)
+- **Comparison to exact Hessian**: K-FAC approximation unvalidated against full Hessian for memorization spectra; gaps in approximation error bounds for reasoning tasks.[2](https://arxiv.org/html/2601.16979v1)[1](https://arxiv.org/abs/2510.24256)

@@ -1,0 +1,17 @@
+{"event": "section_start", "ts": "2026-03-27T18:06:52.054167+00:00", "section": "methodology", "step": "perplexity:methodology"}
+{"event": "section_done", "ts": "2026-03-27T18:07:15.104140+00:00", "section": "methodology", "duration_s": 23.047, "chars": 5111}
+{"event": "section_start", "ts": "2026-03-27T18:07:15.107669+00:00", "section": "experiments", "step": "perplexity:experiments"}
+{"event": "section_done", "ts": "2026-03-27T18:07:32.584508+00:00", "section": "experiments", "duration_s": 17.484, "chars": 4837}
+{"event": "section_start", "ts": "2026-03-27T18:07:32.586981+00:00", "section": "gaps", "step": "perplexity:gaps"}
+{"event": "section_done", "ts": "2026-03-27T18:07:50.009928+00:00", "section": "gaps", "duration_s": 17.422, "chars": 1920}
+{"event": "section_start", "ts": "2026-03-27T18:07:50.027122+00:00", "section": "sota", "step": "perplexity:sota"}
+{"event": "section_done", "ts": "2026-03-27T18:08:10.592842+00:00", "section": "sota", "duration_s": 20.562, "chars": 3526}
+{"event": "section_start", "ts": "2026-03-27T18:08:10.598248+00:00", "section": "datasets", "step": "perplexity:datasets"}
+{"event": "section_done", "ts": "2026-03-27T18:08:32.173283+00:00", "section": "datasets", "duration_s": 21.578, "chars": 3586}
+{"event": "section_start", "ts": "2026-03-27T18:08:32.176885+00:00", "section": "related_code", "step": "perplexity:related_code"}
+{"event": "section_done", "ts": "2026-03-27T18:08:51.587956+00:00", "section": "related_code", "duration_s": 19.406, "chars": 2824}
+{"event": "section_start", "ts": "2026-03-27T18:08:51.594078+00:00", "section": "limitations", "step": "perplexity:limitations"}
+{"event": "section_done", "ts": "2026-03-27T18:09:18.952447+00:00", "section": "limitations", "duration_s": 27.343, "chars": 6665}
+{"event": "draft_assembled", "ts": "2026-03-27T18:09:19.170538+00:00", "path": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\9f7e5c88bd45\\outputs\\draft_paper.md"}
+{"event": "draft_assembled", "ts": "2026-03-27T18:52:47.984791+00:00", "path": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\9f7e5c88bd45\\outputs\\draft_paper.md"}
+{"event": "draft_assembled", "ts": "2026-03-27T19:16:25.545533+00:00", "path": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\9f7e5c88bd45\\outputs\\draft_paper.md"}

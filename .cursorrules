@@ -1,0 +1,31 @@
+# Paper pipeline — agent rules (non-interactive code step)
+
+When asked to implement experiment code for this pipeline:
+
+- Read `outputs/methodology.md` and `outputs/experiments.md` produced by `paper-pipeline`.
+- Place runnable Python (or the stack the mission implies) under `outputs/code/`.
+- Keep dependencies minimal; add `outputs/code/requirements.txt` if needed.
+- Do not block on user input: use sensible defaults and TODO comments for API keys.
+- Prefer small, verifiable scripts (data loaders, metrics, training skeleton) over large frameworks unless the mission specifies otherwise.
+
+If `outputs/` does not exist yet, tell the user to run `paper-pipeline mission.md` first.
+
+## Meta-loop (segundo agente = Perplexity)
+
+If `outputs/next_instruction.md` exists and starts with actionable content (or `CONTINUE`), treat it as the **highest-priority task list** for this session over generic chat. After you finish a chunk of work, append a short summary of what you did to `outputs/cursor_turn.md` (create if missing) so the user can run `paper-meta-loop` to refresh `next_instruction.md`.
+
+If `next_instruction.md` begins with `STOP`, do not expand scope; only fix critical issues or close out.
+
+If `outputs/cursor_turn.md` is empty, the meta-loop has nothing to review — the human pastes Cursor/agent output there, the agent appends its own summary as above, or **`paper-cursor-agent`** / the orchestrator with `enable_cursor_cli: true` append CLI transcripts to the same file.
+
+## Reactive loop directives (real APIs via `paper-loop`)
+
+You may append blocks that **`paper-loop`** will execute before the meta reviewer (then it strips them):
+
+- `@PERPLEXITY:section_key` on its own line, then optional extra instructions until the next line starting with `@`.
+- `@NOTION` on its own line (syncs markdown outputs to Notion if the mission enables it and `NOTION_TOKEN` is set).
+- `@CURSOR` on its own line, optional body lines until the next `@` (runs Cursor CLI if `CURSOR_API_KEY` and `agent` are available).
+
+Place these in `outputs/cursor_turn.md` or `outputs/next_instruction.md`. Valid section keys match `templates.py` (e.g. `gaps`, `methodology`, `sota`).
+
+If the user runs `paper-meta-watch` in a terminal, each time this file is saved the Perplexity reviewer runs automatically (after debounce) and refreshes `next_instruction.md` — no need to run `paper-meta-loop` manually every time.

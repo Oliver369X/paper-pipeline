@@ -1,0 +1,23 @@
+{
+  "id": "goal_verification_blocked",
+  "description": "Non-eligible publication → verification.",
+  "target": "goal_selection",
+  "axis": ["research_quality", "robustness"],
+  "goal_inputs": {
+    "objective_state": {
+      "status": "healthy",
+      "gates": {},
+      "terms": {}
+    },
+    "memory_index": {
+      "latest_by_kind": {
+        "publish": {"payload": {"eligible_for_publication": false}}
+      }
+    },
+    "safety_latest": {},
+    "loop_state": {}
+  },
+  "expectations": {
+    "selected_goal_type": "verification"
+  }
+}

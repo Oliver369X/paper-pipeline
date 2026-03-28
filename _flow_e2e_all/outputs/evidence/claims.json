@@ -1,0 +1,26 @@
+[
+  {
+    "claim_id": "line_9",
+    "line": 9,
+    "text": "<!-- section=gaps generated=2026-03-26T19:17:52.232938+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_17",
+    "line": 17,
+    "text": "- **Triage behavior under ambiguous or borderline cases is probably underexplored.** For an internal demo, the system should show how the hypervisor decides between autonomous handling, escalation, or safe interruption when confidence is low.[4](https://www.alphaxiv.org/resources/1703.10284v2)[5](https://thenuancedperspective.substack.com/p/problem-comes-first-why-the-best)",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_19",
+    "line": 19,
+    "text": "- **False positives and false negatives in the triaje layer may not be measured.** Demo audiences usually care less about raw accuracy than about whether the system escalates the right cases and avoids noisy interrupts.[2](https://emmanuelvalverderamos.substack.com/p/rethinking-e2e-small-on-production)[5](https://thenuancedperspective.substack.com/p/problem-comes-first-why-the-best)",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_23",
+    "line": 23,
+    "text": "- **Coverage of critical journeys is likely too narrow or too broad.** Internal demos work best when they cover a few representative, high-value flows rather than trying to validate everything at once.[5](https://thenuancedperspective.substack.com/p/problem-comes-first-why-the-best)[2](https://emmanuelvalverderamos.substack.com/p/rethinking-e2e-small-on-production)",
+    "type": "literature_or_performance"
+  }
+]

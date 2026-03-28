@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0c10" />
+    <title>Carrera 3D — MVP</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #0b0c10;
+      }
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .skip-link {
+        position: fixed;
+        left: 0.75rem;
+        top: 0.75rem;
+        z-index: 100;
+        padding: 0.5rem 0.85rem;
+        font-family: system-ui, "Segoe UI", sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #0b0c10;
+        background: #f0f4f8;
+        border: 2px solid #7dff9a;
+        border-radius: 6px;
+        text-decoration: none;
+        transform: translateY(-120%);
+        transition: transform 0.2s ease;
+      }
+      .skip-link:focus {
+        transform: translateY(0);
+        outline: 3px solid #7dff9a;
+        outline-offset: 2px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .skip-link {
+          transition: none;
+        }
+      }
+      #app {
+        width: 100%;
+        height: 100%;
+      }
+      #app:focus {
+        outline: none;
+      }
+      #app:focus-visible {
+        outline: 3px solid #7dff9a;
+        outline-offset: -3px;
+      }
+      @media (prefers-contrast: more) {
+        #app:focus-visible {
+          outline-width: 4px;
+        }
+      }
+      #hud {
+        position: fixed;
+        left: 1rem;
+        top: 1rem;
+        z-index: 10;
+        font-family: system-ui, "Segoe UI", sans-serif;
+        pointer-events: none;
+        line-height: 1.35;
+      }
+      #hud-panel {
+        padding: 0.75rem 1rem 0.85rem;
+        max-width: 22rem;
+        color: #f5f8fc;
+        background: rgba(8, 10, 16, 0.88);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 10px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(8px);
+      }
+      @media (prefers-contrast: more) {
+        #hud-panel {
+          background: #080a10;
+          border-color: rgba(255, 255, 255, 0.35);
+          color: #ffffff;
+        }
+      }
+      #hud .time {
+        font-size: clamp(1.5rem, 4vw, 1.85rem);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.02em;
+        color: #ffffff;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 1px rgba(0, 0, 0, 0.8);
+      }
+      #hud .speed-row {
+        margin-top: 0.4rem;
+        font-size: 0.95rem;
+        font-variant-numeric: tabular-nums;
+        color: #c8d4e0;
+      }
+      #hud .hint {
+        font-size: 0.85rem;
+        margin-top: 0.45rem;
+        color: #d8e0ea;
+      }
+      #hud .finish {
+        margin-top: 0.75rem;
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #7dff9a;
+      }
+      #hud .controls {
+        margin-top: 0.65rem;
+        font-size: clamp(0.8rem, 2.2vw, 0.88rem);
+        line-height: 1.45;
+        color: #dce4ee;
+        max-width: 18rem;
+      }
+      #hud .controls kbd {
+        display: inline-block;
+        padding: 0.12rem 0.4rem;
+        margin: 0 0.05rem;
+        font-size: 0.72rem;
+        font-family: inherit;
+        font-weight: 600;
+        color: #0b0c10;
+        background: #e8ecf2;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+      }
+      @media (prefers-contrast: more) {
+        #hud .controls kbd {
+          border-width: 2px;
+        }
+      }
+      #focus-banner {
+        pointer-events: none;
+        position: fixed;
+        left: 50%;
+        bottom: 1.25rem;
+        transform: translateX(-50%);
+        z-index: 20;
+        max-width: min(92vw, 28rem);
+        padding: 0.65rem 1.1rem;
+        font-family: system-ui, "Segoe UI", sans-serif;
+        font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+        line-height: 1.4;
+        color: #f8fafc;
+        background: rgba(6, 8, 14, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 8px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+        transition: opacity 0.35s ease;
+      }
+      #focus-banner.hidden {
+        opacity: 0;
+      }
+      #ready-toast {
+        pointer-events: none;
+        position: fixed;
+        left: 50%;
+        top: 42%;
+        transform: translate(-50%, -50%);
+        z-index: 21;
+        padding: 0.5rem 1.25rem;
+        font-family: system-ui, "Segoe UI", sans-serif;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1a1a22;
+        background: linear-gradient(135deg, #7dff9a, #4ecf7a);
+        border-radius: 10px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      #ready-toast.show {
+        opacity: 1;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #focus-banner,
+        #ready-toast {
+          transition: none;
+        }
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#app">Saltar al juego</a>
+    <div
+      id="hud"
+      role="region"
+      aria-labelledby="hud-title"
+    >
+      <h1 class="visually-hidden" id="hud-title">Carrera — tiempo y controles</h1>
+      <div id="hud-panel">
+        <div
+          class="time"
+          id="hud-time"
+          role="timer"
+          aria-live="off"
+          aria-label="Tiempo de carrera"
+        >
+          0:00.00
+        </div>
+        <div
+          class="speed-row"
+          id="hud-speed"
+          aria-live="off"
+          aria-label="Velocidad relativa"
+        >
+          Velocidad: 0
+        </div>
+        <div class="hint" id="hud-hint">
+          Cruza la línea de meta (banda a cuadros) para registrar tu tiempo.
+        </div>
+        <div class="controls" id="hud-controls" aria-label="Controles de conducción">
+          <kbd aria-label="Tecla W">W</kbd>/<kbd aria-label="Flecha arriba">↑</kbd> acelerar ·
+          <kbd aria-label="Tecla S">S</kbd>/<kbd aria-label="Flecha abajo">↓</kbd> frenar ·
+          <kbd aria-label="Tecla A">A</kbd><kbd aria-label="Tecla D">D</kbd> lateral ·
+          <kbd aria-label="Tecla R">R</kbd> reiniciar carrera
+        </div>
+        <div
+          class="finish"
+          id="hud-finish"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          hidden
+        ></div>
+      </div>
+    </div>
+    <div id="focus-banner" role="status">Pulsa Tab para ir al juego, o haz clic en la pista para usar el teclado</div>
+    <div id="ready-toast" aria-live="polite" hidden>¡Listo! Controles activos.</div>
+    <div
+      id="app"
+      tabindex="0"
+      role="application"
+      aria-label="Vista 3D del circuito. Enfoca esta zona y usa W A S D o flechas para conducir. R reinicia la carrera."
+    ></div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

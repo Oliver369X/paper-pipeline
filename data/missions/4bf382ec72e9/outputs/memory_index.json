@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "counts_by_kind": {
+    "brain_brief": 1
+  },
+  "last_event": {
+    "ts": "2026-03-27T14:37:14.004984+00:00",
+    "memory_id": "fd61cf588541",
+    "kind": "brain_brief",
+    "mission_id": "4bf382ec72e9",
+    "run_id": null,
+    "summary": "# Brief de Replicación: Differential Transformer (arXiv:2410.02159)\n\n## 1. Objetivo de la Investigación\nEl objetivo principal es analizar y proponer un marco de replicación para el **Differential Transformer**, una arquitectura que busca mitigar el 'ruido de atención' en los Transformers estándar. El núcleo del paper propone que al restar dos mapas de atención (Differential Attention), el modelo p",
+    "confidence": 0.7,
+    "source_artifacts": [
+      "outputs/brain_brief.md"
+    ],
+    "tags": [
+      "brain",
+      "brief"
+    ],
+    "payload": {
+      "mission_id": "4bf382ec72e9",
+      "paper_target": "arXiv:2410.02159"
+    }
+  },
+  "latest_by_kind": {
+    "brain_brief": {
+      "ts": "2026-03-27T14:37:14.004984+00:00",
+      "memory_id": "fd61cf588541",
+      "kind": "brain_brief",
+      "mission_id": "4bf382ec72e9",
+      "run_id": null,
+      "summary": "# Brief de Replicación: Differential Transformer (arXiv:2410.02159)\n\n## 1. Objetivo de la Investigación\nEl objetivo principal es analizar y proponer un marco de replicación para el **Differential Transformer**, una arquitectura que busca mitigar el 'ruido de atención' en los Transformers estándar. El núcleo del paper propone que al restar dos mapas de atención (Differential Attention), el modelo p",
+      "confidence": 0.7,
+      "source_artifacts": [
+        "outputs/brain_brief.md"
+      ],
+      "tags": [
+        "brain",
+        "brief"
+      ],
+      "payload": {
+        "mission_id": "4bf382ec72e9",
+        "paper_target": "arXiv:2410.02159"
+      }
+    }
+  },
+  "source_artifacts": [
+    "outputs/brain_brief.md"
+  ],
+  "last_updated_at": "2026-03-27T14:37:14.018911+00:00"
+}

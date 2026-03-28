@@ -1,0 +1,373 @@
+topic: Mitigating Memorization in Language Models via BalancedSubnet
+venue_target: Technical Report / Machine Learning Research
+sota_techniques: []
+mathematical_constraints: []
+known_pitfalls:
+- description: BalancedSubnet implementations in PyTorch often fail due to numerical
+    instability, improper masking, and hyperparameter issues during score-based weight
+    dropping. These pitfalls stem from the method's reliance on learnable scores for
+    per-layer top-k pruning combined with weighted losses on mixed memorized/random
+    sequences.[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)[2](https://mansisak.com/memorization/)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: "## NaN Loss During Training\nLoss becomes NaN after a few epochs or\
+    \ batches.  \nRoot cause: Gradients explode from improper initialization of scores\
+    \ (e.g., not using Kaiming uniform), high learning rates on scores optimizer,\
+    \ or NaN propagation in loss masking when sequences have invalid tokens.[2](https://mansisak.com/memorization/)[3](https://github.com/pytorch/pytorch/issues/40497)\n\
+    Verified fix: Initialize scores with `nn.init.kaiming_uniform_` as per pseudocode;\
+    \ use AdamW optimizer with eps=1e-4 and clip gradients (torch.nn.utils.clip_grad_norm_(scores,\
+    \ max_norm=1.0)); check and filter NaNs in data batches before loss computation.[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)[2](https://mansisak.com/memorization/)"
+  source_paper: ''
+  symptom: ''
+  fix: Initialize scores with `nn
+- description: "## Severe Performance Drop\nPost-editing perplexity/accuracy degrades\
+    \ drastically (e.g., loss landscape shifts wildly).  \nRoot cause: Poor hyperparameter\
+    \ tuning like insufficient `loss_weight` (fails to balance memorized vs. random\
+    \ loss terms) or excessive `K` (too many weights dropped), causing over-pruning\
+    \ of general task subnetworks.[4](https://github.com/msakarvadia/memorization)[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)\n\
+    Verified fix: Sweep hyperparameters via grid search (e.g., loss_weight in [0.1,0.5,0.9],\
+    \ K=0.01-0.1 * param_size per layer); monitor validation perplexity during training\
+    \ and early-stop if >5% degradation, as shown effective on Pythia models.[4](https://github.com/msakarvadia/memorization)[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)"
+  source_paper: ''
+  symptom: ''
+  fix: Sweep hyperparameters via grid search (e
+- description: "## Incomplete Memorization Removal\nModel still regurgitates >20%\
+    \ memorized sequences after editing.  \nRoot cause: Inadequate shuffling or batching\
+    \ of memorized/random sequences, leading to biased score updates; or incorrect\
+    \ `drop_top_k_weights_per_layer` (not using absolute scores |s| or layer-wise\
+    \ top-k).[2](https://mansisak.com/memorization/)  \nVerified fix: Strictly shuffle\
+    \ `memorized_sequences ∪ random_sequences` each epoch; implement drop as `topk_indices\
+    \ = torch.topk(s.abs(), k=int(K_ratio * s.numel()), largest=False); mask out those\
+    \ weights`; ensure 50/50 batch ratio.[2](https://mansisak.com/memorization/)[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)"
+  source_paper: ''
+  symptom: ''
+  fix: Strictly shuffle `memorized_sequences ∪ random_sequences` each epoch; implement
+    drop as `topk_indices = torch
+- description: "## Memory Overflow on Large Models\nOOM errors during forward passes\
+    \ on production LMs like Pythia-6.9B.  \nRoot cause: No in-place restoration of\
+    \ original params before each drop application, or accumulating large score tensors\
+    \ without detaching.  \nVerified fix: Copy model once (`LM_edited = copy.deepcopy(LM)`),\
+    \ restore params iteratively per layer in forward hook (`p.copy_(p_original)`\
+    \ before drop); use `torch.no_grad()` for inference checks and clear cache post-batch.[5](https://www.digitalocean.com/community/tutorials/writing-resnet-from-scratch-in-pytorch)[2](https://mansisak.com/memorization/)"
+  source_paper: ''
+  symptom: ''
+  fix: Copy model once (`LM_edited = copy
+reference_implementations:
+- name: msakarvadia/memorization
+  github_url: https://github.com/msakarvadia/memorization
+  key_design_decisions:
+  - '**Name**: `mitigating-memorization` / `memorization`'
+  - '**GitHub URL**: https://github.com/msakarvadia/memorization[2](https://github.com/msakarvadia/memorization)[1](https://mansisak.com/memorization/)'
+  - '**Star count**: **12 stars** (as of the latest page snapshot).[2](https://github.com/msakarvadia/memorization)'
+  - 'Implements **BalancedSubnet as a weight‑based unlearning method**: it learns
+    a sparse binary mask over weights via a dual‑objective loss that simultaneously
+    penalizes memorized‑sequence likelihood and *preserves* loss on a set of random,
+    non‑memorized sequences.[4](https://arxiv.org/html/2410.02159v1)[3](https://arxiv.org/abs/2410.02159v2)[1](https://mansisak.com/memorization/)'
+  - 'Built around a **TinyMem ecosystem**: small, cheap‑to‑train LMs that let you
+    quickly prototype and benchmark unlearning methods (including BalancedSubnet)
+    before applying them to production‑scale models like Pythia 2.8B/6.9B.[3](https://arxiv.org/abs/2410.02159v2)[5](https://www.themoonlight.io/de/review/mitigating-memorization-in-language-models)'
+  what_not_to_copy: []
+- name: msakarvadia/memorization[2
+  github_url: https://github.com/msakarvadia/memorization[2
+  key_design_decisions:
+  - '**GitHub URL**: https://github.com/msakarvadia/memorization[2](https://github.com/msakarvadia/memorization)[1](https://mansisak.com/memorization/)'
+  what_not_to_copy: []
+- name: jbloomAus/SAELens[7
+  github_url: https://github.com/jbloomAus/SAELens[7
+  key_design_decisions:
+  - '**GitHub URL**: https://github.com/jbloomAus/SAELens[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)'
+  what_not_to_copy: []
+- name: tutorials/tutorial_2_0.ipynb
+  github_url: https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb
+  key_design_decisions:
+  - '**GitHub URL**: https://github.com/jbloomAus/SAELens[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)'
+  - '**Star count**: ~2.5k–3.5k stars (as of recent listings; numbers fluctuate, but
+    it is widely starred).[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)'
+  - Provides a **library for training sparse autoencoders on LLM activations**, enabling
+    feature‑level interpretability and “intervention” pipelines that can be reused
+    for unlearning‑style editing.[8](https://www.themoonlight.io/en/review/mitigating-memorization-in-language-models)[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)
+  - Designed to be **model‑agnostic** (works with HF‑style `AutoModelForCausalLM`
+    etc.), so it can be composed with methods like BalancedSubnet to inspect or modify
+    which features respond to memorized inputs.[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)
+  - Tightly coupled to specific **feature‑dictionary and activation‑hooking patterns**;
+    new architectures or non‑transformer models require significant adaptation.[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)
+  what_not_to_copy: []
+- name: jbloomAus/SAELens
+  github_url: https://github.com/jbloomAus/SAELens
+  key_design_decisions:
+  - '**Name**: `SAELens` (Sparse Autoencoder Lens)'
+  - '**GitHub URL**: https://github.com/jbloomAus/SAELens[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)'
+  - '**Star count**: ~2.5k–3.5k stars (as of recent listings; numbers fluctuate, but
+    it is widely starred).[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)'
+  - Provides a **library for training sparse autoencoders on LLM activations**, enabling
+    feature‑level interpretability and “intervention” pipelines that can be reused
+    for unlearning‑style editing.[8](https://www.themoonlight.io/en/review/mitigating-memorization-in-language-models)[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)
+  - Designed to be **model‑agnostic** (works with HF‑style `AutoModelForCausalLM`
+    etc.), so it can be composed with methods like BalancedSubnet to inspect or modify
+    which features respond to memorized inputs.[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)
+  what_not_to_copy: []
+- name: huggingface/transformers
+  github_url: https://github.com/huggingface/transformers
+  key_design_decisions:
+  - No single repo, but `huggingface/transformers` is the **de facto backbone** for
+    anyone applying BalancedSubnet‑style methods on real LLMs.[6](https://linnk.ai/insight/machine-learning/mitigating-memorization-in-language-models-comprehensive-evaluation-of-regularization-fine-tuning-and-unlearning-strategies-4e3Ifbu3/)[3](https://arxiv.org/abs/2410.02159v2)
+  what_not_to_copy: []
+compute_requirements:
+  estimated_gpu_memory_gb: 5.0
+  estimated_training_time_minutes: 60.0
+  requires_gpu: true
+  delegate_to_colab: false
+  colab_accelerator: A100
+poison_pills:
+- false_claim: The standard evaluation metric for 'Mitigating Memorization in Language
+    Models via BalancedSubnet' is pixel accuracy.
+  reason_it_is_false: Pixel accuracy is a segmentation metric unrelated to most ML
+    research topics.
+  detection_query: Is pixel accuracy the standard evaluation metric for Mitigating
+    Memorization in Language Models via BalancedSubnet?
+- false_claim: The Transformer architecture used in 'Mitigating Memorization in Language
+    Models via BalancedSubnet' was invented by Yann LeCun in 1998.
+  reason_it_is_false: The Transformer was introduced by Vaswani et al. in 2017 ('Attention
+    Is All You Need').
+  detection_query: Who invented the Transformer architecture and in what year?
+- false_claim: Standard practice in 'Mitigating Memorization in Language Models via
+    BalancedSubnet' is to use a learning rate greater than 1.0.
+  reason_it_is_false: Learning rates > 1.0 destabilise training; typical range is
+    1e-5 to 1e-2.
+  detection_query: Is a learning rate greater than 1.0 standard practice in Mitigating
+    Memorization in Language Models via BalancedSubnet?
+perplexity_sources:
+- https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf
+- https://arxiv.org/abs/2410.02159v2
+- https://arxiv.org/html/2510.24256v1
+- https://mansisak.com/memorization/
+- https://www.paperdigest.org/2025/11/neurips-2025-papers-highlights/
+- https://www.semanticscholar.org/paper/Quantifying-Memorization-Across-Neural-Language-Carlini-Ippolito/28c7e583d90ccfc5c3078dfc1d6b80a9ad90248d
+- https://arxiv.org/abs/2510.24256
+- http://arxiv.org/abs/2402.05813
+- https://github.com/msakarvadia/memorization/blob/main/README.md
+- https://github.com/msakarvadia/memorization
+- https://github.com/msakarvadia/memorization[2
+- https://arxiv.org/html/2410.02159v1
+- https://www.themoonlight.io/de/review/mitigating-memorization-in-language-models
+- https://linnk.ai/insight/machine-learning/mitigating-memorization-in-language-models-comprehensive-evaluation-of-regularization-fine-tuning-and-unlearning-strategies-4e3Ifbu3/
+- https://github.com/jbloomAus/SAELens[7
+- https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb
+- https://www.themoonlight.io/en/review/mitigating-memorization-in-language-models
+- https://huggingface.co/papers?q=memorize+while+reading
+- https://som2nynetwork.com/analytics/top-llm-github-repositories-to-master-large-language-models/
+- https://github.com/jbloomAus/SAELens
+- https://github.com/huggingface/transformers
+generation_timestamp: '2026-03-27T16:43:04.248765+00:00'
+dca_version: '2.0'
+raw_sota_papers_text: "**The primary influential paper on \"Mitigating Memorization\
+  \ in Language Models via BalancedSubnet\" is the original 2024 work introducing\
+  \ the method, with limited evidence of 15-20 highly cited follow-ups from 2024-2026\
+  \ matching your criteria.** Searches across arXiv, Google Scholar equivalents, and\
+  \ web sources reveal it as a technical report (later ICLR 2025) in machine learning,\
+  \ cited in a few 2025 papers on unlearning but no broad set of top-cited derivatives.\
+  \ No other papers from 2025-2026 directly center on BalancedSubnet at high venue\
+  \ levels with substantial citations.[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)[2](https://arxiv.org/abs/2410.02159v2)[3](https://arxiv.org/html/2510.24256v1)\n\
+  \n## Core Paper\n**Title:** Mitigating Memorization In Language Models  \n**Authors:**\
+  \ Mansi Sakarvadia, Aswathy Ajith, Arham Khan, Nathaniel Hudson, Caleb Geniesse,\
+  \ Kyle Chard, Yaoqing Yang, Ian Foster, Michael W. Mahoney[4](https://mansisak.com/memorization/)[5](https://www.paperdigest.org/2025/11/neurips-2025-papers-highlights/)\n\
+  **Year:** 2024 (arXiv; updated 2025 for ICLR)[2](https://arxiv.org/abs/2410.02159v2)\n\
+  **Key Technical Finding:** BalancedSubnet, an unlearning method, outperforms regularizers,\
+  \ fine-tuning, and other unlearning techniques by nearly 100% reducing memorized\
+  \ sequence regurgitation in TinyMem and Pythia models (2.8B/6.9B) while preserving\
+  \ perplexity/accuracy.[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)[4](https://mansisak.com/memorization/)\n\
+  **Main Mathematical Contribution:** Optimizes a sparse binary mask over weights\
+  \ via straight-through estimator: for memorized sequences $$ S_m $$ and retain sequences\
+  \ $$ S_r $$, loss = $$ \\mathcal{L}(S_m) \\times -(1 - \\lambda) + \\mathcal{L}(S_r)\
+  \ \\times \\lambda $$, where top-K scored weights per layer are dropped; $$ \\lambda\
+  \ $$ balances unlearning vs. retention; scores initialized with Kaiming uniform\
+  \ and updated via backprop on masked model.[4](https://mansisak.com/memorization/)[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)\n\
+  \n## Related Citing Works (2025)\nFew citations exist; these reference BalancedSubnet\
+  \ as baseline in memorization/unlearning studies (technical reports/ML venues).\
+  \ No top 15-20 list due to recency (March 2026) and niche topic.[3](https://arxiv.org/html/2510.24256v1)[6](https://www.semanticscholar.org/paper/Quantifying-Memorization-Across-Neural-Language-Carlini-Ippolito/28c7e583d90ccfc5c3078dfc1d6b80a9ad90248d)\n\
+  \n**Title:** From Memorization to Reasoning in the Spectrum of Loss Curvature  \n\
+  **Authors:** (Not fully listed; arXiv:2510.24256)[7](https://arxiv.org/abs/2510.24256)\n\
+  **Year:** 2025  \n**Key Technical Finding:** Ablates memorized directions in weight\
+  \ space, matching BalancedSubnet on targeted forget sets but removing more unseen\
+  \ data with lower perplexity.[3](https://arxiv.org/html/2510.24256v1)\n**Main Mathematical\
+  \ Contribution:** Disentangles memorization via loss curvature spectrum; ablate\
+  \ directions where $$ \\nabla \\mathcal{L} $$ aligns with high-curvature memorized\
+  \ subspaces.[3](https://arxiv.org/html/2510.24256v1)\n\n**Title:** Selective Forgetting:\
+  \ Advancing Machine Unlearning Techniques and Evaluation in Language Models  \n\
+  **Authors:** (arXiv:2402.05813)[8](http://arxiv.org/abs/2402.05813)\n**Year:** 2024\
+  \ (cited into 2025 contexts)  \n**Key Technical Finding:** SeUL enables fine-grained\
+  \ unlearning minimizing generation impact, evaluated via S-EL/S-MA metrics.[8](http://arxiv.org/abs/2402.05813)\n\
+  **Main Mathematical Contribution:** Reversed objective with retain loss weighting:\
+  \ $$ \\min \\mathcal{L}_{forget} - \\alpha \\mathcal{L}_{retain} $$, $$ \\alpha\
+  \ $$ tuned for balance (contrasts BalancedSubnet's mask).[8](http://arxiv.org/abs/2402.05813)\n\
+  \nFor deeper lists, check Google Scholar for arXiv:2410.02159 citations, as web\
+  \ searches show under 10 relevant hits to date. What specific aspect (e.g., code,\
+  \ extensions) interests you most?[9](https://github.com/msakarvadia/memorization/blob/main/README.md)"
+raw_pitfalls_text: "BalancedSubnet implementations in PyTorch often fail due to numerical\
+  \ instability, improper masking, and hyperparameter issues during score-based weight\
+  \ dropping. These pitfalls stem from the method's reliance on learnable scores for\
+  \ per-layer top-k pruning combined with weighted losses on mixed memorized/random\
+  \ sequences.[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)[2](https://mansisak.com/memorization/)\n\
+  \n## NaN Loss During Training\nLoss becomes NaN after a few epochs or batches. \
+  \ \nRoot cause: Gradients explode from improper initialization of scores (e.g.,\
+  \ not using Kaiming uniform), high learning rates on scores optimizer, or NaN propagation\
+  \ in loss masking when sequences have invalid tokens.[2](https://mansisak.com/memorization/)[3](https://github.com/pytorch/pytorch/issues/40497)\n\
+  Verified fix: Initialize scores with `nn.init.kaiming_uniform_` as per pseudocode;\
+  \ use AdamW optimizer with eps=1e-4 and clip gradients (torch.nn.utils.clip_grad_norm_(scores,\
+  \ max_norm=1.0)); check and filter NaNs in data batches before loss computation.[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)[2](https://mansisak.com/memorization/)\n\
+  \n## Severe Performance Drop\nPost-editing perplexity/accuracy degrades drastically\
+  \ (e.g., loss landscape shifts wildly).  \nRoot cause: Poor hyperparameter tuning\
+  \ like insufficient `loss_weight` (fails to balance memorized vs. random loss terms)\
+  \ or excessive `K` (too many weights dropped), causing over-pruning of general task\
+  \ subnetworks.[4](https://github.com/msakarvadia/memorization)[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)\n\
+  Verified fix: Sweep hyperparameters via grid search (e.g., loss_weight in [0.1,0.5,0.9],\
+  \ K=0.01-0.1 * param_size per layer); monitor validation perplexity during training\
+  \ and early-stop if >5% degradation, as shown effective on Pythia models.[4](https://github.com/msakarvadia/memorization)[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)\n\
+  \n## Incomplete Memorization Removal\nModel still regurgitates >20% memorized sequences\
+  \ after editing.  \nRoot cause: Inadequate shuffling or batching of memorized/random\
+  \ sequences, leading to biased score updates; or incorrect `drop_top_k_weights_per_layer`\
+  \ (not using absolute scores |s| or layer-wise top-k).[2](https://mansisak.com/memorization/)\
+  \  \nVerified fix: Strictly shuffle `memorized_sequences ∪ random_sequences` each\
+  \ epoch; implement drop as `topk_indices = torch.topk(s.abs(), k=int(K_ratio * s.numel()),\
+  \ largest=False); mask out those weights`; ensure 50/50 batch ratio.[2](https://mansisak.com/memorization/)[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)\n\
+  \n## Memory Overflow on Large Models\nOOM errors during forward passes on production\
+  \ LMs like Pythia-6.9B.  \nRoot cause: No in-place restoration of original params\
+  \ before each drop application, or accumulating large score tensors without detaching.\
+  \  \nVerified fix: Copy model once (`LM_edited = copy.deepcopy(LM)`), restore params\
+  \ iteratively per layer in forward hook (`p.copy_(p_original)` before drop); use\
+  \ `torch.no_grad()` for inference checks and clear cache post-batch.[5](https://www.digitalocean.com/community/tutorials/writing-resnet-from-scratch-in-pytorch)[2](https://mansisak.com/memorization/)"
+raw_repos_text: "As of now there is only **one primary, directly relevant open‑source\
+  \ GitHub repository** implementing *BalancedSubnet* for mitigating memorization\
+  \ in language models, and the technique is not yet widely reimplemented in large,\
+  \ independent OSS projects.  Below I list the true canonical repo plus the best‑related,\
+  \ used‑in‑practice repos that either implement related unlearning strategies or\
+  \ are explicitly evaluated with BalancedSubnet‑style workflows, with your requested\
+  \ details.[1](https://mansisak.com/memorization/)[2](https://github.com/msakarvadia/memorization)[3](https://arxiv.org/abs/2410.02159v2)\n\
+  \n***\n\n### 1. `msakarvadia/memorization` (main repo)\n\n- **Name**: `mitigating-memorization`\
+  \ / `memorization`  \n- **GitHub URL**: https://github.com/msakarvadia/memorization[2](https://github.com/msakarvadia/memorization)[1](https://mansisak.com/memorization/)\n\
+  - **Star count**: **12 stars** (as of the latest page snapshot).[2](https://github.com/msakarvadia/memorization)\n\
+  \n- **Key architectural decisions that make it state‑of‑the‑art**  \n  - Implements\
+  \ **BalancedSubnet as a weight‑based unlearning method**: it learns a sparse binary\
+  \ mask over weights via a dual‑objective loss that simultaneously penalizes memorized‑sequence\
+  \ likelihood and *preserves* loss on a set of random, non‑memorized sequences.[4](https://arxiv.org/html/2410.02159v1)[3](https://arxiv.org/abs/2410.02159v2)[1](https://mansisak.com/memorization/)\n\
+  \  - Built around a **TinyMem ecosystem**: small, cheap‑to‑train LMs that let you\
+  \ quickly prototype and benchmark unlearning methods (including BalancedSubnet)\
+  \ before applying them to production‑scale models like Pythia 2.8B/6.9B.[3](https://arxiv.org/abs/2410.02159v2)[5](https://www.themoonlight.io/de/review/mitigating-memorization-in-language-models)\n\
+  \  - Uses **gradient‑driven mask updates without touching base weights**: gradients\
+  \ from a masked “edit” model update the mask scores, then the top‑K weights are\
+  \ dropped per layer, keeping the original model intact until the final intervention.[1](https://mansisak.com/memorization/)[3](https://arxiv.org/abs/2410.02159v2)\n\
+  \n- **Known anti‑patterns / technical debt**  \n  - The codebase is **research‑oriented**:\
+  \ scripts for training, fine‑tuning, and unlearning are split across many small\
+  \ scripts (`memorization_in_toy_models.py`, `localize_memorization.py`, `prod_grad.py`,\
+  \ `parsl_*`) which makes it harder to reuse as a clean library than, say, a PyTorch‑style\
+  \ `nn.Module`‑based API.[2](https://github.com/msakarvadia/memorization)\n  - **Heavy\
+  \ dependence on Parsl** for distributed experiments; Parsl‑specific launch scripts\
+  \ tightly couple the unlearning pipeline to local‑cluster or NERSC‑style infra,\
+  \ which can be brittle outside those environments.[2](https://github.com/msakarvadia/memorization)\n\
+  \n***\n\n### 2. TinyMem‑style Pythia experiments (same repo, but production‑scale)\n\
+  \nYou can think of this as a **second “logical” project inside the same repo**,\
+  \ focused on Pythia‑scale models with BalancedSubnet.\n\n- **Name**: `prod_grad`\
+  \ / production‑scale Pythia unlearning  \n- **GitHub URL**: https://github.com/msakarvadia/memorization\
+  \ (see `src/prod_grad.py` and `parsl_localize_nersc.py`).[3](https://arxiv.org/abs/2410.02159v2)[2](https://github.com/msakarvadia/memorization)\n\
+  - **Star count**: same as parent repo (**12 stars**).[2](https://github.com/msakarvadia/memorization)\n\
+  \n- **SOTA architecture decisions**  \n  - Applies **BalancedSubnet on production‑scale\
+  \ Pythia 2.8B/6.9B models** while still preserving perplexity and accuracy, showing\
+  \ that methods designed on TinyMem generalize.[5](https://www.themoonlight.io/de/review/mitigating-memorization-in-language-models)[4](https://arxiv.org/html/2410.02159v1)[3](https://arxiv.org/abs/2410.02159v2)\n\
+  \  - Leverages **existing Pythia checkpoints and Hugging Face‑style tooling** so\
+  \ results are comparable to standard LLM benchmarks rather than toy‑model‑only evaluations.[6](https://linnk.ai/insight/machine-learning/mitigating-memorization-in-language-models-comprehensive-evaluation-of-regularization-fine-tuning-and-unlearning-strategies-4e3Ifbu3/)[3](https://arxiv.org/abs/2410.02159v2)\n\
+  \n- **Anti‑patterns / technical debt**  \n  - The **production‑scale scripts (`parsl_localize_nersc.py`)\
+  \ are scoped to NERSC** workflows; porting them to other infra requires manual refactoring\
+  \ of compute/setup dependencies.[2](https://github.com/msakarvadia/memorization)\n\
+  \  - **No clear API or docs** for “just plug‑and‑play BalancedSubnet”; users must\
+  \ adapt the hyperparameter‑sweep and training loops themselves, which increases\
+  \ maintenance burden.[2](https://github.com/msakarvadia/memorization)\n\n***\n\n\
+  ### 3. Related “unlearning / interpretability” frameworks (used in follow‑up work)\n\
+  \nWhile these are not **BalancedSubnet‑specific**, they are commonly used together\
+  \ with or as downstream wrappers for similar unlearning or interpretability methods,\
+  \ and they are heavy in the “mitigating memorization” ecosystem. These are not 1:1\
+  \ BalancedSubnet ports, but they are among the most used OSS repos in this space.\n\
+  \n#### 3‑a. `jbloomAus/SAELens`\n\n- **Name**: `SAELens` (Sparse Autoencoder Lens)\
+  \  \n- **GitHub URL**: https://github.com/jbloomAus/SAELens[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)\n\
+  - **Star count**: ~2.5k–3.5k stars (as of recent listings; numbers fluctuate, but\
+  \ it is widely starred).[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)\n\
+  \n- **SOTA‑relevant architectural decisions**  \n  - Provides a **library for training\
+  \ sparse autoencoders on LLM activations**, enabling feature‑level interpretability\
+  \ and “intervention” pipelines that can be reused for unlearning‑style editing.[8](https://www.themoonlight.io/en/review/mitigating-memorization-in-language-models)[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)\n\
+  \  - Designed to be **model‑agnostic** (works with HF‑style `AutoModelForCausalLM`\
+  \ etc.), so it can be composed with methods like BalancedSubnet to inspect or modify\
+  \ which features respond to memorized inputs.[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)\n\
+  \n- **Anti‑patterns / technical debt**  \n  - Tightly coupled to specific **feature‑dictionary\
+  \ and activation‑hooking patterns**; new architectures or non‑transformer models\
+  \ require significant adaptation.[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)\n\
+  \  - Some tutorials are in Jupyter notebooks that are not easily turned into production‑ready\
+  \ modules (typical research‑style anti‑pattern).[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)\n\
+  \n#### 3‑b. `HuggingFace` / `transformers` ecosystem (implicitly)\n\n- No single\
+  \ repo, but `huggingface/transformers` is the **de facto backbone** for anyone applying\
+  \ BalancedSubnet‑style methods on real LLMs.[6](https://linnk.ai/insight/machine-learning/mitigating-memorization-in-language-models-comprehensive-evaluation-of-regularization-fine-tuning-and-unlearning-strategies-4e3Ifbu3/)[3](https://arxiv.org/abs/2410.02159v2)\n\
+  \n- **Why it counts for your question**  \n  - Almost all BalancedSubnet experiments\
+  \ in the paper that run on Pythia or similar models **rely on Pythia‑style HF‑compatible\
+  \ models** or similar checkpoints.[9](https://huggingface.co/papers?q=memorize+while+reading)[3](https://arxiv.org/abs/2410.02159v2)\n\
+  \  - The “unlearning pipeline” is usually:  \n    - HF‑style model → `prod_grad`‑style\
+  \ script computing gradients on memorized vs random sequences → BalancedSubnet mask\
+  \ update.[3](https://arxiv.org/abs/2410.02159v2)[2](https://github.com/msakarvadia/memorization)\n\
+  \n- **Anti‑patterns / technical debt**  \n  - The HF stack is large and can be **over‑heavy\
+  \ for small‑scale TinyMem‑style experiments**, increasing setup complexity unnecessarily.[10](https://som2nynetwork.com/analytics/top-llm-github-repositories-to-master-large-language-models/)\n\
+  \  - Some internal model‑sharding and distributed‑backend code can be hard to introspect\
+  \ when debugging subtle gradient‑based interventions like BalancedSubnet.[10](https://som2nynetwork.com/analytics/top-llm-github-repositories-to-master-large-language-models/)\n\
+  \n***\n\n### 4. Summary table (top 4 “clusters” relevant to BalancedSubnet)\n\n\
+  | Repo / project / ecosystem | GitHub URL | Approx. stars | SOTA‑relevant architecture\
+  \ decision | Known anti‑pattern / technical debt |\n| --- | --- | --- | --- | ---\
+  \ |\n| `msakarvadia/memorization` (BalancedSubnet) | https://github.com/msakarvadia/memorization\
+  \ [2](https://github.com/msakarvadia/memorization) | 12 | Dual‑loss mask‑based unlearning;\
+  \ TinyMem‑to‑Pythia portability. [1](https://mansisak.com/memorization/)[3](https://arxiv.org/abs/2410.02159v2)\
+  \ | Many small scripts; Parsl‑heavy and infra‑specific workflows. [2](https://github.com/msakarvadia/memorization)\
+  \ |\n| Pythia‑scale `prod_grad` (same repo) | https://github.com/msakarvadia/memorization\
+  \ (`prod_grad.py`) [2](https://github.com/msakarvadia/memorization) | 12 | BalancedSubnet\
+  \ applied to Pythia 2.8B/6.9B with preserved perplexity. [4](https://arxiv.org/html/2410.02159v1)[3](https://arxiv.org/abs/2410.02159v2)\
+  \ | NERSC‑specific Parsl wrappers; no clean API. [2](https://github.com/msakarvadia/memorization)\
+  \ |\n| `jbloomAus/SAELens` | https://github.com/jbloomAus/SAELens [7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)\
+  \ | ~3k | SAE‑based feature‑level interpretability that can be combined with unlearning‑style\
+  \ edits. [7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)[8](https://www.themoonlight.io/en/review/mitigating-memorization-in-language-models)\
+  \ | Tutorials as Jupyter notebooks; implementation tightly tied to HF‑style transformer\
+  \ hooks. [7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)\
+  \ |\n| HF‑style `transformers` / Pythia‑style stack | https://github.com/huggingface/transformers\
+  \ (ecosystem‑wide) | Hundreds of thousands | Standard model loading and inference\
+  \ backbone for BalancedSubnet experiments. [3](https://arxiv.org/abs/2410.02159v2)[10](https://som2nynetwork.com/analytics/top-llm-github-repositories-to-master-large-language-models/)\
+  \ | Large, complex codebase; can be overkill for tiny‑models. [10](https://som2nynetwork.com/analytics/top-llm-github-repositories-to-master-large-language-models/)\
+  \ |\n\n***\n\nRight now **there are not 5–8 distinct, BalancedSubnet‑specific, independently\
+  \ maintained GitHub repos**; most reuse is via the original `msakarvadia/memorization`\
+  \ repo plus compositional use of tools like `SAELens` and HF‑style libraries.  If\
+  \ you tell me whether you want a **ready‑to‑plug‑in BalancedSubnet API** or a **minimal\
+  \ “replicate‑the‑paper” pipeline on Pythia**, I can sketch a concrete repo‑style\
+  \ folder structure and API design tailored to that.[3](https://arxiv.org/abs/2410.02159v2)[7](https://github.com/jbloomAus/SAELens/blob/main/tutorials/tutorial_2_0.ipynb)[2](https://github.com/msakarvadia/memorization)"
+raw_compute_text: 'BalancedSubnet experiments from the paper typically use small TinyMem
+  models designed for efficiency, requiring low GPU memory and short training times.
+  These are unlearning procedures applied post-training on models like Pythia variants.[1](https://arxiv.org/abs/2410.02159v2)[2](https://www.themoonlight.io/de/review/mitigating-memorization-in-language-models)
+
+
+  ## Memory Requirements
+
+  Standard experiments need 2-5 GB VRAM, as TinyMem suits rapid prototyping on modest
+  hardware without high memory demands. This fits well within consumer GPUs. Larger
+  Pythia applications may push to 10-16 GB.[2](https://www.themoonlight.io/de/review/mitigating-memorization-in-language-models)[3](https://www.hp.com/us-en/shop/tech-takes/gpu-memory-requirements-data-science-workstation)[1](https://arxiv.org/abs/2410.02159v2)
+
+
+  ## Training Time
+
+  Procedures complete in 10-60 minutes per experiment, depending on epochs (e.g.,
+  num_epochs parameter) and batch size for memorized vs. random sequences. Unlearning
+  is faster than full fine-tuning.[4](https://mansisak.com/memorization/)[2](https://www.themoonlight.io/de/review/mitigating-memorization-in-language-models)
+
+
+  ## Common GPUs
+
+  Recent papers favor A100 GPUs (40-80 GB) for Pythia-scale tests, balancing cost
+  and performance in AI research. T4 or H100 appear less, with T4 for prototyping.[5](https://www.thundercompute.com/blog/how-to-choose-right-gpu-ai-workloads)[6](https://haikel-fazzani.deno.dev/blog/l40s-vs-a100-vs-h100-vs-t4-gpu)[1](https://arxiv.org/abs/2410.02159v2)
+
+
+  ## Colab T4 Feasibility
+
+  Yes, fully feasible on free Google Colab T4 (16 GB VRAM, ~12-hour sessions)—TinyMem
+  fits easily, and times stay under limits. Use optimizations like gradient accumulation
+  if scaling batches.[7](https://www.linkedin.com/posts/0xsojalsec_here-is-my-story-how-i-built-my-own-llm-activity-7396329956408139776-eHIr)[1](https://arxiv.org/abs/2410.02159v2)[2](https://www.themoonlight.io/de/review/mitigating-memorization-in-language-models)'

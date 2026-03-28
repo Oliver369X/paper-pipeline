@@ -1,0 +1,6 @@
+exit=1
+--- stdout ---
+
+--- stderr ---
+La lÃ­nea de comandos es demasiado larga.
+

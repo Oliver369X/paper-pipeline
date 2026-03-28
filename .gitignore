@@ -1,0 +1,17 @@
+outputs/*
+!outputs/.gitkeep
+# Demo trackeado: integración Perplexity + Cursor (plan agent_monitor_mvp)
+!outputs/agent_monitor_mvp/
+!outputs/agent_monitor_mvp/**
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+dist/
+build/
+recordings/
+.env
+.env.*
+!.env.example

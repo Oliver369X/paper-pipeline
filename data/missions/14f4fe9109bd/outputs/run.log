@@ -1,0 +1,11 @@
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\14f4fe9109bd\\mission.md", "topic": "Replicación de paper: LLM-powered Autonomous Agents for Research", "dry_run": false, "ts": "2026-03-27T14:46:18.096663+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_start", "step": "perplexity:gaps", "model": "best", "ts": "2026-03-27T14:46:18.108275+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_ok", "step": "perplexity:gaps", "duration_s": 50.34, "chars": 5131, "perplexity_backend_uuid": "db0e2274-807c-4bd4-b81e-4e3d93aefa05", "ts": "2026-03-27T14:47:08.443062+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_start", "step": "perplexity:methodology", "model": "best", "ts": "2026-03-27T14:47:08.479301+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_ok", "step": "perplexity:methodology", "duration_s": 60.8, "chars": 9772, "perplexity_backend_uuid": "802f4252-d8f6-4de0-9cef-23f993913544", "ts": "2026-03-27T14:48:09.279603+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_start", "step": "perplexity:experiments", "model": "best", "ts": "2026-03-27T14:48:09.284224+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_ok", "step": "perplexity:experiments", "duration_s": 40.44, "chars": 8472, "perplexity_backend_uuid": "591deb85-0a14-436f-b0bb-e98a8302fd89", "ts": "2026-03-27T14:48:49.719492+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "draft_snapshot", "hash": "c7c9b22b22a5", "chars": 23849, "ts": "2026-03-27T14:48:49.862431+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_start", "step": "step:quality_check", "model": "best", "ts": "2026-03-27T14:48:49.870376+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_ok", "step": "step:quality_check", "duration_s": 17.53, "chars": 4039, "perplexity_backend_uuid": "284c33c3-1084-43d9-8f8a-99c4b1a912a2", "ts": "2026-03-27T14:49:07.402721+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_ok", "step": "pipeline", "duration_s": 169.38, "calls_used": 4, "max_calls": 8, "ts": "2026-03-27T14:49:07.476613+00:00", "level": "info", "module": "paper_pipeline.logger"}

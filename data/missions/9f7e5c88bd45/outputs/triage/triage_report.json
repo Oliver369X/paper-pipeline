@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "tier": 2,
+  "label": "insufficient_metrics",
+  "reason": "No primary metric; classified as neutral match (no breakthrough claim)",
+  "detail": {},
+  "metrics": {
+    "exit_code": 0,
+    "main": null,
+    "baseline": null,
+    "coverage": null,
+    "math_checks": null,
+    "anomaly_detected": false,
+    "oom_error": false,
+    "notes": ""
+  },
+  "quality_gates": {
+    "target_metric": "",
+    "higher_is_better": true,
+    "sota_baseline_value": 0.0,
+    "breakthrough_margin": 0.02,
+    "replication_tolerance": 0.01,
+    "require_statistical_significance": true
+  }
+}

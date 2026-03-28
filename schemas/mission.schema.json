@@ -1,0 +1,352 @@
+{
+  "$defs": {
+    "ComputeConfig": {
+      "description": "Describes available compute resources and delegation thresholds.",
+      "properties": {
+        "local_gpu_available": {
+          "default": false,
+          "title": "Local Gpu Available",
+          "type": "boolean"
+        },
+        "local_gpu_memory_gb": {
+          "default": 0,
+          "title": "Local Gpu Memory Gb",
+          "type": "number"
+        },
+        "colab_mcp_enabled": {
+          "default": false,
+          "title": "Colab Mcp Enabled",
+          "type": "boolean"
+        },
+        "delegate_threshold_gb": {
+          "default": 12.0,
+          "title": "Delegate Threshold Gb",
+          "type": "number"
+        }
+      },
+      "title": "ComputeConfig",
+      "type": "object"
+    },
+    "DebuggingConfig": {
+      "description": "Limits and behaviour for automated debugging loops.",
+      "properties": {
+        "cursor_max_attempts": {
+          "default": 3,
+          "title": "Cursor Max Attempts",
+          "type": "integer"
+        },
+        "perplexity_max_attempts": {
+          "default": 2,
+          "title": "Perplexity Max Attempts",
+          "type": "integer"
+        },
+        "generate_human_briefing": {
+          "default": true,
+          "title": "Generate Human Briefing",
+          "type": "boolean"
+        }
+      },
+      "title": "DebuggingConfig",
+      "type": "object"
+    },
+    "EpistemicInjectionConfig": {
+      "description": "Controls automatic literature and code-repository injection (Capa 2).",
+      "properties": {
+        "enabled": {
+          "default": false,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "n_papers_to_fetch": {
+          "default": 20,
+          "title": "N Papers To Fetch",
+          "type": "integer"
+        },
+        "n_repos_to_fetch": {
+          "default": 5,
+          "title": "N Repos To Fetch",
+          "type": "integer"
+        },
+        "poison_pills": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Poison Pills",
+          "type": "array"
+        }
+      },
+      "title": "EpistemicInjectionConfig",
+      "type": "object"
+    },
+    "Hypothesis": {
+      "description": "A single research hypothesis to validate during the pipeline run.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "priority": {
+          "default": "MEDIUM",
+          "title": "Priority",
+          "type": "string"
+        },
+        "expected_outcome": {
+          "default": "",
+          "title": "Expected Outcome",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "description"
+      ],
+      "title": "Hypothesis",
+      "type": "object"
+    },
+    "QualityGatesConfig": {
+      "description": "Defines quantitative thresholds the pipeline must meet before publishing.",
+      "properties": {
+        "target_metric": {
+          "default": "",
+          "title": "Target Metric",
+          "type": "string"
+        },
+        "higher_is_better": {
+          "default": true,
+          "title": "Higher Is Better",
+          "type": "boolean"
+        },
+        "sota_baseline_value": {
+          "default": 0.0,
+          "title": "Sota Baseline Value",
+          "type": "number"
+        },
+        "breakthrough_margin": {
+          "default": 0.02,
+          "title": "Breakthrough Margin",
+          "type": "number"
+        },
+        "replication_tolerance": {
+          "default": 0.01,
+          "title": "Replication Tolerance",
+          "type": "number"
+        },
+        "require_statistical_significance": {
+          "default": true,
+          "title": "Require Statistical Significance",
+          "type": "boolean"
+        }
+      },
+      "title": "QualityGatesConfig",
+      "type": "object"
+    },
+    "SafetyConfig": {
+      "description": "Hard limits that the pipeline must never exceed.",
+      "properties": {
+        "max_total_runtime_minutes": {
+          "default": 120,
+          "title": "Max Total Runtime Minutes",
+          "type": "integer"
+        },
+        "max_cost_usd": {
+          "default": 5.0,
+          "title": "Max Cost Usd",
+          "type": "number"
+        },
+        "require_human_approval_before_publish": {
+          "default": true,
+          "title": "Require Human Approval Before Publish",
+          "type": "boolean"
+        },
+        "allow_force_push": {
+          "default": false,
+          "title": "Allow Force Push",
+          "type": "boolean"
+        }
+      },
+      "title": "SafetyConfig",
+      "type": "object"
+    }
+  },
+  "description": "Single human-edited mission file (Capa 1).\n\nv1 fields are preserved at the top level.  v2 adds optional nested\nconfiguration blocks — all default to safe no-op values so existing\nmission files continue to load without modification.\n\n``mission_version``:\n  - ``1`` — legacy behaviour (default when omitted).\n  - ``2`` — stricter contract: requires ``enable_quality_check`` and non-empty ``paper_target``.",
+  "properties": {
+    "mission_version": {
+      "default": 1,
+      "maximum": 2,
+      "minimum": 1,
+      "title": "Mission Version",
+      "type": "integer"
+    },
+    "topic": {
+      "title": "Topic",
+      "type": "string"
+    },
+    "paper_target": {
+      "default": "generic venue",
+      "title": "Paper Target",
+      "type": "string"
+    },
+    "sections_needed": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Sections Needed",
+      "type": "array"
+    },
+    "max_perplexity_calls": {
+      "default": 8,
+      "maximum": 64,
+      "minimum": 1,
+      "title": "Max Perplexity Calls",
+      "type": "integer"
+    },
+    "code_needed": {
+      "default": false,
+      "title": "Code Needed",
+      "type": "boolean"
+    },
+    "notion_page_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Notion Page Id"
+    },
+    "model": {
+      "default": "best",
+      "title": "Model",
+      "type": "string"
+    },
+    "language": {
+      "default": "en-US",
+      "title": "Language",
+      "type": "string"
+    },
+    "output_dir": {
+      "default": "outputs",
+      "title": "Output Dir",
+      "type": "string"
+    },
+    "enable_notion": {
+      "default": false,
+      "title": "Enable Notion",
+      "type": "boolean"
+    },
+    "enable_quality_check": {
+      "default": true,
+      "title": "Enable Quality Check",
+      "type": "boolean"
+    },
+    "enable_cursor_cli": {
+      "default": false,
+      "title": "Enable Cursor Cli",
+      "type": "boolean"
+    },
+    "cursor_cli_prompt_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cursor Cli Prompt Path"
+    },
+    "cursor_cli_cwd": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cursor Cli Cwd"
+    },
+    "single_thread_perplexity": {
+      "default": false,
+      "title": "Single Thread Perplexity",
+      "type": "boolean"
+    },
+    "save_perplexity_to_library": {
+      "default": true,
+      "title": "Save Perplexity To Library",
+      "type": "boolean"
+    },
+    "hypotheses": {
+      "items": {
+        "$ref": "#/$defs/Hypothesis"
+      },
+      "title": "Hypotheses",
+      "type": "array"
+    },
+    "epistemic_injection": {
+      "$ref": "#/$defs/EpistemicInjectionConfig"
+    },
+    "compute": {
+      "$ref": "#/$defs/ComputeConfig"
+    },
+    "quality_gates": {
+      "$ref": "#/$defs/QualityGatesConfig"
+    },
+    "debugging": {
+      "$ref": "#/$defs/DebuggingConfig"
+    },
+    "safety": {
+      "$ref": "#/$defs/SafetyConfig"
+    },
+    "enable_epistemic_injection": {
+      "default": false,
+      "title": "Enable Epistemic Injection",
+      "type": "boolean"
+    },
+    "enable_degradation_monitor": {
+      "default": false,
+      "title": "Enable Degradation Monitor",
+      "type": "boolean"
+    },
+    "enable_skill_orchestrator": {
+      "default": false,
+      "title": "Enable Skill Orchestrator",
+      "type": "boolean"
+    },
+    "enable_hypervisor_triage": {
+      "default": false,
+      "title": "Enable Hypervisor Triage",
+      "type": "boolean"
+    },
+    "parallel_allowed_command_prefixes": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parallel Allowed Command Prefixes"
+    }
+  },
+  "required": [
+    "topic"
+  ],
+  "title": "Mission",
+  "type": "object"
+}

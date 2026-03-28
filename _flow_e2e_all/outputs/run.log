@@ -1,0 +1,10 @@
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\_flow_e2e_all\\mission.md", "topic": "E2E matriz: pipeline v2 + triaje hipervisor + modo autonomía (smoke)", "dry_run": false, "ts": "2026-03-26T19:17:39.418463+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_start", "step": "perplexity:gaps", "model": "best", "ts": "2026-03-26T19:17:39.425462+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_ok", "step": "perplexity:gaps", "duration_s": 12.8, "chars": 4925, "perplexity_backend_uuid": "2b9619d2-a980-4746-9ed5-6e9519783bd3", "ts": "2026-03-26T19:17:52.233938+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "draft_snapshot", "hash": "22de7c8d4586", "chars": 5175, "ts": "2026-03-26T19:17:52.299799+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_ok", "step": "pipeline", "duration_s": 12.94, "calls_used": 1, "max_calls": 2, "ts": "2026-03-26T19:17:52.350707+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_start", "step": "directives", "count": 1, "ts": "2026-03-26T19:18:20.679292+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_start", "step": "perplexity:gaps", "source": "loop_directive", "ts": "2026-03-26T19:18:20.681294+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_ok", "step": "perplexity:gaps", "duration_s": 30.2, "ts": "2026-03-26T19:18:50.885728+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "draft_snapshot", "hash": "e41a1111e862", "chars": 7317, "ts": "2026-03-26T19:18:50.938654+00:00", "level": "info", "module": "paper_pipeline.logger"}
+{"event": "step_ok", "step": "directives", "duration_s": 30.27, "ts": "2026-03-26T19:18:50.938654+00:00", "level": "info", "module": "paper_pipeline.logger"}

@@ -1,0 +1,40 @@
+{
+  "phases": [
+    {
+      "name": "perplexity_sections",
+      "status": "done",
+      "started_at": "2026-03-26T20:59:14.558320+00:00",
+      "finished_at": "2026-03-26T21:01:03.132726+00:00",
+      "error": null
+    },
+    {
+      "name": "assembly_draft",
+      "status": "done",
+      "started_at": "2026-03-26T21:01:03.135822+00:00",
+      "finished_at": "2026-03-26T21:01:03.336154+00:00",
+      "error": null
+    },
+    {
+      "name": "quality_check",
+      "status": "skipped",
+      "started_at": null,
+      "finished_at": "2026-03-26T21:01:03.347291+00:00",
+      "error": null
+    },
+    {
+      "name": "notion_sync",
+      "status": "done",
+      "started_at": "2026-03-26T21:01:03.372531+00:00",
+      "finished_at": "2026-03-26T21:01:35.011321+00:00",
+      "error": null
+    },
+    {
+      "name": "cursor_cli",
+      "status": "failed",
+      "started_at": "2026-03-26T21:01:35.013899+00:00",
+      "finished_at": "2026-03-26T21:01:37.081875+00:00",
+      "error": "exit 1"
+    }
+  ],
+  "updated_at": "2026-03-26T21:01:37.081875+00:00"
+}

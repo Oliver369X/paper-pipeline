@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "tier": 0,
+  "label": "crash_or_error",
+  "reason": "Non-zero exit_code or OOM flag",
+  "detail": {
+    "exit_code": 1,
+    "oom": false
+  },
+  "metrics": {
+    "exit_code": 1,
+    "main": null,
+    "baseline": null,
+    "coverage": null,
+    "math_checks": null,
+    "anomaly_detected": true,
+    "oom_error": false,
+    "notes": ""
+  },
+  "quality_gates": {
+    "target_metric": "",
+    "higher_is_better": true,
+    "sota_baseline_value": 0.0,
+    "breakthrough_margin": 0.02,
+    "replication_tolerance": 0.01,
+    "require_statistical_significance": true
+  }
+}

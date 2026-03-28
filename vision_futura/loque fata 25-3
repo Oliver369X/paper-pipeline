@@ -1,0 +1,720 @@
+Sí: el proyecto **sí puede llegar a ese nivel**, pero no con más “features sueltas”; hay que convertir lo que hoy ya existe como orquestador, loop, API, worktrees, triage y documentación en una **plataforma con contratos duros de misión, estado, evidencia, validación y publicación**. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/886127c1-6ba3-41c6-93c8-a9e1888b8566/ESTADO_Y_OBJETIVO.md)
+El norte correcto no es “más automatización” a secas, sino **investigación auditable de punta a punta**, donde `mission.md`, `outputs/`, `run_state.json`, `manifest.json`, `paper-loop`, `paper-parallel`, la API, el triage y las integraciones queden subordinados a un mismo contrato operativo y epistémico. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7202532b-9845-487f-a7de-f9d1e7c82d91/HIPERVISOR_Y_PARALELO.md)
+
+## Norte final
+
+El sistema ya tiene como base una misión única, generación de secciones vía Perplexity, ensamblado de `draft_paper.md`, calidad opcional, Notion opcional, `paper-loop`, meta-loop, watcher, Cursor CLI opt-in, CI y Docker documentados. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/886127c1-6ba3-41c6-93c8-a9e1888b8566/ESTADO_Y_OBJETIVO.md)
+Eso significa que el siguiente salto no es inventar otro comando, sino fijar una arquitectura donde el flujo real actual —CLI, loop, API, eventos, worktrees y triage— quede bajo una sola definición de verdad. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/8b3cfa7f-9353-4e2f-a123-19ae861643ea/GUIA_FLUJO_COMPLETO.md)
+La meta del proyecto debe quedar escrita así: **“cada run produce un resultado, un expediente de evidencia, un estado resumible y una decisión de publicación o rechazo”**.
+
+## Definición de completo
+
+Voy a definir “impletar todo eso” de forma estricta, para que no quede ambiguo:
+
+| Capa | Hecho cuando | Hoy |
+|---|---|---|
+| Misión | Existe un esquema único v2 validado igual en CLI, API y web | Hoy la misión existe, pero la documentación muestra varias claves y variantes de flujo que conviene unificar.  [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/886127c1-6ba3-41c6-93c8-a9e1888b8566/ESTADO_Y_OBJETIVO.md) |
+| Ejecución | Todo run pasa por fases explícitas, resumibles y auditables | Ya existe runner con fases, `run_state.json`, `manifest.json` y eventos.  [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md) |
+| Evidencia | Cada resultado trae métricas, claims, fuentes, entorno, seeds y artefactos | Hoy el triage depende de `outputs/metrics.json`, pero no todo el expediente está estandarizado.  [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7202532b-9845-487f-a7de-f9d1e7c82d91/HIPERVISOR_Y_PARALELO.md) |
+| Validación | Ningún resultado “bueno” se acepta sin quality gates obligatorios | Hoy `quality_check` es opcional.  [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md) |
+| Paralelo | Lotes masivos producen resultados comparables y auditables | Ya existe `paper-parallel`, worktrees y tiers.  [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7202532b-9845-487f-a7de-f9d1e7c82d91/HIPERVISOR_Y_PARALELO.md) |
+| API/UI | La web refleja estado real del pipeline y permite operar sin tocar archivos | Hoy la API existe con CRUD, runs, SSE y contenido, pero la web sigue siendo una capa por encima del sistema principal.  [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e4898275-1061-4471-b568-bc84ab3d263a/03-servidor-api.md) |
+| Publicación | Hay salida reproducible para paper, código, web y tablero | Hoy hay borrador, secciones, logs, Notion opcional y demo visual separada.  [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/886127c1-6ba3-41c6-93c8-a9e1888b8566/ESTADO_Y_OBJETIVO.md) |
+
+## Principios de diseño
+
+No cambies el corazón práctico del sistema. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/8b3cfa7f-9353-4e2f-a123-19ae861643ea/GUIA_FLUJO_COMPLETO.md)
+Los docs muestran que `paper-pipeline` sirve para el flujo lineal, `paper-loop` para iteración reactiva, `paper-meta-loop` para revisión, y `paper-parallel` para worktrees y triage; eso ya es una buena partición funcional y hay que preservarla. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7202532b-9845-487f-a7de-f9d1e7c82d91/HIPERVISOR_Y_PARALELO.md)
+Lo que sí debes cambiar es el nivel de contrato entre esas piezas: menos “archivos sueltos que se entienden por convención” y más “objetos de estado versionados que la CLI, la API, la web y el paralelo comparten”.
+
+## Arquitectura objetivo
+
+La arquitectura actual ya separa `pipeline/`, `server/`, `parallel/`, `epistemic/` y `debug/`, y consume `mission.md` para entrar al orquestador. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/5da860f8-daae-48fa-96c3-f69582c1f61d/01-arquitectura.md)
+Además, la documentación ya reconoce que `outputs/run_state.json` sirve para reanudación y `outputs/manifest.json` para UI y auditoría, mientras `run.log` y `pipeline_events.jsonl` registran actividad. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/cdf518f8-f85d-44cd-ada9-5e836da100c1/OUTPUTS_REFERENCE.md)
+La arquitectura objetivo debe quedar en 5 planos:
+
+- **Plano 1 — Contrato:** `mission.schema.json`, `run_ledger.schema.json`, `evidence_bundle.schema.json`, `metrics.schema.json`
+- **Plano 2 — Motor:** `runner`, `loop`, `meta-loop`, `parallel`, `triage`, `debug`
+- **Plano 3 — Integraciones:** Perplexity, Notion, Cursor CLI, webhooks, GitHub, MCP bridges
+- **Plano 4 — Validación:** fact-check, quality gates, reproducibilidad, reviewer pool, degradation monitor
+- **Plano 5 — Publicación:** draft, report, code pack, dataset pack, website pack, Notion dashboards
+
+## Fase 0
+
+Tu primer paso no es programar más lógica, sino **congelar el contrato del sistema**.  
+Hoy la documentación ya muestra un runner por fases, una misión basada en frontmatter YAML, artefactos estándar en `outputs/`, reanudación con `run_state.json`, y diferencias entre `run_state.json` y `meta_loop_state.json`; eso es suficiente para definir los contratos oficiales. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md)
+
+### Entregables
+- `docs/architecture/system-contracts.md`
+- `schemas/mission.schema.json`
+- `schemas/run-ledger.schema.json`
+- `schemas/evidence-bundle.schema.json`
+- `schemas/metrics.schema.json`
+
+### Proceso
+1. Recolecta todas las claves hoy usadas en `mission.md` desde runner, loop, triage, API y docs. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/20669b06-afe7-4446-8232-4d39e92148f4/GUIA_PRUEBAS_Y_DEBUG.md)
+2. Divide esas claves en:
+   - obligatorias
+   - opcionales
+   - deprecadas
+   - internas
+3. Define versión explícita: `mission_version: 2`
+4. Prohíbe aliases ambiguos después de una ventana corta de compatibilidad.
+
+### Input v2
+```yaml
+---
+mission_version: 2
+mission_id: wildfire-sae-001
+topic: "Sparse autoencoders para detección de circuitos causales"
+paper_target: "conference"
+sections_needed:
+  - introduction
+  - related_work
+  - methodology
+  - experiments
+  - limitations
+model: best
+language: en-US
+output_dir: outputs
+max_perplexity_calls: 12
+
+code_needed: true
+enable_quality_check: true
+enable_notion: true
+enable_cursor_cli: true
+enable_hypervisor_triage: true
+single_thread_perplexity: true
+
+quality_gates:
+  target_metric: "f1"
+  higher_is_better: true
+  sota_baseline_value: 0.81
+  breakthrough_margin: 0.02
+  replication_tolerance: 0.01
+
+reproducibility:
+  seed: 42
+  require_environment_snapshot: true
+  require_metrics_bundle: true
+  require_claim_checks: true
+
+notion:
+  page_id: "..."
+  triage_page_id: "..."
+
+parallel:
+  enabled: true
+  keep_breakthrough_branches: true
+  max_concurrent: 6
+---
+Objetivo narrativo largo...
+```
+
+### Output esperado
+- `mission.normalized.yaml`
+- `mission.validation.json`
+- error claro si falta contrato o si una clave es incompatible
+
+## Fase 1
+
+El problema más importante hoy es la dispersión de estado entre `run.log`, `pipeline_events.jsonl`, `run_state.json`, `manifest.json`, `meta_loop_state.json`, `cursor_turn.md` y `next_instruction.md`. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/cdf518f8-f85d-44cd-ada9-5e836da100c1/OUTPUTS_REFERENCE.md)
+La propia referencia de `outputs/` admite que `meta_loop_state.json` y `run_state.json` son complementarios y no se fusionan en una sola estructura en esta versión. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/cdf518f8-f85d-44cd-ada9-5e836da100c1/OUTPUTS_REFERENCE.md)
+Eso hay que resolver con un **Run Ledger** canónico.
+
+### Entregables
+- `outputs/run_ledger.json`
+- `paper_pipeline/state/run_ledger.py`
+- adaptadores desde `run.log`, `manifest.json`, `pipeline_events.jsonl`
+
+### Modelo
+```json
+{
+  "run_id": "2026-03-25T22-46-10Z__wildfire-sae-001",
+  "mission_id": "wildfire-sae-001",
+  "mission_version": 2,
+  "status": "running",
+  "current_phase": "quality_validation",
+  "phases": [
+    {
+      "name": "perplexity_sections",
+      "status": "completed",
+      "started_at": "...",
+      "ended_at": "...",
+      "artifacts": ["outputs/introduction.md", "outputs/methodology.md"],
+      "cost_estimate": null
+    }
+  ],
+  "integrations": {
+    "perplexity": {"enabled": true, "thread_uuid": "..."},
+    "notion": {"enabled": true, "sync_status": "pending"},
+    "cursor_cli": {"enabled": true, "status": "not_started"}
+  },
+  "decision": {
+    "triage_tier": null,
+    "publishable": false,
+    "blocking_reasons": []
+  }
+}
+```
+
+### Regla
+- `run_ledger.json` es la fuente oficial.
+- `run.log` sigue existiendo como log detallado. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md)
+- `pipeline_events.jsonl` sigue existiendo como stream/auditoría. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md)
+- `manifest.json` puede quedar como vista derivada o deprecada.
+
+## Fase 2
+
+Tu orquestador actual tiene 5 fases: `perplexity_sections`, `assembly_draft`, `quality_check`, `notion_sync`, `cursor_cli`. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md)
+Eso fue suficiente para arrancar, pero ya no alcanza para la visión que quieres.  
+Debes migrar a un orquestador v2 con fases obligatorias y fases opt-in.
+
+### Fases nuevas
+1. `mission_validation`
+2. `preflight`
+3. `perplexity_sections`
+4. `assembly_draft`
+5. `claim_extraction`
+6. `quality_validation`
+7. `evidence_packaging`
+8. `triage`
+9. `notion_sync`
+10. `cursor_cli`
+11. `publication_pack`
+12. `final_decision`
+
+### Proceso
+- `mission_validation` verifica esquema
+- `preflight` verifica entorno y permisos
+- `perplexity_sections` ejecuta investigación
+- `assembly_draft` arma draft
+- `claim_extraction` detecta afirmaciones del draft
+- `quality_validation` valida claims, estructura y métricas
+- `evidence_packaging` genera bundle reproducible
+- `triage` clasifica tier
+- `notion_sync` sincroniza
+- `cursor_cli` solo corre si la misión lo pide y la fase anterior no dejó bloqueos
+- `publication_pack` genera salidas publicables
+- `final_decision` escribe estado final
+
+### Output mínimo por fase
+```json
+{
+  "phase": "quality_validation",
+  "status": "failed",
+  "blocking_reasons": [
+    "missing_metrics_bundle",
+    "unsupported_claims_in_related_work",
+    "no_environment_snapshot"
+  ],
+  "artifacts": [
+    "outputs/validation/claim_report.json",
+    "outputs/validation/quality_gaps.md"
+  ]
+}
+```
+
+## Fase 3
+
+Hoy `paper-pipeline` produce secciones `.md`, `draft_paper.md`, `quality_gaps.md`, `notion_sync.log`, `run_state.json`, `cursor_cli.log` y otros artefactos relacionados con el loop y el meta-loop. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/886127c1-6ba3-41c6-93c8-a9e1888b8566/ESTADO_Y_OBJETIVO.md)
+Eso sirve para operar, pero no para sostener investigación fuerte.  
+Necesitas un **Evidence Bundle** obligatorio.
+
+### Estructura
+```text
+outputs/
+  evidence/
+    claims.json
+    claim_checks.json
+    metrics.json
+    environment.json
+    seeds.json
+    data_sources.json
+    source_map.json
+    experiment_manifest.json
+    reviewer_report.json
+    reproducibility_check.json
+```
+
+### Contrato de cada archivo
+- `claims.json`: cada afirmación verificable detectada en el draft
+- `claim_checks.json`: estado de verificación por claim
+- `metrics.json`: ya existe como input de triage, pero debes versionarlo. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7202532b-9845-487f-a7de-f9d1e7c82d91/HIPERVISOR_Y_PARALELO.md)
+- `environment.json`: Python, paquetes, SO, commit SHA, CUDA si aplica
+- `seeds.json`: seeds efectivas por experimento
+- `data_sources.json`: datasets, papers, URLs, repos
+- `source_map.json`: claim → fuente
+- `reviewer_report.json`: evaluaciones cruzadas
+- `reproducibility_check.json`: resultado de rerun o verificación
+
+### Ejemplo de `claims.json`
+```json
+[
+  {
+    "claim_id": "c1",
+    "section": "related_work",
+    "text": "Nuestro método supera el baseline X por 2 puntos de F1",
+    "type": "quantitative",
+    "requires": ["metrics", "baseline", "experiment_id"]
+  },
+  {
+    "claim_id": "c2",
+    "section": "introduction",
+    "text": "El trabajo Y es el estado del arte en este dominio",
+    "type": "literature",
+    "requires": ["source_count", "citation_support"]
+  }
+]
+```
+
+## Fase 4
+
+El `quality_check` actual está documentado como opcional. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md)
+Eso debe cambiar de raíz.  
+No debe existir ningún run “publicable” si no pasó quality gates obligatorios.
+
+### Gates obligatorios
+- **Gate A — Estructural:** misión válida, outputs mínimos presentes
+- **Gate B — Epistémico:** claims verificables soportados
+- **Gate C — Experimental:** métricas presentes y consistentes
+- **Gate D — Reproducibilidad:** seed + entorno + comando + artefactos
+- **Gate E — Integridad:** sin contradicciones entre draft, metrics y triage
+- **Gate F — Seguridad:** sin comandos peligrosos ni paths inseguros, extendiendo lo que ya existe en `command_safety.py` y `server/paths.py`. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/c50b626d-9b37-4b0e-869a-e4da0477bc88/06-seguridad.md)
+
+### Ejemplo de `claim_checks.json`
+```json
+{
+  "summary": {
+    "total_claims": 18,
+    "passed": 13,
+    "failed": 3,
+    "warning": 2
+  },
+  "claims": [
+    {
+      "claim_id": "c1",
+      "status": "passed",
+      "evidence": ["outputs/evidence/metrics.json"],
+      "reason": "metric delta matches threshold"
+    },
+    {
+      "claim_id": "c2",
+      "status": "failed",
+      "evidence": [],
+      "reason": "insufficient literature support"
+    }
+  ],
+  "publishable": false
+}
+```
+
+### Regla dura
+- Si `publishable: false`, no se publica web, no se marca breakthrough público, no se genera release.
+
+## Fase 5
+
+Tu triage actual ya distingue tiers 0–3, usa `outputs/metrics.json`, genera `triage_report.json`, `events.jsonl`, `FAILURES.md` y se integra con `paper-parallel`, `run_pipeline_v2`, webhooks y Notion tier 3. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/21cc0d45-dc7b-47d2-8085-e5a39c1d7fd3/NOTION_MCP_TRIAGE.md)
+Eso está muy bien, pero el triage hoy es más una clasificación final que un sistema completo de evaluación comparativa. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7202532b-9845-487f-a7de-f9d1e7c82d91/HIPERVISOR_Y_PARALELO.md)
+Hay que convertirlo en un **hypervisor experimental**.
+
+### Extensión del `metrics.json`
+```json
+{
+  "schema_version": 2,
+  "exit_code": 0,
+  "main": 0.85,
+  "baseline": 0.80,
+  "coverage": 0.92,
+  "math_checks": "PASS",
+  "anomaly_detected": false,
+  "oom_error": false,
+  "seed": 42,
+  "n_runs": 5,
+  "confidence_interval": [0.83, 0.87],
+  "dataset_hash": "sha256:...",
+  "code_commit": "abc123",
+  "runtime_sec": 1832
+}
+```
+
+### Nuevo proceso de triage
+1. Verifica completitud del `metrics.json`
+2. Cruza misión + quality gates + resultados
+3. Evalúa consistencia con claims
+4. Decide tier
+5. Decide promoción:
+   - `tier 0`: crash, nada más
+   - `tier 1`: resultado negativo honesto
+   - `tier 2`: replicación o casi-SOTA
+   - `tier 3`: breakthrough elegible
+6. Genera salida humana y salida máquina
+
+### Nuevos outputs
+- `outputs/triage/triage_report.json`
+- `outputs/triage/triage_card.md`
+- `outputs/triage/decision.json`
+- `outputs/triage/failure_autopsy.md`
+
+## Fase 6
+
+Tu proyecto ya tiene `paper-loop`, `paper-meta-loop` y `paper-meta-watch`, con directivas `@PERPLEXITY`, `@NOTION` y `@CURSOR` sobre `cursor_turn.md` y `next_instruction.md`. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/8b3cfa7f-9353-4e2f-a123-19ae861643ea/GUIA_FLUJO_COMPLETO.md)
+Esa parte ya es una ventaja competitiva real. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/8b3cfa7f-9353-4e2f-a123-19ae861643ea/GUIA_FLUJO_COMPLETO.md)
+Lo que falta es volver el loop **seguro y no degradante**.
+
+### Debes implementar 4 detectores
+- `LoopStallDetector` — el docs ya menciona `LOOP_STALLED` como salida 8. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/20669b06-afe7-4446-8232-4d39e92148f4/GUIA_PRUEBAS_Y_DEBUG.md)
+- `DraftRegressionDetector`
+- `ClaimRegressionDetector`
+- `SectionDriftDetector`
+
+### Input
+- `draft_paper.md` anterior
+- `draft_paper.md` nuevo
+- `claims.json` anterior/nuevo
+- `quality_gaps.md`
+- `next_instruction.md`
+
+### Output
+```json
+{
+  "loop_cycle": 4,
+  "status": "blocked",
+  "reasons": [
+    "draft_regression",
+    "claim_support_dropped",
+    "no_new_evidence_added"
+  ],
+  "recommended_action": "stop_and_review"
+}
+```
+
+### Regla
+- Si 2 ciclos consecutivos empeoran soporte de claims o densidad útil, el loop se detiene aunque el meta-loop quiera continuar.
+
+## Fase 7
+
+El paralelo actual ya corre worktrees aislados, soporta `paper-parallel batch`, acepta `specs.json`, usa `enable_hypervisor_triage`, rellena `spec.tier_result` y puede conservar ramas breakthrough. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7202532b-9845-487f-a7de-f9d1e7c82d91/HIPERVISOR_Y_PARALELO.md)
+Eso te da la base para el laboratorio de hipótesis. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7202532b-9845-487f-a7de-f9d1e7c82d91/HIPERVISOR_Y_PARALELO.md)
+Ahora necesitas convertir `specs.json` en una **matriz de experimentos declarativa**.
+
+### Input `specs.json`
+```json
+[
+  {
+    "exp_id": "exp-001",
+    "mission_md_content": "...",
+    "hypothesis": "dynamic_l1_warmup",
+    "command": ["python", "train.py", "--variant", "dynamic_l1"],
+    "branch_name": "exp/dynamic-l1"
+  },
+  {
+    "exp_id": "exp-002",
+    "mission_md_content": "...",
+    "hypothesis": "pca_decoder_init",
+    "command": ["python", "train.py", "--variant", "pca_init"],
+    "branch_name": "exp/pca-init"
+  }
+]
+```
+
+### Output agregado
+- `batch_summary.json`
+- `leaderboard.json`
+- `experiment_matrix.tsv`
+- `top_candidates.json`
+
+### Proceso
+1. Generar specs desde hipótesis de la misión
+2. Lanzar worktrees
+3. Correr comando del agente o experimento
+4. Validar `metrics.json`
+5. Ejecutar triage
+6. Agregar resultados
+7. Promover solo candidatos que superen gates
+
+## Fase 8
+
+La API actual ya tiene `paper-web`, health, CRUD de misiones, `POST .../run`, SSE por `run_id`, acceso a draft, loop, snapshots y otros routers. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e4898275-1061-4471-b568-bc84ab3d263a/03-servidor-api.md)
+La guía de pruebas también deja claro que la API y la web deben ser probadas separadas del pipeline y del frontend. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/20669b06-afe7-4446-8232-4d39e92148f4/GUIA_PRUEBAS_Y_DEBUG.md)
+Eso indica que la base es correcta; ahora toca llevarla de MVP a cockpit.
+
+### Nuevos endpoints
+- `GET /api/missions/{id}/ledger/latest`
+- `GET /api/missions/{id}/evidence/latest`
+- `GET /api/missions/{id}/triage/latest`
+- `GET /api/missions/{id}/claims/latest`
+- `POST /api/missions/{id}/publish/preview`
+- `POST /api/missions/{id}/parallel/specs/generate`
+
+### Vistas web
+- **Mission Editor v2**
+- **Run Timeline**
+- **Phase DAG**
+- **Claims Board**
+- **Evidence Board**
+- **Parallel Leaderboard**
+- **Triage Console**
+- **Publish Preview**
+
+### Regla UX
+La web ya no debe ser solo una capa visual sobre comandos. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/20669b06-afe7-4446-8232-4d39e92148f4/GUIA_PRUEBAS_Y_DEBUG.md)
+Debe mostrar el mismo estado oficial del `run_ledger.json`.
+
+## Fase 9
+
+La integración con Notion hoy usa `NOTION_TOKEN`, `notion_page_id` y `NOTION_TRIAGE_PAGE_ID`, y explícitamente no habla con MCP desde Python sino con REST usando el mismo token de integración. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/09e305af-834a-48d5-969d-85a24aa47561/04-integraciones.md)
+Eso es una buena decisión porque separa el runtime Python del runtime del IDE. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/21cc0d45-dc7b-47d2-8085-e5a39c1d7fd3/NOTION_MCP_TRIAGE.md)
+Ahora hay que formalizar el rol de Notion.
+
+### No usar Notion como verdad canónica
+- El truth source es disco/versionado
+- Notion es tablero operativo y editorial
+
+### Bases o páginas mínimas
+1. **Research Missions**
+2. **Runs**
+3. **Breakthroughs**
+4. **Failures / Honest negatives**
+5. **Publication Queue**
+
+### Payload de sync
+```json
+{
+  "mission_id": "wildfire-sae-001",
+  "run_id": "2026-03-25T22-46-10Z__wildfire-sae-001",
+  "status": "completed",
+  "triage_tier": 2,
+  "target_metric": "f1",
+  "main_metric": 0.84,
+  "publishable": false,
+  "artifacts": {
+    "draft": "outputs/draft_paper.md",
+    "triage": "outputs/triage/triage_report.json"
+  }
+}
+```
+
+## Fase 10
+
+Las integraciones actuales ya contemplan `PERPLEXITY_SESSION_TOKEN`, `perplexity_webui_scraper`, `single_thread_perplexity`, `NOTION_TOKEN`, `CURSOR_API_KEY`, `CURSOR_AGENT_BIN`, `CURSOR_CLI_TIMEOUT_SEC` y trazas de `cursor_cli_subprocess_done` en `outputs/run.log`. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/09e305af-834a-48d5-969d-85a24aa47561/04-integraciones.md)
+La seguridad actual ya cubre path traversal en `mission_id`, patrones peligrosos de comandos, secretos fuera de git y timeouts/logs de subprocess. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/c50b626d-9b37-4b0e-869a-e4da0477bc88/06-seguridad.md)
+Ahora falta seguridad y resiliencia de nivel plataforma.
+
+### Debes añadir
+- `Adapter` por integración con interfaz uniforme
+- política de reintentos
+- clasificación de fallos transitorios/permanentes
+- circuit breaker por proveedor
+- checksum de outputs críticos
+- procedencia de fuentes
+- validación de licencia/origen para assets de publicación
+- sandboxing más fuerte para ejecuciones generadas
+
+### Ejemplo de adapter
+```python
+class ResearchProviderAdapter(Protocol):
+    def preflight(self) -> ProviderStatus: ...
+    def execute(self, request: ProviderRequest) -> ProviderResponse: ...
+    def classify_error(self, exc: Exception) -> ProviderErrorClass: ...
+    def redact(self, event: dict) -> dict: ...
+```
+
+## Fase 11
+
+Tus docs de pruebas ya son bastante buenos: recomiendan `pytest -m "not integration and not notion_real" -q`, separan validación por CLI, outputs, API y web, y explican cómo probar `paper-pipeline`, `paper-loop`, `paper-meta-loop`, `paper-meta-watch` y `paper-cursor-agent`. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/f9cf5b1d-12d3-4fc3-8db6-f58f05a8d6ec/README.md)
+También existe una guía específica para pruebas por niveles, runs reales, paralelo 10 y Notion. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/f6e6b0f2-c1f5-4a22-8f77-8645aa04f635/PRUEBAS_NIVELES_5_10_NOTION.md)
+La evolución correcta es montar una pirámide de pruebas institucional.
+
+### Pirámide final
+- **Nivel 1 — Schema tests**
+- **Nivel 2 — Unit tests**
+- **Nivel 3 — Contract tests**
+- **Nivel 4 — Golden-output tests**
+- **Nivel 5 — Integration tests**
+- **Nivel 6 — Parallel stress tests**
+- **Nivel 7 — Replay tests**
+- **Nivel 8 — Publish tests**
+
+### Casos imprescindibles
+- misión inválida
+- reanudación de run
+- loop con STOP correcto
+- loop con degradación detectada
+- `metrics.json` inconsistente
+- tier 3 con webhook/Notion
+- `paper-parallel batch` con 10 specs
+- API + SSE + web leyendo el mismo ledger
+- reproducibility rerun desde evidence bundle
+
+## Fase 12
+
+Tu proyecto hoy genera borradores y artefactos operativos, pero no tiene aún un paquete final de publicación realmente estandarizado. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/886127c1-6ba3-41c6-93c8-a9e1888b8566/ESTADO_Y_OBJETIVO.md)
+La publicación debe ser una consecuencia del estado validado, no una rama lateral.  
+Debes definir tres productos de salida.
+
+### Producto A
+**Research Pack**
+- `draft_paper.md`
+- `claim_checks.json`
+- `metrics.json`
+- `triage_report.json`
+- `environment.json`
+- `source_map.json`
+
+### Producto B
+**Code Pack**
+- código
+- commit SHA
+- lockfiles
+- comando reproducible
+- tests mínimos
+- benchmark summary
+
+### Producto C
+**Web Pack**
+- landing del experimento
+- abstract
+- figures
+- claims soportados
+- tabla de métricas
+- links a code/data/report
+
+### Ejemplo de `publish_decision.json`
+```json
+{
+  "run_id": "2026-03-25T22-46-10Z__wildfire-sae-001",
+  "eligible_for_publication": true,
+  "reasons": [],
+  "packs_generated": [
+    "research_pack",
+    "code_pack",
+    "web_pack"
+  ]
+}
+```
+
+## Estructura final del repo
+
+```text
+paper_pipeline/
+  pipeline/
+  loop/
+  parallel/
+  debug/
+  epistemic/
+  validation/
+  evidence/
+  state/
+  publication/
+  integrations/
+  server/
+schemas/
+docs/
+tests/
+web/
+```
+
+### Submódulos nuevos
+- `validation/claim_validator.py`
+- `validation/degradation_monitor.py`
+- `validation/quality_gate_runner.py`
+- `evidence/bundle_builder.py`
+- `state/run_ledger.py`
+- `publication/publish_manager.py`
+- `integrations/adapters/*.py`
+
+## Orden exacto de implementación
+
+### Sprint 1
+- congelar `mission.schema.json`
+- crear normalizador de misión
+- crear `run_ledger.json`
+- adaptar CLI y API para leer/escribir ledger
+
+### Sprint 2
+- mover orquestador a fases v2
+- dejar `quality_validation` obligatorio
+- crear `claim_extraction`
+
+### Sprint 3
+- crear `evidence_bundle`
+- endurecer `metrics.json`
+- acoplar triage a evidence + quality
+
+### Sprint 4
+- detectores de degradación del loop
+- políticas de stop
+- diff semántico entre drafts
+
+### Sprint 5
+- panel web de ledger + triage + evidence
+- endpoints nuevos
+- Mission Editor v2
+
+### Sprint 6
+- sync completo a Notion
+- leaderboard paralelo
+- publish manager
+- paquete web
+
+### Sprint 7
+- stress tests
+- replay tests
+- reproducibility reruns
+- documentación final de operador y contribuidor
+
+## Proceso diario de operación
+
+Una vez implementado, el proceso real de uso debería ser así:
+
+1. Crear misión v2 en web o YAML
+2. `mission_validation`
+3. `preflight`
+4. run lineal o paralelo
+5. ensamblado
+6. extracción de claims
+7. validación
+8. evidence bundle
+9. triage
+10. sync a Notion
+11. publicación si y solo si gates pasan
+
+### Flujo mínimo CLI
+```bash
+paper-pipeline mission.md --v2
+paper-parallel batch --repo . --specs specs.json
+paper-web --reload
+pytest -m "not integration and not notion_real" -q
+```
+Los comandos base ya existen para pipeline, loop, meta-loop, web, pruebas y paralelo; lo que cambia con este plan es el contrato y la disciplina con que se conectan. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/f9cf5b1d-12d3-4fc3-8db6-f58f05a8d6ec/README.md)
+
+## Qué no debes hacer
+
+No sigas agregando más comandos antes de congelar esquema y ledger.  
+No uses Notion como sistema canónico. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/21cc0d45-dc7b-47d2-8085-e5a39c1d7fd3/NOTION_MCP_TRIAGE.md)
+No permitas que `quality_check` siga siendo un lujo opcional si el objetivo es investigación fuerte. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/e843d991-f393-40ca-ab25-f77146640570/02-orquestador.md)
+No dejes que `visual-flow` o la UI vendan una ilusión mayor que la lógica real del terminal y del runner. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/886127c1-6ba3-41c6-93c8-a9e1888b8566/ESTADO_Y_OBJETIVO.md)
+No aceptes un breakthrough solo por `main > baseline`; hoy el triage ya usa eso como parte del sistema, pero tu versión final debe exigir evidencia más dura además de la métrica. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/7202532b-9845-487f-a7de-f9d1e7c82d91/HIPERVISOR_Y_PARALELO.md)
+
+## Tu checklist de implementación real
+
+| Semana | Objetivo | Inputs | Outputs |
+|---|---|---|---|
+| 1 | Congelar contrato | docs actuales, runner, loop, triage | `mission.schema.json`, normalizador, plan de migración |
+| 2 | Estado canónico | `run.log`, `manifest.json`, `run_state.json` | `run_ledger.json` |
+| 3 | Quality gates | draft, metrics, mission | `claim_checks.json`, `quality_validation.json` |
+| 4 | Evidence bundle | outputs existentes | carpeta `outputs/evidence/` |
+| 5 | Triage v2 | metrics + evidence + gates | `decision.json`, `triage_card.md` |
+| 6 | Loop seguro | drafts + claims + gaps | detectores de degradación |
+| 7 | Paralelo laboratorio | `specs.json`, worktrees | leaderboard y promoción automática |
+| 8 | API/UI cockpit | ledger + evidence + triage | pantallas nuevas y endpoints |
+| 9 | Notion/GitHub publish | ledger + publish decision | tableros y publication queue |
+| 10 | Stress/replay/repro | evidence bundles y lotes reales | estabilidad y reproducibilidad verificadas |
+
+## Mi recomendación final de implementación
+
+Empieza en este orden exacto: **Mission Schema v2 → Run Ledger → Orquestador v2 → Quality Gates obligatorios → Evidence Bundle → Triage v2 → Loop seguro → Web cockpit → Publicación**. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/5da860f8-daae-48fa-96c3-f69582c1f61d/01-arquitectura.md)
+Ese orden respeta la realidad de tu proyecto actual, porque hoy ya tienes runner, loop, outputs, API, worktrees, triage, Notion opcional y pruebas por capas; lo que falta no es “más magia”, sino convertir esas piezas en un sistema con contratos y decisiones fuertes. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/60798252/cdf518f8-f85d-44cd-ada9-5e836da100c1/OUTPUTS_REFERENCE.md)
+Y por tu perfil —investigación seria, interpretabilidad, autonomía útil y cero humo— te conviene construir primero la infraestructura que te obligue a decir la verdad, incluso cuando el run salga mal.
+

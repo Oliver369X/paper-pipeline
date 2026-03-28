@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "output_dir_writable",
+      "ok": true,
+      "detail": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\9f7e5c88bd45\\outputs"
+    },
+    {
+      "name": "perplexity_token_present",
+      "ok": true,
+      "detail": "set"
+    },
+    {
+      "name": "cursor_api_key_present",
+      "ok": true,
+      "detail": "set"
+    },
+    {
+      "name": "cursor_agent_on_path",
+      "ok": true,
+      "detail": "C:\\Users\\OLIVER\\AppData\\Local\\cursor-agent\\agent.CMD"
+    }
+  ],
+  "blocking_reasons": []
+}

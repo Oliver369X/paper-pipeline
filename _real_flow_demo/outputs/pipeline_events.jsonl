@@ -1,0 +1,3 @@
+{"event": "section_start", "ts": "2026-03-26T19:01:51.466466+00:00", "section": "gaps", "step": "perplexity:gaps"}
+{"event": "section_done", "ts": "2026-03-26T19:02:12.867082+00:00", "section": "gaps", "duration_s": 21.406, "chars": 3062}
+{"event": "draft_assembled", "ts": "2026-03-26T19:02:12.915415+00:00", "path": "_real_flow_demo\\outputs\\draft_paper.md"}

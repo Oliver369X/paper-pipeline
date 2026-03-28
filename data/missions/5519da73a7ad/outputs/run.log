@@ -1,0 +1,11 @@
+{"event": "step_start", "step": "pipeline", "mission": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\5519da73a7ad\\mission.md", "topic": "Research topic", "dry_run": false, "ts": "2026-03-24T16:31:50.974788+00:00"}
+{"event": "step_start", "step": "perplexity:gaps", "model": "best", "ts": "2026-03-24T16:31:50.987945+00:00"}
+{"event": "step_ok", "step": "perplexity:gaps", "duration_s": 20.42, "chars": 5597, "ts": "2026-03-24T16:32:11.408094+00:00"}
+{"event": "step_start", "step": "perplexity:methodology", "model": "best", "ts": "2026-03-24T16:32:11.410931+00:00"}
+{"event": "step_ok", "step": "perplexity:methodology", "duration_s": 45.77, "chars": 13368, "ts": "2026-03-24T16:32:57.171203+00:00"}
+{"event": "step_start", "step": "perplexity:experiments", "model": "best", "ts": "2026-03-24T16:32:57.174198+00:00"}
+{"event": "step_ok", "step": "perplexity:experiments", "duration_s": 45.7, "chars": 13577, "ts": "2026-03-24T16:33:42.877440+00:00"}
+{"event": "draft_snapshot", "hash": "b817a2aade55", "chars": 32947, "ts": "2026-03-24T16:33:43.023836+00:00"}
+{"event": "step_start", "step": "step:quality_check", "model": "best", "ts": "2026-03-24T16:33:43.026967+00:00"}
+{"event": "step_ok", "step": "step:quality_check", "duration_s": 30.72, "chars": 7078, "ts": "2026-03-24T16:34:13.744557+00:00"}
+{"event": "step_ok", "step": "pipeline", "duration_s": 142.78, "calls_used": 4, "max_calls": 8, "ts": "2026-03-24T16:34:13.753762+00:00"}

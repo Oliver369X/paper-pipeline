@@ -1,0 +1,35 @@
+exit=0
+--- stdout ---
+
+## Mejora continua **12/12** (pulido final)
+
+Según `racing_prompts.py`, la iteración **12** corresponde a `(12-1) % 6 === 5` → **pulido final** (consistencia, constantes nombradas, optimizaciones menores sin cambiar el gameplay).
+
+### Cambios realizados
+
+1. **`config.js`**
+   - **`GAME.recoveryDtSeconds`**: paso mínimo al recuperar física tras error (antes `1e-6` en `main.js`).
+   - **`NUM_EPS`**: tolerancias compartidas para derivadas en curva, longitud de arco, tangente horizontal, raíces cuadráticas y clamp en bordes.
+   - **`TRACK_LEVELS`**: alturas Y de hierba, asfalto, bordes y línea central.
+   - **`TRACK_PALETTE`**: colores y materiales PBR (roughness/metalness) del entorno y colores de meta/postes.
+   - **`FINISH_VISUAL`**: colores del canvas a cuadros, repetición de textura y parámetros de material de banda y postes.
+   - **`HUD.speedPercentMax`**: tope del porcentaje de velocidad en el HUD (antes `100` literal).
+
+2. **`motion.js`**, **`curve-utils.js`**, **`track.js`**: usan esas constantes en lugar de números sueltos.
+
+3. **`main.js`**: `HUD.speedPercentMax` y `GAME.recoveryDtSeconds`.
+
+4. **`timing.js`**: `MS_PER_MINUTE`, `MS_PER_SECOND`, `CENTISECONDS_PER_SECOND` para el formato `m:ss.cs`.
+
+5. **`README.md`**: tabla de `config.js` actualizada con los nuevos bloques exportados.
+
+6. **`outputs/code/racing/INTEGRATION_TRANSCRIPT.md`**: sección **12/12** con resumen y **ESTADO: LISTO**.
+
+**Archivos tocados:** `outputs/code/X/config.js`, `motion.js`, `curve-utils.js`, `track.js`, `main.js`, `timing.js`, `README.md`, y `outputs/code/racing/INTEGRATION_TRANSCRIPT.md`.
+
+---
+
+**`ESTADO: LISTO`** — Bucle **12/12** cerrado; tunings y presentación quedan centralizados en `config.js` y el comportamiento del juego se mantiene igual.
+
+--- stderr ---
+

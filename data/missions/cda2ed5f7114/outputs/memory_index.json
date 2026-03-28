@@ -1,0 +1,220 @@
+{
+  "version": 1,
+  "counts_by_kind": {
+    "brain_brief": 1,
+    "quality": 1,
+    "publish": 2,
+    "run_consolidation": 2,
+    "triage": 1
+  },
+  "last_event": {
+    "ts": "2026-03-27T20:40:00.977191+00:00",
+    "memory_id": "4efd92248c59",
+    "kind": "run_consolidation",
+    "mission_id": null,
+    "run_id": null,
+    "summary": "Consolidación post-hypervisor en orquestador v2",
+    "confidence": 0.85,
+    "source_artifacts": [
+      "triage/triage_report.json",
+      "publication/publish_decision.json",
+      "run_ledger.json",
+      "objective_state.json"
+    ],
+    "tags": [
+      "run",
+      "hypervisor"
+    ],
+    "payload": {
+      "phase": "post_hypervisor"
+    }
+  },
+  "latest_by_kind": {
+    "brain_brief": {
+      "ts": "2026-03-27T20:34:07.671457+00:00",
+      "memory_id": "a41c04ba1dd1",
+      "kind": "brain_brief",
+      "mission_id": "cda2ed5f7114",
+      "run_id": null,
+      "summary": "# Brief Doctoral: Curvatura de Pérdida y la Transición Memorización-Razonamiento\n\nEste proyecto se centra en la réplica y extensión del trabajo de **Merullo et al. (2025)**, *“From Memorization to Reasoning in the Spectrum of Loss Curvature”*. La tesis central es que el espacio de parámetros de los Transformers no es homogéneo: la **memorización** (overfitting de datos específicos) reside en direc",
+      "confidence": 0.7,
+      "source_artifacts": [
+        "outputs/brain_brief.md"
+      ],
+      "tags": [
+        "brain",
+        "brief"
+      ],
+      "payload": {
+        "mission_id": "cda2ed5f7114",
+        "paper_target": "arXiv:2510.24256"
+      }
+    },
+    "quality": {
+      "ts": "2026-03-27T20:39:32.649104+00:00",
+      "memory_id": "51836b8e9ba3",
+      "kind": "quality",
+      "mission_id": null,
+      "run_id": null,
+      "summary": "Quality gates OK",
+      "confidence": 0.8,
+      "source_artifacts": [
+        "validation/quality_validation.json"
+      ],
+      "tags": [
+        "quality",
+        "publishable"
+      ],
+      "payload": {
+        "mission_version": 1,
+        "all_passed": true,
+        "gates": [
+          {
+            "id": "structural_draft",
+            "passed": true,
+            "detail": "word_count=4217"
+          },
+          {
+            "id": "structural_sections",
+            "passed": true,
+            "detail": "ok"
+          },
+          {
+            "id": "epistemic_claim_candidates",
+            "passed": true,
+            "detail": "claim_candidates=34"
+          },
+          {
+            "id": "epistemic_alignment",
+            "passed": true,
+            "detail": {
+              "replication_tier": "planning_only",
+              "mode": "off"
+            }
+          },
+          {
+            "id": "fallback_transparency",
+            "passed": true,
+            "detail": {
+              "fallback_from_hf_import": true,
+              "has_replication_status_md": true,
+              "draft_mentions_degraded": true
+            }
+          },
+          {
+            "id": "downstream_metrics_declared",
+            "passed": true,
+            "detail": {
+              "keyword_hits": 6,
+              "replication_fidelity": "extension_exploratory",
+              "mode": "off"
+            }
+          }
+        ],
+        "blocking_reasons": [],
+        "warnings": [],
+        "publishable": true
+      }
+    },
+    "publish": {
+      "ts": "2026-03-27T20:40:00.899470+00:00",
+      "memory_id": "78ee6ccab27d",
+      "kind": "publish",
+      "mission_id": null,
+      "run_id": null,
+      "summary": "Publish elegible",
+      "confidence": 0.8,
+      "source_artifacts": [
+        "publication/publish_decision.json",
+        "triage/triage_report.json"
+      ],
+      "tags": [
+        "publish",
+        "insufficient_metrics"
+      ],
+      "payload": {
+        "eligible_for_publication": true,
+        "blocking_reasons": [],
+        "mission_version": 1,
+        "quality_publishable": true,
+        "triage_tier": 2,
+        "triage_label": "insufficient_metrics"
+      }
+    },
+    "run_consolidation": {
+      "ts": "2026-03-27T20:40:00.977191+00:00",
+      "memory_id": "4efd92248c59",
+      "kind": "run_consolidation",
+      "mission_id": null,
+      "run_id": null,
+      "summary": "Consolidación post-hypervisor en orquestador v2",
+      "confidence": 0.85,
+      "source_artifacts": [
+        "triage/triage_report.json",
+        "publication/publish_decision.json",
+        "run_ledger.json",
+        "objective_state.json"
+      ],
+      "tags": [
+        "run",
+        "hypervisor"
+      ],
+      "payload": {
+        "phase": "post_hypervisor"
+      }
+    },
+    "triage": {
+      "ts": "2026-03-27T20:40:00.857263+00:00",
+      "memory_id": "ca35cbee4633",
+      "kind": "triage",
+      "mission_id": null,
+      "run_id": null,
+      "summary": "Triage insufficient_metrics (tier 2)",
+      "confidence": 0.8,
+      "source_artifacts": [
+        "triage/triage_report.json"
+      ],
+      "tags": [
+        "triage",
+        "tier_2",
+        "insufficient_metrics"
+      ],
+      "payload": {
+        "version": 1,
+        "tier": 2,
+        "label": "insufficient_metrics",
+        "reason": "No primary metric; classified as neutral match (no breakthrough claim)",
+        "detail": {},
+        "metrics": {
+          "exit_code": 0,
+          "main": null,
+          "baseline": null,
+          "coverage": null,
+          "math_checks": null,
+          "anomaly_detected": false,
+          "oom_error": false,
+          "notes": ""
+        },
+        "quality_gates": {
+          "target_metric": "",
+          "higher_is_better": true,
+          "sota_baseline_value": 0.0,
+          "breakthrough_margin": 0.02,
+          "replication_tolerance": 0.01,
+          "require_statistical_significance": true,
+          "epistemic_alignment_mode": "off",
+          "downstream_metrics_mode": "off"
+        }
+      }
+    }
+  },
+  "source_artifacts": [
+    "outputs/brain_brief.md",
+    "validation/quality_validation.json",
+    "publication/publish_decision.json",
+    "run_ledger.json",
+    "objective_state.json",
+    "triage/triage_report.json"
+  ],
+  "last_updated_at": "2026-03-27T20:40:00.995447+00:00"
+}

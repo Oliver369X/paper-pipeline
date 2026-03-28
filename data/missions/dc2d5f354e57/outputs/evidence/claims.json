@@ -1,0 +1,242 @@
+[
+  {
+    "claim_id": "line_11",
+    "line": 11,
+    "text": "<!-- section=methodology generated=2026-03-27T16:29:15.224571+00:00 model=best -->",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_18",
+    "line": 18,
+    "text": "The goal is to edit $$ M $$ post-training to minimize % Memorized on $$ s_A $$ (target: -100% change) while keeping test accuracy/perplexity near baseline (0% change).[2](https://mansisak.com/memorization/)[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_24",
+    "line": 24,
+    "text": "- **Unlearning** (post-training, weight/neuron-based): Greedy, Durable, Subnet, neuron methods (e.g., Hard Concrete, Integrated Gradients)—BalancedSubnet outperforms by balancing memorization removal and performance preservation across model sizes/data types.[2](https://mansisak.com/memorization/)[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_34",
+    "line": 34,
+    "text": "1. Train baseline TinyMem LMs (2-16 layers, math/language tasks) with artifacts (5-10% noise/backdoors) until memorization emerges (~epochs 50-3500).[2](https://mansisak.com/memorization/)",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_37",
+    "line": 37,
+    "text": "Run over 3 seeds, HP tune (K=0.1-1%, epochs=10-100, loss_weight=0.5-0.9).[2](https://mansisak.com/memorization/)",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_40",
+    "line": 40,
+    "text": "On 4-layer TinyMem (math+noise/backdoor), achieve ≥90% memorization reduction (% diff ≤-90) with ≤5% accuracy drop, faster than fine-tuning (<10s avg.); replicate on Pythia-2.8B with ≥50% reduction and <5% perplexity increase.[4](https://arxiv.org/abs/2410.02159v2)[1](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)[2](https://mansisak.com/memorization/)",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_54",
+    "line": 54,
+    "text": "<!-- section=experiments generated=2026-03-27T16:29:53.986298+00:00 model=best -->",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_153",
+    "line": 153,
+    "text": "- Save only the best‑performing checkpoint per method to avoid over‑fitting to the evaluation set.",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_185",
+    "line": 185,
+    "text": "| BSN (best‑λ)        | +0.52            | 0.12           | +0.09         | -0.04        | 9.0       | tuned λ |",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_207",
+    "line": 207,
+    "text": "<!-- section=gaps generated=2026-03-27T16:30:07.918499+00:00 model=best -->",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_226",
+    "line": 226,
+    "text": "<!-- section=sota generated=2026-03-27T16:30:21.708851+00:00 model=best -->",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_228",
+    "line": 228,
+    "text": "**BalancedSubnet represents the current state-of-the-art method for mitigating memorization in language models through machine unlearning.**[1](https://arxiv.org/abs/2410.02159v2)",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_230",
+    "line": 230,
+    "text": "Introduced in the ICLR 2025 paper \"Mitigating Memorization in Language Models,\" it extends the Subnet approach by training a binary mask to identify and prune subnetworks responsible for memorized sequences while penalizing masks that affect non-memorized tasks.  This weight-based unlearning technique outperforms regularizers, fine-tuning, and other unlearning methods (e.g., Greedy, Durable, neuron-based like Hard Concrete) in reducing regurgitation while preserving downstream performance and ef",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_243",
+    "line": 243,
+    "text": "| % Memorized | % of artifact sequences (noise/backdoors) regurgitated verbatim via greedy decoding | Lower (ideally ~0%)  |",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_248",
+    "line": 248,
+    "text": "BalancedSubnet achieves near-complete memorization removal (0-0.06% memorized) with minimal degradation (e.g., 96.11-96.79% accuracy on math, perplexity 57.18-71.86 on language for 4-layer TinyMem).",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_252",
+    "line": 252,
+    "text": "| TinyMem Math 4L | Noise | 34.73 → 0.06 | 96.98 → 96.11% | 6.00 |",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_253",
+    "line": 253,
+    "text": "| TinyMem Math 4L | Backdoor | 99.50 → 0.00 | 96.97 → 96.79% | 5.88 |",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_259",
+    "line": 259,
+    "text": "It consistently excels across model sizes (2-16 layers), training durations, and data sizes, often reducing % memorized by ~100% with <5% performance drop.",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_268",
+    "line": 268,
+    "text": "<!-- section=datasets generated=2026-03-27T16:43:22.938395+00:00 model=best -->",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_286",
+    "line": 286,
+    "text": "## Best-fit shortlist",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_288",
+    "line": 288,
+    "text": "If you want the smallest set of public sources that best match the BalancedSubnet paper, use these three: **TinyMem synthetic sequences**, **Wikipedia-based toy language data**, and **The Pile / Pythia checkpoints**. That combination covers the paper’s main evaluation modes: controlled synthetic artifacts, natural-language memorization, and larger production-style models.[1](https://github.com/msakarvadia/memorization)",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_294",
+    "line": 294,
+    "text": "<!-- section=related_code generated=2026-03-27T16:43:42.091569+00:00 model=best -->",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_319",
+    "line": 319,
+    "text": "- **Last‑update signal**: Jupyter notebooks and CSVs were last updated in 2025, with full Pythia unlearning runs and “best runs” CSVs.[2](https://github.com/msakarvadia/memorization/blob/main/README.md)[1](https://github.com/msakarvadia/memorization)",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_328",
+    "line": 328,
+    "text": "- **Relevance**: Conceptual reference that **uses BalancedSubnet (BSN)** as an SOTA unlearning baseline for evaluating memorization via loss‑curvature, useful if you want to compare or extend BalancedSubnet‑style masking.[5](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_338",
+    "line": 338,
+    "text": "<!-- section=limitations generated=2026-03-27T16:30:38.131897+00:00 model=best -->",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_346",
+    "line": 346,
+    "text": "TinyMem injects artificial noise (±1 perturbations) or backdoors (trigger-replacement sequences), which simplifies detection but diverges from real memorization of PII, code, or copyrighted text in diverse corpora like The Pile.  Synthetic math/language tasks enable precise artifact control but may inflate unlearning efficacy, as real data lacks such clean \"clean vs. memorized\" splits; generalization to organic Pile-extracted sequences in Pythia is promising but limited to ~50-90% memorization r",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_365",
+    "line": 365,
+    "text": "<!-- section=discussion generated=2026-03-27T16:30:55.319958+00:00 model=best -->",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_370",
+    "line": 370,
+    "text": "BalancedSubnet extends Subnet unlearning by incorporating a balanced objective that penalizes masks affecting non-memorized tasks, addressing limitations in neuron- vs. weight-based methods from works like Chang et al. (2024) and Maini et al. (2023). Unlike regularizers (e.g., spectral norm, loss truncation) or fine-tuning, which trade off effectiveness or efficiency, BalancedSubnet achieves superior memorization reduction (near -100%) with minimal perplexity/accuracy loss, as shown in TinyMem a",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_376",
+    "line": 376,
+    "text": "Test BalancedSubnet on frontier LLMs (e.g., Llama-3.1 405B) with real-world extraction attacks like those in Carlini et al. (2023), evaluating against relearning vulnerabilities. Scale to multi-modal models and sequential unlearning requests, measuring fidelity via loss landscapes and extractability metrics. Explore hybrid integration with RLHF for alignment-specific forgets, varying forget set sizes up to 1% of training data.[4](https://arxiv.org/abs/2503.01854)[8](https://www.lesswrong.com/pos",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_382",
+    "line": 382,
+    "text": "<!-- section=conclusion generated=2026-03-27T16:43:48.739930+00:00 model=best -->",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  }
+]

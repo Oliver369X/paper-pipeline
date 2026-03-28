@@ -1,0 +1,784 @@
+topic: Research topic
+venue_target: generic venue
+sota_techniques:
+- '**Title, authors, year**'
+- '**Key technical finding**'
+- '**Main mathematical contribution**, and'
+- a *generic* venue label (e.g., “arXiv‑first, generic‑AI‑venue‑level”).[2](https://arxiv.org/abs/2412.12121)
+- '**Authors:** A. Grattafiori et al. (Meta) [arXiv:2407.21783][4](https://arxiv.org/abs/2407.21783)[2](https://arxiv.org/abs/2412.12121)'
+- '**Year:** 2024 (v3 Nov 2024)'
+- '**Key technical finding:** Introduces a “herd” of open‑weight Llama‑3 language
+  models (up to 405B parameters) with strong multilingual, coding, reasoning, and
+  tool‑use capabilities; balances performance vs. openness.[2](https://arxiv.org/abs/2412.12121)[4](https://arxiv.org/abs/2407.21783)'
+- '**Mathematical contribution:** Systematic ablation of scaling laws (parameter count,
+  data mix, training compute) and evaluation protocols for foundation‑model quality;
+  empirical characterization of “good” post‑train configurations.[4](https://arxiv.org/abs/2407.21783)[2](https://arxiv.org/abs/2412.12121)'
+- '**Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.AI/cs.CL).[2](https://arxiv.org/abs/2412.12121)'
+- '**Authors:** Alibaba Tongyi Lab et al. [arXiv:2407.10671][2](https://arxiv.org/abs/2412.12121)'
+- '**Year:** 2024'
+- '**Key technical finding:** Presents **Qwen2**, a family of open‑source, multilingual
+  LLMs with strong performance on code, math, and reasoning, while remaining licensable
+  and inspectable.[2](https://arxiv.org/abs/2412.12121)'
+- '**Mathematical contribution:** Analysis of data‑scaling and model‑scaling curves
+  for multilingual quality; empirical justification of curriculum‑style data mixing
+  across language and code domains.[2](https://arxiv.org/abs/2412.12121)'
+- '**Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.CL).[2](https://arxiv.org/abs/2412.12121)'
+- '**Authors:** Google DeepMind et al. [arXiv:2403.05530][2](https://arxiv.org/abs/2412.12121)'
+mathematical_constraints: []
+known_pitfalls:
+- description: '**Symptom**: Training loss quickly becomes `NaN` or jumps to very
+    large values (e.g., 1e6+) in the first few steps.[4](https://www.dawsondean.com/PytorchDebugging.htm)[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Root cause**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Learning rate too high.
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Poor initialization (e.g., very large weights, or no initialization
+    at all).
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Unstable loss function (e.g., `log` on inputs that can be ≤0, or masking
+    that propagates `NaN` gradients).[5](https://github.com/pytorch/pytorch/issues/121416)[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)[6](https://intellipaat.com/blog/deep-learning-nan-loss-reasons/)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Verified fix**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Reduce learning rate significantly (often 1–2 orders of magnitude lower).
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Use standard initialization (`torch.nn.init.kaiming_normal_`, `xavier_normal`,
+    etc.).
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Avoid numerically fragile patterns such as `torch.log` on raw logits;
+    prefer log‑sum‑exp or `nn.LogSoftmax` + `NLLLoss` or `nn.CrossEntropyLoss` directly.[7](https://www.33rdsquare.com/pytorch-a-comprehensive-guide-to-common-mistakes/)[8](https://discuss.pytorch.org/t/loss-is-nan-vanishing-exploding-gradients/162130)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Symptom**: Loss plateaus immediately, gradients are exactly zero,
+    or `model.parameters()` barely change after many steps.[9](https://www.youtube.com/watch?v=O2wJ3tkc-TU)[10](https://docs.pytorch.org/rl/main/reference/generated/knowledge_base/PRO-TIPS.html)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Root cause**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Forgetting `optimizer.zero_grad()` inside the training loop, so gradients
+    accumulate from previous iterations.
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Accidentally detaching the graph (e.g., `.detach()` or `.data` on the
+    parameter tensors).
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Passing the wrong tensor into the loss (e.g., using `prediction.detach()`
+    instead of `prediction`).[10](https://docs.pytorch.org/rl/main/reference/generated/knowledge_base/PRO-TIPS.html)[9](https://www.youtube.com/watch?v=O2wJ3tkc-TU)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Verified fix**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'Always wrap the training step with:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Avoid inplace mutations and `.data`/`.detach()` on things that should
+    be trainable.[10](https://docs.pytorch.org/rl/main/reference/generated/knowledge_base/PRO-TIPS.html)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Symptom**: `RuntimeError: size mismatch`, `mat1 and mat2 shapes
+    cannot be multiplied`, or similar shape‑related errors during forward/backward.[13](https://www.byteplus.com/en/topic/401878)[11](https://www.learnpytorch.io/pytorch_most_common_errors/)'
+  source_paper: ''
+  symptom: size mismatch`, `mat1 and mat2 shapes cannot be multiplied`, or similar
+    shape‑related errors during forward/backward
+  fix: ''
+- description: '**Root cause**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Incorrect layer parameterization (e.g., `nn.Linear(in_features=10)`
+    but upstream convolution outputs  `batch × 16 × 32 × 32` and is passed directly
+    without `flatten`).
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Mismatched image/channel order (`C × H × W` vs `H × W × C`) baked into
+    a `__getitem__` or `DataLoader`.[14](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/common-pytorch-pitfalls)[11](https://www.learnpytorch.io/pytorch_most_common_errors/)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Verified fix**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'Always print intermediate shapes inside the model and inspect them
+    with a tiny dummy input:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Use `nn.Flatten` or explicit `.view()` with correct size (computed
+    from the conv output) rather than hard‑coding `in_features`.[11](https://www.learnpytorch.io/pytorch_most_common_errors/)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Symptom**: Loss starts at a very high value and does not meaningfully
+    improve, or model outputs “garbage” probabilities (e.g., all‑zeros logit vectors
+    capped at 1 after `softmax`).[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)[4](https://www.dawsondean.com/PytorchDebugging.htm)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Root cause**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Using `MSELoss` for classification indices instead of `CrossEntropyLoss`.
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Using integer‑class labels with `BCELoss` instead of `BCEWithLogitsLoss`.
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Applying `nn.Softmax` then `CrossEntropyLoss`, which is numerically
+    unstable and ignores the logits’ gradient structure.[9](https://www.youtube.com/watch?v=O2wJ3tkc-TU)[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Verified fix**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'For classification with integer labels: use `nn.CrossEntropyLoss`
+    on raw logits, no `softmax` beforehand.[8](https://discuss.pytorch.org/t/loss-is-nan-vanishing-exploding-gradients/162130)[9](https://www.youtube.com/watch?v=O2wJ3tkc-TU)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'For multi‑label or binary classification: use `BCEWithLogitsLoss`
+    on logits, not `BCELoss` on already‑squeezed probabilities.[7](https://www.33rdsquare.com/pytorch-a-comprehensive-guide-to-common-mistakes/)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Symptom**: Early‑layer gradients are near zero (vanishing), or gradients
+    suddenly jump to huge values and then `NaN`.[6](https://intellipaat.com/blog/deep-learning-nan-loss-reasons/)[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Root cause**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Unstable or improperly clipped gradients in long sequences or deep
+    stacks (e.g., self‑attention or RNN‑style modules reimplemented from scratch).
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Absence of proper initialization or normalization (no `LayerNorm`,
+    bad attention scores without scaling).
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Verified fix**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'Clip gradients by norm:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Use standard, well‑tested modules (e.g., `nn.MultiheadAttention` instead
+    of home‑grown multi‑head) when possible, and scale attention scores by `1/sqrt(d_k)`.[15](https://stackoverflow.com/questions/79027142/exploding-gradient-nan-training-loss-and-validation-loss-in-multi-head-self-at)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Symptom**: Sudden `NaN` or flat‑out wrong outputs; or “cannot be
+    multiplied on CUDA” errors when the model is on GPU but data is on CPU.[16](https://www.youtube.com/watch?v=szmXqtaXSWE)[11](https://www.learnpytorch.io/pytorch_most_common_errors/)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Root cause**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Mixing `torch.float32` and `torch.int64` (e.g., `CrossEntropyLoss`
+    with float labels).
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Forgetting to move data to the same device as the model (`model.cuda()`
+    but input on CPU).
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Incorrect normalization or augmentation (e.g., clipping ranges, augmenting
+    labels in the wrong order).[16](https://www.youtube.com/watch?v=szmXqtaXSWE)[11](https://www.learnpytorch.io/pytorch_most_common_errors/)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Verified fix**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'Always align device and dtype at the inner loop:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Normalize data to the same range as the model was designed for (e.g.,
+    imagenet normalization for pretrained CNNs) and avoid inplace augmentations that
+    mutate the same tensor across workers.[7](https://www.33rdsquare.com/pytorch-a-comprehensive-guide-to-common-mistakes/)[11](https://www.learnpytorch.io/pytorch_most_common_errors/)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Symptom**: Performance on validation drops, or results are noisy
+    even though training loss is low; sometimes `NaN` during validation if dropout
+    or batch‑norm is misconfigured.[9](https://www.youtube.com/watch?v=O2wJ3tkc-TU)[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Root cause**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Forgetting `model.train()` vs `model.eval()` around training and validation
+    loops.
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Not using `torch.no_grad()` in inference, which can cause memory blow‑ups
+    and subtle numerical issues under heavy load.[16](https://www.youtube.com/watch?v=szmXqtaXSWE)[9](https://www.youtube.com/watch?v=O2wJ3tkc-TU)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Verified fix**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'Wrap training and eval loops properly:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Symptom**: Reported metrics look good but cannot be reproduced;
+    or the “novel” module has no gradient or is effectively identity‑like.[2](https://arxiv.org/pdf/2307.13777.pdf)[1](https://das.encs.concordia.ca/pdf/ho2023empirical.pdf)'
+  source_paper: https://das.encs.concordia.ca/pdf/ho2023empirical.pdf
+  symptom: ''
+  fix: ''
+- description: '**Root cause**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Wrong implementation of the algorithm (e.g., incorrect masking, normalization,
+    or per‑sample weighting) classified as “wrong algorithm implementation” in an
+    empirical study of PyTorch bugs.[17](https://arxiv.org/abs/2307.13777v1)[2](https://arxiv.org/pdf/2307.13777.pdf)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Accidentally breaking the computation graph (e.g., converting to NumPy,
+    then back to tensor, or using `@torch.no_grad()` in the middle of an update step)..[1](https://das.encs.concordia.ca/pdf/ho2023empirical.pdf)[2](https://arxiv.org/pdf/2307.13777.pdf)
+  source_paper: https://das.encs.concordia.ca/pdf/ho2023empirical.pdf
+  symptom: ''
+  fix: ''
+- description: '**Verified fix**:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Add unit tests for the model’s gradient flow on small synthetic data
+    (gradient ≠ zero, parameter stats change after a step).
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Match the implementation to the paper’s pseudocode or known‑correct
+    reference (e.g., official library implementations or well‑tested repos like `PyTorch‑Research‑Paper‑Implementations`).[18](https://github.com/cjfghk5697/Pytorch-Research-Paper-Implementations)[17](https://arxiv.org/abs/2307.13777v1)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+reference_implementations:
+- name: topics/sparse-autoencoders
+  github_url: https://github.com/topics/sparse-autoencoders
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: koayon/awesome-sparse-autoencoders
+  github_url: https://github.com/koayon/awesome-sparse-autoencoders
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: jbloomAus/SAELens
+  github_url: https://github.com/jbloomAus/SAELens
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: saelens/SKILL.md
+  github_url: https://github.com/zechenzhangAGI/AI-research-SKILLs/blob/main/04-mechanistic-interpretability/saelens/SKILL.md
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: EleutherAI/sparsify
+  github_url: https://github.com/EleutherAI/sparsify
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: ai-safety-foundation/sparse_autoencoder
+  github_url: https://github.com/ai-safety-foundation/sparse_autoencoder
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: neelnanda-io/TransformerLens
+  github_url: https://github.com/neelnanda-io/TransformerLens
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: ayyucekizrak/Mechanistic-Interpretability
+  github_url: https://github.com/ayyucekizrak/Mechanistic-Interpretability
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: neelnanda-io/sae-dashboard
+  github_url: https://github.com/neelnanda-io/sae-dashboard
+  key_design_decisions: []
+  what_not_to_copy: []
+- name: neelnanda-io/1L-Sparse-Autoencoder
+  github_url: https://github.com/neelnanda-io/1L-Sparse-Autoencoder
+  key_design_decisions: []
+  what_not_to_copy: []
+compute_requirements:
+  estimated_gpu_memory_gb: 16.0
+  estimated_training_time_minutes: 180.0
+  requires_gpu: true
+  delegate_to_colab: true
+  colab_accelerator: A100
+poison_pills:
+- false_claim: The standard evaluation metric for 'Research topic' is pixel accuracy.
+  reason_it_is_false: Pixel accuracy is a segmentation metric unrelated to most ML
+    research topics.
+  detection_query: Is pixel accuracy the standard evaluation metric for Research topic?
+- false_claim: The Transformer architecture used in 'Research topic' was invented
+    by Yann LeCun in 1998.
+  reason_it_is_false: The Transformer was introduced by Vaswani et al. in 2017 ('Attention
+    Is All You Need').
+  detection_query: Who invented the Transformer architecture and in what year?
+- false_claim: Standard practice in 'Research topic' is to use a learning rate greater
+    than 1.0.
+  reason_it_is_false: Learning rates > 1.0 destabilise training; typical range is
+    1e-5 to 1e-2.
+  detection_query: Is a learning rate greater than 1.0 standard practice in Research
+    topic?
+perplexity_sources:
+- https://ai.gopubby.com/2024s-most-influential-ai-papers-ef9197a8d24a?gi=dc1ea85ed898
+- https://arxiv.org/abs/2412.12121
+- https://arxiv.org/html/2412.12121v1
+- https://arxiv.org/abs/2407.21783
+- https://ml-digest.com/top-20-most-influential-ai-research-papers-of-2024/
+- https://www.youtube.com/watch?v=Zsb-uY4_Tls
+- https://machinelearningmastery.com/5-most-influential-machine-learning-papers-2024/
+- https://www.youtube.com/watch?v=tF-SBS5PuQY
+- https://github.com/topics/sparse-autoencoders
+- https://www.perplexity.ai/search/b0d16120-47db-4242-b162-40a5a44e1212
+- https://github.com/koayon/awesome-sparse-autoencoders
+- https://github.com/jbloomAus/SAELens
+- https://playbooks.com/skills/davila7/claude-code-templates/mechanistic-interpretability-saelens
+- https://github.com/zechenzhangAGI/AI-research-SKILLs/blob/main/04-mechanistic-interpretability/saelens/SKILL.md
+- https://www.perplexity.ai/search/43842c2b-dc52-4691-8266-02ec9a148ca3
+- https://github.com/EleutherAI/sparsify
+- https://repos.ecosyste.ms/hosts/GitHub/owners/EleutherAI?order=desc&sort=stargazers_count
+- https://github.com/ai-safety-foundation/sparse_autoencoder
+- https://ai-safety-foundation.github.io/sparse_autoencoder/
+- https://github.com/neelnanda-io/TransformerLens
+- https://www.lesswrong.com/posts/hnzHrdqn3nrjveayv/how-to-transformer-mechanistic-interpretability-in-50-lines
+- https://github.com/ayyucekizrak/Mechanistic-Interpretability
+- https://github.com/neelnanda-io/sae-dashboard
+- https://github.com/neelnanda-io/1L-Sparse-Autoencoder
+generation_timestamp: '2026-03-26T20:59:14.403962+00:00'
+dca_version: '2.0'
+raw_sota_papers_text: "Here is a concise, curated list of **15–20 of the most influential\
+  \ and highly cited AI‑related research papers from 2024–2026**, based on citation‑weighted\
+  \ arXiv‑based analyses (such as the NLLG “top‑40” list) and post‑2024 commentary.\
+  \  For each entry I give:[1](https://ai.gopubby.com/2024s-most-influential-ai-papers-ef9197a8d24a?gi=dc1ea85ed898)[2](https://arxiv.org/abs/2412.12121)[3](https://arxiv.org/html/2412.12121v1)\n\
+  - **Title, authors, year**  \n- **Key technical finding**  \n- **Main mathematical\
+  \ contribution**, and  \n- a *generic* venue label (e.g., “arXiv‑first, generic‑AI‑venue‑level”).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n***\n\n### 1. **The Llama 3 Herd of Models**  \n- **Authors:** A. Grattafiori\
+  \ et al. (Meta) [arXiv:2407.21783][4](https://arxiv.org/abs/2407.21783)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2024 (v3 Nov 2024)  \n- **Key technical finding:** Introduces a “herd”\
+  \ of open‑weight Llama‑3 language models (up to 405B parameters) with strong multilingual,\
+  \ coding, reasoning, and tool‑use capabilities; balances performance vs. openness.[2](https://arxiv.org/abs/2412.12121)[4](https://arxiv.org/abs/2407.21783)\n\
+  - **Mathematical contribution:** Systematic ablation of scaling laws (parameter\
+  \ count, data mix, training compute) and evaluation protocols for foundation‑model\
+  \ quality; empirical characterization of “good” post‑train configurations.[4](https://arxiv.org/abs/2407.21783)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.AI/cs.CL).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 2. **Qwen2 Technical Report**  \n- **Authors:** Alibaba Tongyi Lab et al.\
+  \ [arXiv:2407.10671][2](https://arxiv.org/abs/2412.12121)\n- **Year:** 2024  \n\
+  - **Key technical finding:** Presents **Qwen2**, a family of open‑source, multilingual\
+  \ LLMs with strong performance on code, math, and reasoning, while remaining licensable\
+  \ and inspectable.[2](https://arxiv.org/abs/2412.12121)\n- **Mathematical contribution:**\
+  \ Analysis of data‑scaling and model‑scaling curves for multilingual quality; empirical\
+  \ justification of curriculum‑style data mixing across language and code domains.[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.CL).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 3. **Gemini 1.5: Unlocking multimodal understanding across millions of tokens**\
+  \  \n- **Authors:** Google DeepMind et al. [arXiv:2403.05530][2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2024  \n- **Key technical finding:** Introduces **Gemini 1.5** with\
+  \ extremely long context windows (millions of tokens) and strong multimodal reasoning\
+  \ while preserving generation quality.[2](https://arxiv.org/abs/2412.12121)\n- **Mathematical\
+  \ contribution:** Modifications to the Transformer architecture and token‑wise contextualization\
+  \ to maintain low latency and memory cost at ultra‑long sequences; empirical study\
+  \ of context‑length vs. reasoning quality.[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.CL).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 4. **Mamba: Linear‑Time Sequence Modeling with Selective State Spaces**  \n\
+  - **Authors:** A. Gu et al. [arXiv:2312.00752][2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2023 (high‑impact in 2024–2025)  \n- **Key technical finding:** Proposes\
+  \ **Mamba**, a selective state‑space model for sequences that scales linearly in\
+  \ sequence length and matches or exceeds Transformer performance on long‑context\
+  \ tasks.[1](https://ai.gopubby.com/2024s-most-influential-ai-papers-ef9197a8d24a?gi=dc1ea85ed898)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Mathematical contribution:** Reformulation of state‑space models with input‑dependent\
+  \ hidden‑state transitions (“selection”) and a structured matrix parameterization\
+  \ that enables efficient recurrence and parallel training.[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.LG).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 5. **Direct Preference Optimization: Your Language Model is Secretly a Reward\
+  \ Model**  \n- **Authors:** R. Rafailov et al. [arXiv:2305.18290][3](https://arxiv.org/html/2412.12121v1)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2023 (dominant in 2024–2025)  \n- **Key technical finding:** Shows that\
+  \ **DPO** can align LLMs directly from human preference data **without** an explicit\
+  \ reward‑model training loop, reducing training cost and tuning complexity.[3](https://arxiv.org/html/2412.12121v1)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Mathematical contribution:** Reformulation of the Bradley‑Terry reward‑learning\
+  \ objective into a single‑step policy optimization problem; derivation of the “implicit\
+  \ reward” that a policy encodes when maximizing DPO‑style log‑ratios.[3](https://arxiv.org/html/2412.12121v1)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.LG).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 6. **Vision Mamba: Efficient Visual Representation Learning with Bidirectional\
+  \ State Space Models**  \n- **Authors:** J. Zhang et al. [arXiv:2401.09417][1](https://ai.gopubby.com/2024s-most-influential-ai-papers-ef9197a8d24a?gi=dc1ea85ed898)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2024  \n- **Key technical finding:** Adapts the Mamba framework to vision,\
+  \ showing that **Vision Mamba (Vim)** can achieve strong image‑classification and\
+  \ detection performance without self‑attention.[1](https://ai.gopubby.com/2024s-most-influential-ai-papers-ef9197a8d24a?gi=dc1ea85ed898)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Mathematical contribution:** Extension of selective state‑space models to grid‑structured\
+  \ data via bidirectional scanning and channel‑wise mixing; analysis of receptive‑field\
+  \ growth and effective context under Mamba‑style recurrence.[1](https://ai.gopubby.com/2024s-most-influential-ai-papers-ef9197a8d24a?gi=dc1ea85ed898)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.CV).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 7. **Mixtral of Experts**  \n- **Authors:** Mistral AI et al. [arXiv:2401.04088][2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2024  \n- **Key technical finding:** Introduces a **Sparse Mixture‑of‑Experts\
+  \ (SMoE)** architecture (Mixtral 8×7B) that activates only a subset of experts per\
+  \ token, improving throughput and cost‑efficiency.[5](https://ml-digest.com/top-20-most-influential-ai-research-papers-of-2024/)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Mathematical contribution:** Sparse gating and load‑balancing objectives for\
+  \ MoE; empirical characterization of how sparsity and expert‑count trade off against\
+  \ parameter‑count and training‑stability.[5](https://ml-digest.com/top-20-most-influential-ai-research-papers-of-2024/)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.LG).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 8. **Phi‑3 Technical Report: A Highly Capable Language Model Locally on Your\
+  \ Phone**  \n- **Authors:** Microsoft Research et al. [arXiv:2404.14219][2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2024  \n- **Key technical finding:** Presents **Phi‑3**, a small family\
+  \ of high‑quality LLMs (3B–14B) trained on high‑quality academic‑style data, optimized\
+  \ to run efficiently on edge devices.[6](https://www.youtube.com/watch?v=Zsb-uY4_Tls)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Mathematical contribution:** Empirical comparison of data‑quality‑vs‑‑quantity\
+  \ scaling curves; compact Transformer layouts with reduced intermediate dimensionality\
+  \ and latency‑aware training.[6](https://www.youtube.com/watch?v=Zsb-uY4_Tls)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.CL).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 9. **Retrieval‑Augmented Generation for Large Language Models: A Survey**\
+  \  \n- **Authors:** Various (survey authors) [arXiv:2312.10997][2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2023 (massive uptake in 2024–2025)  \n- **Key technical finding:** Systematically\
+  \ categorizes **RAG** architectures, prompting techniques, and evaluation regimes,\
+  \ helping standardize practice for production‑scale LLMs.[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Mathematical contribution:** Formalization of RAG as a conditional‑generation\
+  \ problem over retrieved documents, plus analysis of approximation bounds and error‑propagation\
+  \ when retrieval is noisy.[2](https://arxiv.org/abs/2412.12121)\n- **Venue level:**\
+  \ arXiv‑first, generic‑AI‑venue‑level (cs.CL).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 10. **QLoRA: Efficient Finetuning of Quantized LLMs**  \n- **Authors:** T.\
+  \ Dettmers et al. [arXiv:2305.14314][2](https://arxiv.org/abs/2412.12121)\n- **Year:**\
+  \ 2023  \n- **Key technical finding:** Introduces **QLoRA**, a 4‑bit‑quantized LLM\
+  \ finetuning method that dramatically reduces GPU memory and cost while preserving\
+  \ performance.[7](https://machinelearningmastery.com/5-most-influential-machine-learning-papers-2024/)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Mathematical contribution:** Design of 4‑bit quantization with normal‑scaling\
+  \ and double‑quantization, plus low‑rank‑adaptation (LoRA) integration; error‑propagation\
+  \ analysis under reduced‑precision training.[7](https://machinelearningmastery.com/5-most-influential-machine-learning-papers-2024/)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.LG).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 11. **KAN: Kolmogorov‑Arnold Networks**  \n- **Authors:** Z. Chen et al. [arXiv:2404.19756][1](https://ai.gopubby.com/2024s-most-influential-ai-papers-ef9197a8d24a?gi=dc1ea85ed898)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2024  \n- **Key technical finding:** Proposes **KAN** as an alternative\
+  \ to MLPs, using learnable univariate functions and combinatorial basis to approximate\
+  \ smooth functions with fewer parameters.[1](https://ai.gopubby.com/2024s-most-influential-ai-papers-ef9197a8d24a?gi=dc1ea85ed898)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Mathematical contribution:** Discretization of the Kolmogorov‑Arnold representation\
+  \ theorem into a practical, differentiable neural architecture; empirical validation\
+  \ of high parameter‑efficiency on PDE and symbolic tasks.[1](https://ai.gopubby.com/2024s-most-influential-ai-papers-ef9197a8d24a?gi=dc1ea85ed898)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.LG).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 12. **DeepSeek‑Coder: When the Large Language Model Meets Programming – The\
+  \ Rise of Code Intelligence**  \n- **Authors:** DeepSeek AI et al. [arXiv:2401.14196][2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2024  \n- **Key technical finding:** Shows that **DeepSeek‑Coder** models,\
+  \ trained on large code corpora, outperform many closed‑source coders on code‑generation\
+  \ and repair benchmarks.[8](https://www.youtube.com/watch?v=tF-SBS5PuQY)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Mathematical contribution:** Empirical analysis of token‑level and function‑level\
+  \ code‑generation objectives, and study of how code‑specific tokenization and curriculum‑mixing\
+  \ affect generalization.[8](https://www.youtube.com/watch?v=tF-SBS5PuQY)[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.SE / cs.CL).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 13. **3D Gaussian Splatting for Real‑Time Radiance Field Rendering**  \n-\
+  \ **Authors:** J. Luiten et al. [arXiv:2308.04079][2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2023 (high‑impact in 2024–2025)  \n- **Key technical finding:** Introduces\
+  \ **3D Gaussian Splatting** as a fast, raster‑based alternative to NeRF, enabling\
+  \ real‑time radiance‑field rendering and editing.[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Mathematical contribution:** Continuous formulation of scene‑representation\
+  \ as a sum of Gaussian‑weighted splats, with closed‑form rendering and differentiable\
+  \ rasterization for inverse‑rendering optimization.[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Venue level:** arXiv‑first, generic‑AI‑venue‑level (cs.GR/cs.CV).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 14. **Improved Baselines with Visual Instruction Tuning**  \n- **Authors:**\
+  \ Various (follow‑up on original BLIP‑style setups) [arXiv:2310.03744][2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2023 (widely cited in 2024–2025)  \n- **Key technical finding:** Presents\
+  \ refined **visual instruction‑tuning** pipelines that improve generalization of\
+  \ vision‑language models on diverse downstream tasks.[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Mathematical contribution:** Formalization of visual‑instruction‑tuning as a\
+  \ multi‑task, cross‑modal objective; empirical study of how data‑mixing and prompt‑design\
+  \ affect zero‑shot transfer.[2](https://arxiv.org/abs/2412.12121)\n- **Venue level:**\
+  \ arXiv‑first, generic‑AI‑venue‑level (cs.CV).[2](https://arxiv.org/abs/2412.12121)\n\
+  \n### 15. **Efficient Memory Management for Large Language Model Serving with PagedAttention**\
+  \  \n- **Authors:** Various [arXiv:2309.06180][2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2023  \n- **Key technical finding:** Introduces **PagedAttention**,\
+  \ a memory‑management technique that reduces KV‑cache fragmentation and improves\
+  \ serving throughput for LLMs.[2](https://arxiv.org/abs/2412.12121)\n- **Mathematical\
+  \ contribution:** Structured memory‑allocation scheme for variable‑length sequences,\
+  \ with analytical bounds on memory‑usage and latency under batching and attention‑span\
+  \ constraints.[2](https://arxiv.org/abs/2412.12121)\n- **Venue level:** arXiv‑first,\
+  \ generic‑AI‑venue‑level (cs.LG).[2](https://arxiv.org/abs/2412.12121)\n\n### 16.\
+  \ **Qwen2‑VL: Enhancing Vision‑Language Model’s Perception of the World at Any Resolution**\
+  \  \n- **Authors:** Alibaba Tongyi Lab et al. [arXiv:2409.12191][2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2024  \n- **Key technical finding:** Extends Qwen2 to vision‑language,\
+  \ enabling input of images at arbitrary resolutions and maintaining strong performance\
+  \ on multimodal reasoning.[2](https://arxiv.org/abs/2412.12121)\n- **Mathematical\
+  \ contribution:** Adaptive tiling and positional‑encoding schemes that preserve\
+  \ spatial coherence under variable‑resolution patching; empirical analysis of resolution‑aware\
+  \ scaling laws.[2](https://arxiv.org/abs/2412.12121)\n- **Venue level:** arXiv‑first,\
+  \ generic‑AI‑venue‑level (cs.CV).[2](https://arxiv.org/abs/2412.12121)\n\n### 17.\
+  \ **Tree of Thoughts: Deliberate Problem Solving with Large Language Models**  \n\
+  - **Authors:** S. Long et al. [arXiv:2305.10601][2](https://arxiv.org/abs/2412.12121)\n\
+  - **Year:** 2023 (still influential in 2025)  \n- **Key technical finding:** Introduces\
+  \ **Tree of Thoughts (ToT)**, a search‑based reasoning framework for LLMs that explores\
+  \ multiple reasoning paths and backtracks, improving complex‑task performance.[2](https://arxiv.org/abs/2412.12121)\n\
+  - **Mathematical contribution:** Formalization of LLM‑driven reasoning as tree‑search\
+  \ over generated “thoughts”; analysis of expected‑utility gains vs. cost of additional\
+  \ generations.[2](https://arxiv.org/abs/2412.12121)\n- **Venue level:** arXiv‑first,\
+  \ generic‑AI‑venue‑level (cs.CL).[2](https://arxiv.org/abs/2412.12121)\n\n### 18.\
+  \ **PaLM‑E: An Embodied Multimodal Language Model**  \n- **Authors:** Google et\
+  \ al. [arXiv:2303.03378][2](https://arxiv.org/abs/2412.12121)\n- **Year:** 2023\
+  \  \n- **Key technical finding:** Integrates vision, language, and robotics into\
+  \ a single **PaLM‑E** model, enabling direct mapping from multimodal inputs to robot\
+  \ actions.[2](https://arxiv.org/abs/2412.12121)\n- **Mathematical contribution:**\
+  \ Composition of visual encoders, language models, and action‑decoders into a unified\
+  \ transformer‑based latent space; analysis of transfer across vision‑language and\
+  \ control tasks.[2](https://arxiv.org/abs/2412.12121)\n- **Venue level:** arXiv‑first,\
+  \ generic‑AI‑venue‑level (cs.LG).[2](https://arxiv.org/abs/2412.12121)\n\n***\n\n\
+  If you tell me your precise **“Research topic”** (for example: “LLM alignment,”\
+  \ “interpretable transformers,” “multimodal safety,” or “state‑space‑based agents”),\
+  \ I can prune this list to **only papers that are directly relevant to your project**\
+  \ and, if you want, write a short **literature‑map / roadmap** connecting those\
+  \ 10–15 key papers.  \n\nWhat is your specific research topic within 2024–2026 AI?\
+  \  \n-  \n-  \n-"
+raw_pitfalls_text: "Research‑oriented PyTorch code tends to repeat a small set of\
+  \ implementation mistakes that either break training (NaNs, crashes) or silently\
+  \ corrupt the experiment. Below are some of the most common such patterns, each\
+  \ with symptom, root cause, and verified fix, plus links to papers or issues where\
+  \ they are documented or discussed.[1](https://das.encs.concordia.ca/pdf/ho2023empirical.pdf)[2](https://arxiv.org/pdf/2307.13777.pdf)[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)\n\
+  \n***\n\n### 1. Exploding / NaN loss early in training\n\n- **Symptom**: Training\
+  \ loss quickly becomes `NaN` or jumps to very large values (e.g., 1e6+) in the first\
+  \ few steps.[4](https://www.dawsondean.com/PytorchDebugging.htm)[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)\n\
+  - **Root cause**:  \n  - Learning rate too high.  \n  - Poor initialization (e.g.,\
+  \ very large weights, or no initialization at all).  \n  - Unstable loss function\
+  \ (e.g., `log` on inputs that can be ≤0, or masking that propagates `NaN` gradients).[5](https://github.com/pytorch/pytorch/issues/121416)[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)[6](https://intellipaat.com/blog/deep-learning-nan-loss-reasons/)\n\
+  - **Verified fix**:  \n  - Reduce learning rate significantly (often 1–2 orders\
+  \ of magnitude lower).  \n  - Use standard initialization (`torch.nn.init.kaiming_normal_`,\
+  \ `xavier_normal`, etc.).  \n  - Avoid numerically fragile patterns such as `torch.log`\
+  \ on raw logits; prefer log‑sum‑exp or `nn.LogSoftmax` + `NLLLoss` or `nn.CrossEntropyLoss`\
+  \ directly.[7](https://www.33rdsquare.com/pytorch-a-comprehensive-guide-to-common-mistakes/)[8](https://discuss.pytorch.org/t/loss-is-nan-vanishing-exploding-gradients/162130)\n\
+  \n  Example “bad” pattern on a masked loss that caused `NaN` gradients in PyTorch:\
+  \ issue #121416 shows how applying reduction on masked tensors in the wrong order\
+  \ produces `grad = nan` even when the unmasked value looks correct.[5](https://github.com/pytorch/pytorch/issues/121416)\n\
+  \n***\n\n### 2. Gradients never updating or optimizer effectively doing nothing\n\
+  \n- **Symptom**: Loss plateaus immediately, gradients are exactly zero, or `model.parameters()`\
+  \ barely change after many steps.[9](https://www.youtube.com/watch?v=O2wJ3tkc-TU)[10](https://docs.pytorch.org/rl/main/reference/generated/knowledge_base/PRO-TIPS.html)\n\
+  - **Root cause**:  \n  - Forgetting `optimizer.zero_grad()` inside the training\
+  \ loop, so gradients accumulate from previous iterations.  \n  - Accidentally detaching\
+  \ the graph (e.g., `.detach()` or `.data` on the parameter tensors).  \n  - Passing\
+  \ the wrong tensor into the loss (e.g., using `prediction.detach()` instead of `prediction`).[10](https://docs.pytorch.org/rl/main/reference/generated/knowledge_base/PRO-TIPS.html)[9](https://www.youtube.com/watch?v=O2wJ3tkc-TU)\n\
+  - **Verified fix**:  \n  - Always wrap the training step with:\n    ```python\n\
+  \    optimizer.zero_grad()\n    loss = criterion(output, target)\n    loss.backward()\n\
+  \    optimizer.step()\n    ```  \n    This pattern is standard in the “Zero to Mastery”\
+  \ PyTorch notebooks and is widely cited in PyTorch‑training guides.[11](https://www.learnpytorch.io/pytorch_most_common_errors/)[12](https://github.com/mrdbourke/pytorch-deep-learning/blob/main/extras/pytorch_most_common_errors.ipynb)\n\
+  \  - Avoid inplace mutations and `.data`/`.detach()` on things that should be trainable.[10](https://docs.pytorch.org/rl/main/reference/generated/knowledge_base/PRO-TIPS.html)\n\
+  \n***\n\n### 3. Shape mismatches in layers or data pipeline\n\n- **Symptom**: `RuntimeError:\
+  \ size mismatch`, `mat1 and mat2 shapes cannot be multiplied`, or similar shape‑related\
+  \ errors during forward/backward.[13](https://www.byteplus.com/en/topic/401878)[11](https://www.learnpytorch.io/pytorch_most_common_errors/)\n\
+  - **Root cause**:  \n  - Incorrect layer parameterization (e.g., `nn.Linear(in_features=10)`\
+  \ but upstream convolution outputs  `batch × 16 × 32 × 32` and is passed directly\
+  \ without `flatten`).  \n  - Mismatched image/channel order (`C × H × W` vs `H ×\
+  \ W × C`) baked into a `__getitem__` or `DataLoader`.[14](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/common-pytorch-pitfalls)[11](https://www.learnpytorch.io/pytorch_most_common_errors/)\n\
+  - **Verified fix**:  \n  - Always print intermediate shapes inside the model and\
+  \ inspect them with a tiny dummy input:\n    ```python\n    x = torch.randn(1, 3,\
+  \ 32, 32)\n    print(self.conv1(x).shape)  # sanity check\n    ```  \n    Tutorials\
+  \ and “common‑errors” pages systematically document this technique.[11](https://www.learnpytorch.io/pytorch_most_common_errors/)[14](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/common-pytorch-pitfalls)\n\
+  \  - Use `nn.Flatten` or explicit `.view()` with correct size (computed from the\
+  \ conv output) rather than hard‑coding `in_features`.[11](https://www.learnpytorch.io/pytorch_most_common_errors/)\n\
+  \n***\n\n### 4. Wrong loss function / label type\n\n- **Symptom**: Loss starts at\
+  \ a very high value and does not meaningfully improve, or model outputs “garbage”\
+  \ probabilities (e.g., all‑zeros logit vectors capped at 1 after `softmax`).[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)[4](https://www.dawsondean.com/PytorchDebugging.htm)\n\
+  - **Root cause**:  \n  - Using `MSELoss` for classification indices instead of `CrossEntropyLoss`.\
+  \  \n  - Using integer‑class labels with `BCELoss` instead of `BCEWithLogitsLoss`.\
+  \  \n  - Applying `nn.Softmax` then `CrossEntropyLoss`, which is numerically unstable\
+  \ and ignores the logits’ gradient structure.[9](https://www.youtube.com/watch?v=O2wJ3tkc-TU)[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)\n\
+  - **Verified fix**:  \n  - For classification with integer labels: use `nn.CrossEntropyLoss`\
+  \ on raw logits, no `softmax` beforehand.[8](https://discuss.pytorch.org/t/loss-is-nan-vanishing-exploding-gradients/162130)[9](https://www.youtube.com/watch?v=O2wJ3tkc-TU)\n\
+  \  - For multi‑label or binary classification: use `BCEWithLogitsLoss` on logits,\
+  \ not `BCELoss` on already‑squeezed probabilities.[7](https://www.33rdsquare.com/pytorch-a-comprehensive-guide-to-common-mistakes/)\n\
+  \n  PyTorch‑community discussions repeatedly flag this as a top pitfall; for example,\
+  \ custom incorrect cross‑entropy that manually applies `torch.log` on logits generates\
+  \ `NaN` where `nn.CrossEntropyLoss` would not.[8](https://discuss.pytorch.org/t/loss-is-nan-vanishing-exploding-gradients/162130)\n\
+  \n***\n\n### 5. Vanishing or exploding gradients in deep / RNN‑style models\n\n\
+  - **Symptom**: Early‑layer gradients are near zero (vanishing), or gradients suddenly\
+  \ jump to huge values and then `NaN`.[6](https://intellipaat.com/blog/deep-learning-nan-loss-reasons/)[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)\n\
+  - **Root cause**:  \n  - Unstable or improperly clipped gradients in long sequences\
+  \ or deep stacks (e.g., self‑attention or RNN‑style modules reimplemented from scratch).\
+  \  \n  - Absence of proper initialization or normalization (no `LayerNorm`, bad\
+  \ attention scores without scaling).  \n- **Verified fix**:  \n  - Clip gradients\
+  \ by norm:  \n    ```python\n    torch.nn.utils.clip_grad_norm_(model.parameters(),\
+  \ max_norm=1.0)\n    ```  \n    This is standard practice in sequence‑model papers\
+  \ and tutorials.[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)[6](https://intellipaat.com/blog/deep-learning-nan-loss-reasons/)\n\
+  \  - Use standard, well‑tested modules (e.g., `nn.MultiheadAttention` instead of\
+  \ home‑grown multi‑head) when possible, and scale attention scores by `1/sqrt(d_k)`.[15](https://stackoverflow.com/questions/79027142/exploding-gradient-nan-training-loss-and-validation-loss-in-multi-head-self-at)\n\
+  \n  Issues such as “NaN training loss in multi‑head self‑attention” show that a\
+  \ custom implementation of attention can cause exploding gradients while the official\
+  \ PyTorch module does not.[15](https://stackoverflow.com/questions/79027142/exploding-gradient-nan-training-loss-and-validation-loss-in-multi-head-self-at)\n\
+  \n***\n\n### 6. Data pipeline bug: wrong dtype, device, or augmentation\n\n- **Symptom**:\
+  \ Sudden `NaN` or flat‑out wrong outputs; or “cannot be multiplied on CUDA” errors\
+  \ when the model is on GPU but data is on CPU.[16](https://www.youtube.com/watch?v=szmXqtaXSWE)[11](https://www.learnpytorch.io/pytorch_most_common_errors/)\n\
+  - **Root cause**:  \n  - Mixing `torch.float32` and `torch.int64` (e.g., `CrossEntropyLoss`\
+  \ with float labels).  \n  - Forgetting to move data to the same device as the model\
+  \ (`model.cuda()` but input on CPU).  \n  - Incorrect normalization or augmentation\
+  \ (e.g., clipping ranges, augmenting labels in the wrong order).[16](https://www.youtube.com/watch?v=szmXqtaXSWE)[11](https://www.learnpytorch.io/pytorch_most_common_errors/)\n\
+  - **Verified fix**:  \n  - Always align device and dtype at the inner loop:\n  \
+  \  ```python\n    data, target = data.to(device), target.to(device)\n    output\
+  \ = model(data)\n    ```  \n  - Normalize data to the same range as the model was\
+  \ designed for (e.g., imagenet normalization for pretrained CNNs) and avoid inplace\
+  \ augmentations that mutate the same tensor across workers.[7](https://www.33rdsquare.com/pytorch-a-comprehensive-guide-to-common-mistakes/)[11](https://www.learnpytorch.io/pytorch_most_common_errors/)\n\
+  \n  Tutorials explicitly list “device errors” and “incorrect input shape” as among\
+  \ the top three PyTorch mistakes.[11](https://www.learnpytorch.io/pytorch_most_common_errors/)\n\
+  \n***\n\n### 7. Wrong train/eval mode or unclamped inference\n\n- **Symptom**: Performance\
+  \ on validation drops, or results are noisy even though training loss is low; sometimes\
+  \ `NaN` during validation if dropout or batch‑norm is misconfigured.[9](https://www.youtube.com/watch?v=O2wJ3tkc-TU)[3](https://apxml.com/courses/getting-started-with-pytorch/chapter-8-monitoring-debugging-models/inspecting-gradients-issues)\n\
+  - **Root cause**:  \n  - Forgetting `model.train()` vs `model.eval()` around training\
+  \ and validation loops.  \n  - Not using `torch.no_grad()` in inference, which can\
+  \ cause memory blow‑ups and subtle numerical issues under heavy load.[16](https://www.youtube.com/watch?v=szmXqtaXSWE)[9](https://www.youtube.com/watch?v=O2wJ3tkc-TU)\n\
+  - **Verified fix**:  \n  - Wrap training and eval loops properly:\n    ```python\n\
+  \    model.train()\n    for x, y in train_loader:\n        ...\n    \n    model.eval()\n\
+  \    with torch.no_grad():\n        for x, y in val_loader:\n            ...\n \
+  \   ```  \n    This is recommended in PyTorch‑best‑practice guides and debugging\
+  \ resources.[10](https://docs.pytorch.org/rl/main/reference/generated/knowledge_base/PRO-TIPS.html)[16](https://www.youtube.com/watch?v=szmXqtaXSWE)\n\
+  \n***\n\n### 8. Incorrect “research logic” in the model or loss\n\nHere the “bug”\
+  \ is not a runtime crash but a failure of the *scientific* hypothesis:\n\n- **Symptom**:\
+  \ Reported metrics look good but cannot be reproduced; or the “novel” module has\
+  \ no gradient or is effectively identity‑like.[2](https://arxiv.org/pdf/2307.13777.pdf)[1](https://das.encs.concordia.ca/pdf/ho2023empirical.pdf)\n\
+  - **Root cause**:  \n  - Wrong implementation of the algorithm (e.g., incorrect\
+  \ masking, normalization, or per‑sample weighting) classified as “wrong algorithm\
+  \ implementation” in an empirical study of PyTorch bugs.[17](https://arxiv.org/abs/2307.13777v1)[2](https://arxiv.org/pdf/2307.13777.pdf)\n\
+  \  - Accidentally breaking the computation graph (e.g., converting to NumPy, then\
+  \ back to tensor, or using `@torch.no_grad()` in the middle of an update step)..[1](https://das.encs.concordia.ca/pdf/ho2023empirical.pdf)[2](https://arxiv.org/pdf/2307.13777.pdf)\n\
+  - **Verified fix**:  \n  - Add unit tests for the model’s gradient flow on small\
+  \ synthetic data (gradient ≠ zero, parameter stats change after a step).  \n  -\
+  \ Match the implementation to the paper’s pseudocode or known‑correct reference\
+  \ (e.g., official library implementations or well‑tested repos like `PyTorch‑Research‑Paper‑Implementations`).[18](https://github.com/cjfghk5697/Pytorch-Research-Paper-Implementations)[17](https://arxiv.org/abs/2307.13777v1)\n\
+  \n***\n\nIf you tell me your current “research topic” (e.g., “sparse attention”,\
+  \ “interpreted RL”, “LLM‑based agent planner”), I can walk through the top 3–5 PyTorch‑specific\
+  \ failure modes for *that* paradigm and show concrete code snippets for the fix."
+raw_repos_text: '**The top 5-8 most-used open-source GitHub repositories focus on
+  Sparse Autoencoders (SAEs) for Mechanistic Interpretability, a key area in your
+  AI safety research at YAIS Lab.**[1](https://github.com/topics/sparse-autoencoders)
+
+
+  These are selected based on stars, mentions in research contexts, and adoption in
+  interpretability pipelines as of March 2026.[2](https://www.perplexity.ai/search/b0d16120-47db-4242-b162-40a5a44e1212)[1](https://github.com/topics/sparse-autoencoders)[3](https://github.com/koayon/awesome-sparse-autoencoders)
+
+
+  ## Top Repositories
+
+
+  | Repository | GitHub URL | Stars | Key Architectural Decisions (SotA) | Anti-Patterns
+  / Technical Debt |
+
+  |------------|------------|-------|------------------------------------|-------------------------------|
+
+  | SAELens | [jbloomAus/SAELens](https://github.com/jbloomAus/SAELens) | ~1,100+
+  [4](https://playbooks.com/skills/davila7/claude-code-templates/mechanistic-interpretability-saelens)[5](https://github.com/zechenzhangAGI/AI-research-SKILLs/blob/main/04-mechanistic-interpretability/saelens/SKILL.md)
+  | Modular PyTorch pipeline for training/analysis; L1/TopK sparsity; integrates TransformerLens
+  + Neuronpedia viz; pretrained SAEs; SAE-Vis dashboards for features. [6](https://github.com/jbloomAus/SAELens)[7](https://www.perplexity.ai/search/43842c2b-dc52-4691-8266-02ec9a148ca3)
+  | Frequent releases cause API churn; resid stream hookpoints dominant, custom ones
+  need hacks; heavy on disk-cached activations (storage overhead). [2](https://www.perplexity.ai/search/b0d16120-47db-4242-b162-40a5a44e1212)[7](https://www.perplexity.ai/search/43842c2b-dc52-4691-8266-02ec9a148ca3)
+  |
+
+  | sparsify | [EleutherAI/sparsify](https://github.com/EleutherAI/sparsify) | ~656
+  [8](https://repos.ecosyste.ms/hosts/GitHub/owners/EleutherAI?order=desc&sort=stargazers_count)
+  | Distributed TopK SAE training; on-the-fly activations (no disk cache); transcoders
+  for steering; scales to large models/datasets. [9](https://github.com/EleutherAI/sparsify)[8](https://repos.ecosyste.ms/hosts/GitHub/owners/EleutherAI?order=desc&sort=stargazers_count)
+  | Minimal config options limit research flexibility; recomputes activations (slow
+  hyperparam sweeps); lean docs vs. full pipelines. [9](https://github.com/EleutherAI/sparsify)[7](https://www.perplexity.ai/search/43842c2b-dc52-4691-8266-02ec9a148ca3)
+  |
+
+  | sparse_autoencoder | [ai-safety-foundation/sparse_autoencoder](https://github.com/ai-safety-foundation/sparse_autoencoder)
+  | ~1,500 (est. from prior) [2](https://www.perplexity.ai/search/b0d16120-47db-4242-b162-40a5a44e1212)
+  | Activation resampler curbs dead neurons; torchmetrics logging; wandb sweeps; customizable
+  PyTorch components. [10](https://ai-safety-foundation.github.io/sparse_autoencoder/)
+  | Genomic/biomed data formats (refactor for LLMs); sparse docs, trial-error heavy;
+  smaller scope than full pipelines. [2](https://www.perplexity.ai/search/b0d16120-47db-4242-b162-40a5a44e1212)[11](https://github.com/ai-safety-foundation/sparse_autoencoder)
+  |
+
+  | TransformerLens | [neelnanda-io/TransformerLens](https://github.com/neelnanda-io/TransformerLens)
+  [12](https://www.lesswrong.com/posts/hnzHrdqn3nrjveayv/how-to-transformer-mechanistic-interpretability-in-50-lines)
+  | ~3k+ (est.) | HookedTransformer for precise intervention; activation caching/hooking;
+  circuit analysis; SAE integration base. [12](https://www.lesswrong.com/posts/hnzHrdqn3nrjveayv/how-to-transformer-mechanistic-interpretability-in-50-lines)[13](https://github.com/ayyucekizrak/Mechanistic-Interpretability)
+  | Steep learning curve for hooks; focused on interp not pure SAE training; versioning
+  ties to specific models. [7](https://www.perplexity.ai/search/43842c2b-dc52-4691-8266-02ec9a148ca3)
+  |
+
+  | sae-dashboard | [neelnanda-io/sae-dashboard](https://github.com/neelnanda-io/sae-dashboard)
+  (or similar) | ~few hundred [7](https://www.perplexity.ai/search/43842c2b-dc52-4691-8266-02ec9a148ca3)
+  | Interactive feature viz/steering dashboards; pairs with SAEs for monosemanticity
+  checks. [7](https://www.perplexity.ai/search/43842c2b-dc52-4691-8266-02ec9a148ca3)
+  | Viz-only (no training); fragments ecosystem; basic UI lacks advanced metrics.
+  [7](https://www.perplexity.ai/search/43842c2b-dc52-4691-8266-02ec9a148ca3) |
+
+  | 1L-Sparse-Autoencoder | [neelnanda-io/1L-Sparse-Autoencoder](https://github.com/neelnanda-io/1L-Sparse-Autoencoder)
+  [14](https://github.com/neelnanda-io/1L-Sparse-Autoencoder) | Low hundreds | Anthropic
+  monosemanticity replication; gelu-1l focus; simple for educational starts. [14](https://github.com/neelnanda-io/1L-Sparse-Autoencoder)
+  | Toy-scale (1L); not production-ready; lacks scaling/multi-layer. [2](https://www.perplexity.ai/search/b0d16120-47db-4242-b162-40a5a44e1212)
+  |
+
+
+  **For YAIS Lab experiments, prioritize SAELens or sparsify: SAELens for analysis-rich
+  research, sparsify for scalable training on Colab/A100.**  Star counts approximate
+  from recent data; verify live on GitHub.[7](https://www.perplexity.ai/search/43842c2b-dc52-4691-8266-02ec9a148ca3)[4](https://playbooks.com/skills/davila7/claude-code-templates/mechanistic-interpretability-saelens)[9](https://github.com/EleutherAI/sparsify)[8](https://repos.ecosyste.ms/hosts/GitHub/owners/EleutherAI?order=desc&sort=stargazers_count)'
+raw_compute_text: 'Typical standard experiments in Sparse Autoencoders (SAEs) for
+  mechanistic interpretability, such as on GPT-2 small or similar 1-3B models with
+  24k features, require 8-16 GB of GPU memory and 30-180 minutes of training time.
+  Larger setups on mid-sized models like Llama or Minerva-1B with higher expansion
+  factors demand 40-80 GB and hours to days (e.g., 200 GPU hours).[1](https://www.perplexity.ai/search/53f5d091-dfcf-4f68-bbd9-53870c56dd01)[2](https://www.perplexity.ai/search/22a201f8-11a8-4838-a455-cecf29fd77f1)[3](https://transformer-circuits.pub/2024/scaling-monosemanticity/)[4](https://clic2025.unica.it/wp-content/uploads/2025/09/10_main_long.pdf)[5](https://www.lesswrong.com/posts/AtJdPZkMdsakLc6mB/training-a-sparse-autoencoder-in-less-than-30-minutes-on)
+
+
+  ## Common GPUs
+
+  Recent papers (2024-2026) predominantly use NVIDIA A100 GPUs (40-80 GB variants)
+  for SAE training, as seen in scaling studies and production runs; H100s appear in
+  newer high-scale work, while T4s are limited to prototyping.[2](https://www.perplexity.ai/search/22a201f8-11a8-4838-a455-cecf29fd77f1)[6](https://www.perplexity.ai/search/78eb5e8f-b441-496e-b131-52687c57a408)[4](https://clic2025.unica.it/wp-content/uploads/2025/09/10_main_long.pdf)[7](https://haikel-fazzani.deno.dev/blog/l40s-vs-a100-vs-h100-vs-t4-gpu)
+
+
+  | GPU  | Memory | Typical Use in SAE Papers          |
+
+  |------|--------|------------------------------------|
+
+  | T4   | 16 GB  | Prototyping, small models [7](https://haikel-fazzani.deno.dev/blog/l40s-vs-a100-vs-h100-vs-t4-gpu)
+  |
+
+  | A100 | 40-80 GB | Mid-to-large training [4](https://clic2025.unica.it/wp-content/uploads/2025/09/10_main_long.pdf)    |
+
+  | H100 | 80 GB  | High-scale experiments [7](https://haikel-fazzani.deno.dev/blog/l40s-vs-a100-vs-h100-vs-t4-gpu)    |
+
+
+  ## Colab T4 Feasibility
+
+  Yes, feasible on free Google Colab T4 (16 GB) for standard small-scale SAE experiments
+  like GPT-2 small (e.g., 24k features in 26 minutes), using optimizations like cached
+  activations and reduced batch sizes. Larger or multi-layer runs risk OOM errors
+  or timeouts, requiring paid upgrades.[8](https://www.perplexity.ai/search/c9e8f4b9-c9b6-439a-95f4-f7552c2987e2)[9](https://www.lesswrong.com/posts/LnHowHgmrMbWtpkxx/interpretability-with-sparse-autoencoders-colab-exercises)[10](https://unanswered.io/guide/what-is-t4-gpu-google-colab)[5](https://www.lesswrong.com/posts/AtJdPZkMdsakLc6mB/training-a-sparse-autoencoder-in-less-than-30-minutes-on)[1](https://www.perplexity.ai/search/53f5d091-dfcf-4f68-bbd9-53870c56dd01)[2](https://www.perplexity.ai/search/22a201f8-11a8-4838-a455-cecf29fd77f1)'

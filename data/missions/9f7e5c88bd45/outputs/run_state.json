@@ -1,0 +1,22 @@
+{
+  "last_run": "2026-03-27T19:18:38.667577+00:00",
+  "completed_steps": [
+    "perplexity:methodology",
+    "perplexity:experiments",
+    "perplexity:gaps",
+    "perplexity:sota",
+    "perplexity:datasets",
+    "perplexity:related_code",
+    "perplexity:limitations",
+    "step:quality_check",
+    "step:cursor_cli"
+  ],
+  "pending_steps": [],
+  "errors": [],
+  "draft_version": 3,
+  "draft_hash": "fdf9e1bb5231",
+  "meta_loop_cycles": 0,
+  "perplexity_backend_uuid": null,
+  "perplexity_read_write_token": null,
+  "last_critical_failure": "cursor_cli"
+}

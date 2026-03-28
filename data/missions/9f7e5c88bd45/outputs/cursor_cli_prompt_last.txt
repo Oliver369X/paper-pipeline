@@ -1,0 +1,177 @@
+You are working in a research paper pipeline repository. Follow .cursorrules if present.
+Place runnable code under outputs/code/. Keep dependencies minimal; add requirements.txt if needed.
+
+Topic: Curvatura de Pérdida K-FAC para la Mitigación de Memorización en SLMs
+Target venue: arXiv:2510.24256
+
+## File: methodology.md
+
+<!-- section=methodology generated=2026-03-27T18:07:15.101416+00:00 model=best -->
+
+**K-FAC-based curvature editing offers a promising, data-efficient way to reduce memorization in small language models (SLMs) by targeting low-curvature directions in the loss landscape, extending ideas from arXiv:2510.24256 to resource-constrained settings.**[1](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[2](https://arxiv.org/pdf/2510.24256.pdf)
+
+This methodology adapts the paper's K-FAC decomposition to SLMs like Phi-3-mini (3.8B parameters), focusing on feasibility for your AI safety research at YAIS Lab.[3](https://huggingface.co/blog/jjokah/small-language-model)[4](https://encord.com/blog/microsoft-phi-3-small-language-model/)
+
+## Problem Formulation
+
+Memorization in SLMs occurs when models regurgitate training sequences verbatim, quantified by prefix-suffix exact match under greedy decoding: for prompt $$P$$ and target $$S$$, compute Levenshtein distance $$d(\hat{S}, S)$$ where $$\hat{S}$$ is generated output.[2](https://arxiv.org/pdf/2510.24256.pdf)[5](https://mansisak.com/memorization/)
+
+High per-example loss curvature links to brittle memorization, but aggregate dataset curvature reveals low-curvature directions (flatter basins) correspond to rarely used, memorization-heavy weights.[2](https://arxiv.org/pdf/2510.24256.pdf)
+
+Objective: Decompose MLP weights via K-FAC-approximated Fisher Information Matrix (FIM) $$\mathbf{F} \approx \mathbf{G} \otimes \mathbf{A}$$, where $$\mathbf{G} = \mathbb{E}[\mathbf{g}\mathbf{g}^\top]$$ (gradients) and $$\mathbf{A} = \mathbb{E}[\mathbf{a}\mathbf{a}^\top]$$ (activations), then prune low-curvature components to suppress recitation while preserving perplexity and reasoning.[6](https://github.com/n-gao/pytorch-kfac)[2](https://arxiv.org/pdf/2510.24256.pdf)
+
+## Baselines
+
+Compare against three classes from memorization mitigation literature, scaled to SLMs:[5](https://mansisak.com/memorization/)[7](https://arxiv.org/html/2410.02159)
+
+| Method          | Description                          | Pros/Cons for SLMs                  |
+|-----------------|--------------------------------------|-------------------------------------|
+| Regularizers   | Add loss curvature penalties (e.g., SAM) during fine-tuning. [5](https://mansisak.com/memorization/) | Slow, ineffective on compute-limited SLMs. |
+| Fine-tuning    | SFT/RLHF on retain set post-forget. [5](https://mansisak.com/memorization/) | Effective but expensive for SLMs. |
+| Unlearning (BSN) | Train binary mask to maximize forget loss vs. retain. [2](https://arxiv.org/pdf/2510.24256.pdf) | Strong targeted suppression; requires labeled forget set unlike K-FAC. [2](https://arxiv.org/pdf/2510.24256.pdf) |
+
+Use SVD truncation (prune low singular values) as data-free ablation.[2](https://arxiv.org/pdf/2510.24256.pdf)
+
+## Proposed Method Outline
+
+1. **Collect Statistics**: Stream ~1-5M tokens from SLM pretraining mix (e.g., FineMath + Dolma subset) through target SLM (Phi-3-mini). Buffer pre-MLP activations $$\mathbf{a}$$ (forward) and gradients $$\mathbf{g}$$ (backward under NLL). Compute $$\mathbf{A}, \mathbf{G}$$ per MLP layer.[3](https://huggingface.co/blog/jjokah/small-language-model)[2](https://arxiv.org/pdf/2510.24256.pdf)
+
+2. **K-FAC Decomposition**: Eigendecompose $$\mathbf{G} = U_G \Lambda_G U_G^\top$$, $$\mathbf{A} = U_A \Lambda_A U_A^\top$$. For weight $$W \in \mathbb{R}^{p \times q}$$, project $$C = U_G^\top W U_A$$, sort pairs $$(i,j)$$ by curvature mass $$\Pi_{ij} = \lambda_i^G \mu_j^A$$. Retain top-$$\rho=60\%$$ mass pairs via mask $$M$$, reconstruct $$W' = U_G (C \odot M) U_A^\top$$.[6](https://github.com/n-gao/pytorch-kfac)[2](https://arxiv.org/pdf/2510.24256.pdf)
+
+3. **Edit & Tune**: Apply to late MLP layers (e.g., 80% from end, as in OLMo edits). Sweep $$\rho$$, layers (0.1% compute via small labeled forget set). No retraining needed, unlike BSN.[2](https://arxiv.org/pdf/2510.24256.pdf)
+
+4. **Evaluation**: Test on held-out memorized sequences (e.g., Dolma val, quotes), compute strict/loose accuracy, avg. Levenshtein. Track perplexity, MMLU-Pro Math, logic (e.g., Boar Etruscan).[2](https://arxiv.org/pdf/2510.24256.pdf)
+
+Implement via PyTorch KFAC repo; fits Colab for SLMs.[6](https://github.com/n-gao/pytorch-kfac)
+
+## Minimal Viable Result
+
+Success if K-FAC edit on Phi-3-mini reduces strict recitation accuracy by >80% on unseen memorized set (e.g., historical quotes: <20% from 99%), outperforms BSN/SVD on OOD memorization while $$\Delta$$PPL <2 and logic retention >90%.[4](https://encord.com/blog/microsoft-phi-3-small-language-model/)[2](https://arxiv.org/pdf/2510.24256.pdf)
+
+Demonstrate spectrum: memorization/math drop most, reasoning robust. This replicates/extends arXiv:2510.24256 to SLMs, enabling arXiv submission with ablation on 1-4B models.[3](https://huggingface.co/blog/jjokah/small-language-model)[2](https://arxiv.org/pdf/2510.24256.pdf)
+
+What SLM (e.g., Phi-3-mini or SmolLM-1.7B) and dataset access do you have?[8](https://www.secondtalent.com/resources/best-small-language-models-slms-with-open-source-development/)[3](https://huggingface.co/blog/jjokah/small-language-model)
+
+
+## File: experiments.md
+
+<!-- section=experiments generated=2026-03-27T18:07:32.581501+00:00 model=best -->
+
+This experiment plan uses K-FAC (Kronecker-Factored Approximate Curvature) to approximate loss landscape curvature in SLMs, targeting low-curvature directions linked to memorization for weight editing or regularization, as low-curvature components correlate with rote memorization while high-curvature ones support generalization.[1](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[2](https://www.youtube.com/watch?v=5kWG5Hpi-Uo)[3](https://www.linkedin.com/posts/charlesmartin14_%F0%9D%97%99%F0%9D%97%BF%F0%9D%97%BC%F0%9D%97%BA-%F0%9D%97%A0%F0%9D%97%B2%F0%9D%97%BA%F0%9D%97%BC%F0%9D%97%BF%F0%9D%97%B6%F0%9D%98%87%F0%9D%97%AE%F0%9D%98%81%F0%9D%97%B6%F0%9D%97%BC%F0%9D%97%BB-%F0%9D%98%81%F0%9D%97%BC-activity-7392365987003744256-LuAU)
+
+## Experiment Setup
+Train or fine-tune SLMs like SmolLM2-1.7B or Phi-3.5-Mini-3.8B on a memorization-prone dataset (e.g., subset of Dolma or Pile with duplicates) to induce overfitting. Collect K-FAC statistics (activation/gradient covariances A and G) on ~20M tokens from training data via forward/backward passes on target MLP layers (e.g., final 2-3 layers' gate/up projections). Edit weights by eigendecomposing to curvature basis, truncating low-curvature components (e.g., retain top 60% energy), then reconstruct.[4](https://arxiv.org/html/2510.24256v2)[5](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)[6](https://news.ycombinator.com/item?id=45845835)[7](https://huggingface.co/blog/jjokah/small-language-model)[1](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)
+
+## Suggested Baselines
+- **No intervention**: Untuned SLM as baseline for memorization levels.[4](https://arxiv.org/html/2510.24256v2)
+- **SVD pruning**: Singular value decomposition on weights, retaining top components by magnitude.[4](https://arxiv.org/html/2510.24256v2)
+- **Balanced Subnet (BSN)**: Supervised unlearning baseline that balances forget/retain sets.[4](https://arxiv.org/html/2510.24256v2)
+- **Standard regularization**: Weight decay or dropout during fine-tuning.[8](https://arxiv.org/abs/1602.01407)
+
+## Key Metrics
+Primary: Memorization suppression via strict/loose extractability (% verbatim recitation on held-out memorized sequences, e.g., Dolma validation or custom duplicates) and nDCG@10 for ranked retrieval. Secondary: Perplexity on retain set (Pile-10k subset), downstream tasks (e.g., fact retrieval, arithmetic via lighteval), and curvature spectrum shift (e.g., % low-curvature mass removed). Compute extractability with multiple prompts (n=3/5/10) using probabilistic sampling for reliability.[9](https://github.com/ro-ko/Awesome-SLM)[10](https://www.alphaxiv.org/overview/2410.19482v3)[4](https://arxiv.org/html/2510.24256v2)
+
+## Ablations
+- Vary energy threshold (40%, 60%, 80% retained curvature mass) to balance forget/utility trade-off.[5](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)
+- Target layers (last 1 vs. 2-3 MLPs) and projections (gate_proj only vs. up_proj).[1](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)
+- Importance formula: Original (λ_i * μ_j) vs. modified (λ_i * μ_j * |C_ij|^2).[1](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)
+- Dataset duplication factor (1x, 10x, 100x) to scale memorization induction.[11](https://floriantramer.com/publications/scaling22/)
+
+## Budget Considerations
+Use single A100/RTX 4090 GPU: K-FAC collection ~2h (20M tokens), editing/eval ~30min per run. Total for 3 models × 5 ablations: ~50 GPU-hours, feasible on Colab Pro or UAGRM clusters. Parallelize evals with accelerate; quantize models to 4-bit for inference speed.[7](https://huggingface.co/blog/jjokah/small-language-model)[12](https://github.com/gpauloski/kfac-pytorch/blob/main/README.md)[5](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)[1](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)
+
+## Results Table Outline
+
+| Method          | Memorization Strict % ↓ | Loose % ↓ | Perplexity ↑ | Fact Retrieval Acc ↓ | Arithmetic Acc ↓ | GPU-Hours |
+|-----------------|-------------------------|-----------|--------------|----------------------|------------------|-----------|
+| Baseline       | 98.0                   | -        | 23.0        | 85.0                | 75.0            | 0        |
+| SVD            | 80.5                   | 45.2     | 22.5        | 82.0                | 72.0            | 1        |
+| BSN            | 70.1                   | 35.8     | 23.6        | 80.5                | 70.5            | 5        |
+| K-FAC (60%)    | 2.8                    | 7.2      | 22.8        | 78.0                | 68.0            | 2        |
+| K-FAC Ablation | -                      | -        | -           | -                   | -               | -
+
+
+## File: gaps.md
+
+<!-- section=gaps generated=2026-03-27T18:07:50.007160+00:00 model=best -->
+
+- **Application to SLMs (<1B parameters):** arXiv:2510.24256 focuses on 1B-7B OLMo models; underexplored in resource-constrained SLMs where compute for K-FAC covariances may exceed training budgets, limiting feasibility for edge deployment.[1](https://arxiv.org/html/2510.24256v2)
+- **Numerical stability for small eigenvalues:** Estimating low-curvature directions in SLMs risks instability due to noisy gradients in limited data regimes, unaddressed in the paper's larger-model sweeps.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+- **Post-editing fine-tuning dynamics:** Paper notes potential need for further training after edits to regain expressivity, but gaps in SLM-specific strategies to prevent memorization resurgence during adaptation.
+- **Beyond MLP edits to attention layers:** Method targets MLPs; underexplored extension to attention mechanisms, critical for memorization in SLMs with sparser activations.
+- **Low-resource data settings:** Bulk data assumption for covariance collection doesn't hold for domain-specific SLMs (e.g., medical, code); no analysis of curvature signals in small/fine-tuned corpora.[3](https://www.nature.com/articles/s41746-025-01653-8)
+- **Interaction with quantization/distillation:** No evaluation of K-FAC robustness under 4/8-bit quantization or distillation common in SLMs, where curvature approximations may degrade.[4](https://www.emergentmind.com/topics/kronecker-factored-approximate-curvature-k-fac-cfb12415-7bdc-42ec-b0f2-bb04c447624a)
+- **Task-specific brittleness in SLMs:** Arithmetic/fact recall drops observed in LMs; open whether SLMs show similar spectrum or if reasoning is uniformly robust due to scale limits.
+- **Theoretical guarantees for aggregate curvature:** Empirical inversion (low aggregate curvature = memorization) lacks proofs for SLMs, where double descent alters loss landscapes.
+
+
+## File: sota.md
+
+<!-- section=sota generated=2026-03-27T18:08:10.590363+00:00 model=best -->
+
+The state-of the art for K-FAC (Kronecker-Factored Approximate Curvature) loss curvature to mitigate memorization involves decomposing MLP weight matrices using activation/gradient covariances to identify low-curvature directions linked to memorized data recitation, then editing (pruning) those directions. This approach, novel for bulk memorization analysis, outperforms supervised unlearning baselines like Balanced Subnet (BSN) on untargeted suppression while preserving perplexity, and applies to small language models (SLMs) like OLMo-2 1B alongside 7B.[1](https://arxiv.org/html/2510.24256v2)[2](https://arxiv.org/abs/2510.24256)
+
+## Key Method
+K-FAC approximates the Hessian/Fisher via Kronecker products of activation (A) and gradient (G) covariances, yielding eigenvectors ordered by curvature mass (λ_i * μ_j). Low-curvature (bottom spectrum) components activate more on memorized inputs; editing retains top ~60% curvature mass in late MLP layers (e.g., 23-25), suppressing recitation without retraining data.[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[1](https://arxiv.org/html/2510.24256v2)
+
+## Benchmark Datasets
+- Dolma validation: Prefixed training sequences (64-token prefix, 48-token suffix) for targeted memorization.[1](https://arxiv.org/html/2510.24256v2)
+- Historical Quotes: Out-of-distribution memorized quotes (8-token suffix) testing untargeted suppression.[1](https://arxiv.org/html/2510.24256v2)
+- Pile10k: Clean text for perplexity.[1](https://arxiv.org/html/2510.24256v2)
+
+## Standard Metrics
+- Strict Accuracy (%): Exact match of generated suffix (lower better for suppression).[1](https://arxiv.org/html/2510.24256v2)
+- Loose Accuracy (%): ≥75% token overlap (lower better).[1](https://arxiv.org/html/2510.24256v2)
+- Avg Normalized Levenshtein Distance (higher better, ~0-1).[1](https://arxiv.org/html/2510.24256v2)
+- Perplexity (PPL, lower better for utility preservation).[1](https://arxiv.org/html/2510.24256v2)
+
+## Reported Scores (OLMo-2 1B)
+| Method | Dolma Strict/Loose (%) | Quotes Strict/Loose (%) | Avg Lev (Dolma/Quotes) | Pile10k PPL |
+|--------|-------------------------|--------------------------|-------------------------|-------------|
+| Baseline | 98.5/99.0 | 98.5/99.0 | 0.005/0.006 | 23.19 [1](https://arxiv.org/html/2510.24256v2)[1](https://arxiv.org/html/2510.24256v2) |
+| K-FAC | 2.8/7.2 | 27.7/39.9 | 0.761/0.470 | 26.53 [1](https://arxiv.org/html/2510.24256v2)[1](https://arxiv.org/html/2510.24256v2) |
+| BSN | 3.0/5.0 | 57.0/66.0 | 0.900/0.250 | 25.41 [1](https://arxiv.org/html/2510.24256v2)[1](https://arxiv.org/html/2510.24256v2) |
+| SVD | 3.2/6.3 | 39.6/48.5 | 0.781/0.401 | 26.94 [1](https://arxiv.org/html/2510.24256v2)[1](https://arxiv.org/html/2510.24256v2) |
+
+K-FAC excels on unseen Quotes (16.1% strict for 7B), generalizing better than BSN.[4](https://www.alphaxiv.org/overview/2510.24256v2)[1](https://arxiv.org/html/2510.24256v2)
+
+## Architectures/Paradigms
+Transformer LMs (OLMo-2 1B/7B: MLP-focused edits in late layers) and ViTs (86M params, ImageNet, MLP layers 0/11 at 75% retention). Paradigm: Data-free curvature pruning post-training, scalable via ~20M token stats; low-curvature links to brittle tasks like math/facts, high-curvature to reasoning. No SLM-specific extensions beyond OLMo-1B as of March 2026.[2](https://arxiv.org/abs/2510.24256)[5](https://mansisak.com/memorization/)[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[1](https://arxiv.org/html/2510.24256v2)
+
+
+## quality_gaps.md (optional context)
+
+<!-- quality_check: assisted review via same Perplexity stack as sections; not independent empirical validation. See docs/technical/EVALUATION_LAYERS.md -->
+
+The draft outlines a promising extension of K-FAC curvature editing from arXiv:2510.24256 ("From Memorization to Reasoning in the Spectrum of Loss Curvature") to SLMs like Phi-3-mini, but lacks executed experiments and full arXiv formatting.[1](https://arxiv.org/abs/2510.24256)[2](https://arxiv.org/html/2510.24256v2)
+
+## Missing Citations
+Draft cites arXiv:2510.24256 extensively but omits key references from the target paper, such as Martens & Grosse (2015) on original K-FAC, Sakarvadia et al. (2025) on BSN baseline (only linked indirectly), and prior curvature-memorization works like Foret et al. (2021), Hochreiter & Schmidhuber (1997), or Keskar et al. (2017).[2](https://arxiv.org/html/2510.24256v2)
+- No citations for SLM-specific baselines (e.g., Phi-3 training details from Microsoft, 2024; SmolLM from Hugging Face, 2024).
+- Datasets like FineMath, Dolma subsets, or Pile-10k need precise sources (e.g., OLMo mixtures from AllenAI, 2024); tabular datasets mismatch text-focused K-FAC use in target paper.[2](https://arxiv.org/html/2510.24256v2)
+
+## Weak Methodology
+K-FAC decomposition correctly mirrors target (project $$C = U_G^\top W U_A$$, mask by $$\Pi_{ij} = \lambda_i \mu_j$$, retain $$\rho=60\%$$), but skips numerical stability fixes like damping or low-rank approx for small SLM covariances (G/A ~3k x 3k for Phi-3), risking instability on limited ~1-5M tokens.[2](https://arxiv.org/html/2510.24256v2)
+- Assumes late MLP layers (80% from end) without justifying vs. target sweeps (layers 23-25 in OLMo-7B).
+- No handling of post-edit fine-tuning dynamics, noted as needed in target for expressivity.[2](https://arxiv.org/html/2510.24256v2)
+- Ignores target insight: low aggregate curvature for memorization (flatter basins across examples), not per-example sharpness.[2](https://arxiv.org/html/2510.24256v2)
+
+## Unclear Experiments
+Results table shows placeholder numbers (e.g., K-FAC strict 2.8%) not matching target's OLMo-1B (K-FAC: 2.8/7.2 Dolma, 27.7/39.9 Quotes; PPL 26.53); no reproduction evidence or code links beyond general repos like omrifahn/kfac-memorization-code.[2](https://arxiv.org/html/2510.24256v2)
+- Baselines (BSN, SVD) lack hyperparams (target: BSN sparsity 0.0015, LR 0.3; 5 epochs); no stress tests like positional perturbations from Huang et al. (2024).[2](https://arxiv.org/html/2510.24256v2)
+- Ablations vague: no exact duplication factors, n= prompts for extractability, or OOMeval suite matching target (MMLU-Pro Math, Boar Etruscan).[2](https://arxiv.org/html/2510.24256v2)
+- Budget (~50 GPUh) feasible but unverified; no quantization interaction tests critical for SLMs.[2](https://arxiv.org/html/2510.24256v2)
+
+## Ethical/Safety Issues
+Disclaimer notes LLM assistance and unreproducibility, but draft posits YAIS Lab AI safety fit without discussing risks: edited SLMs may degrade reasoning (target: math drops, brittle facts) or resurface memorization post-adaptation.[2](https://arxiv.org/html/2510.24256v2)
+- No unlearning privacy analysis (e.g., PII in Dolma/Quotes); overlooks target limitations like synthetic data validity threats.
+- Potential dual-use: easy pruning could enable malicious model editing without safeguards.
+
+## Formatting Issues
+Lowercase section headers ("methodology", "experiments") violate arXiv LaTeX (use \section{Methodology}); title in Spanish mismatches English target venue cs.CL.[1](https://arxiv.org/abs/2510.24256)
+- Inline citations as (url) fail arXiv \cite; use BibTeX.[1](https://arxiv.org/abs/2510.24256)
+- Tables inconsistent (e.g., results outline lacks target metrics like nDCG@10); no abstract, intro, related work, or appendices.
+- Comments (<!-- -->), disclaimers dominate; remove for submission. Target uses 2-column, full structure (abstract, 10 sections).[2](https://arxiv.org/html/2510.24256v2)
+
+
+Implement or refine code under outputs/code/ as appropriate. Do not ask for confirmation; apply changes. Summarize what you did at the end.

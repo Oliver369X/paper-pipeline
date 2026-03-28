@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "note": "evidence_status unverified until human or external tool confirms source",
+  "paper_target_hint": "cross-check arXiv ID matches the paper you cite (see docs/ARXIV_TARGET_ALIGNMENT.md)",
+  "items": [
+    {
+      "claim_id": "line_11",
+      "line": 11,
+      "text": "<!-- section=methodology generated=2026-03-27T18:07:15.101416+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_43",
+      "line": 43,
+      "text": "3. **Edit & Tune**: Apply to late MLP layers (e.g., 80% from end, as in OLMo edits). Sweep $$\\rho$$, layers (0.1% compute via small labeled forget set). No retraining needed, unlike BSN.[2](https://arxiv.org/pdf/2510.24256.pdf)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_51",
+      "line": 51,
+      "text": "Success if K-FAC edit on Phi-3-mini reduces strict recitation accuracy by >80% on unseen memorized set (e.g., historical quotes: <20% from 99%), outperforms BSN/SVD on OOD memorization while $$\\Delta$$PPL <2 and logic retention >90%.[4](https://encord.com/blog/microsoft-phi-3-small-language-model/)[2](https://arxiv.org/pdf/2510.24256.pdf)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_55",
+      "line": 55,
+      "text": "What SLM (e.g., Phi-3-mini or SmolLM-1.7B) and dataset access do you have?[8](https://www.secondtalent.com/resources/best-small-language-models-slms-with-open-source-development/)[3](https://huggingface.co/blog/jjokah/small-language-model)",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_61",
+      "line": 61,
+      "text": "<!-- section=experiments generated=2026-03-27T18:07:32.581501+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_63",
+      "line": 63,
+      "text": "This experiment plan uses K-FAC (Kronecker-Factored Approximate Curvature) to approximate loss landscape curvature in SLMs, targeting low-curvature directions linked to memorization for weight editing or regularization, as low-curvature components correlate with rote memorization while high-curvature ones support generalization.[1](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[2](https://www.youtube.com/watch?v=5kWG5Hpi-Uo)[3](https://www.linkedin.com/posts/char",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_66",
+      "line": 66,
+      "text": "Train or fine-tune SLMs like SmolLM2-1.7B or Phi-3.5-Mini-3.8B on a memorization-prone dataset (e.g., subset of Dolma or Pile with duplicates) to induce overfitting. Collect K-FAC statistics (activation/gradient covariances A and G) on ~20M tokens from training data via forward/backward passes on target MLP layers (e.g., final 2-3 layers' gate/up projections). Edit weights by eigendecomposing to curvature basis, truncating low-curvature components (e.g., retain top 60% energy), then reconstruct.",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_78",
+      "line": 78,
+      "text": "- Vary energy threshold (40%, 60%, 80% retained curvature mass) to balance forget/utility trade-off.[5](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_81",
+      "line": 81,
+      "text": "- Dataset duplication factor (1x, 10x, 100x) to scale memorization induction.[11](https://floriantramer.com/publications/scaling22/)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_93",
+      "line": 93,
+      "text": "| K-FAC (60%)    | 2.8                    | 7.2      | 22.8        | 78.0                | 68.0            | 2        |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_100",
+      "line": 100,
+      "text": "<!-- section=gaps generated=2026-03-27T18:07:50.007160+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_115",
+      "line": 115,
+      "text": "<!-- section=sota generated=2026-03-27T18:08:10.590363+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_117",
+      "line": 117,
+      "text": "The state-of the art for K-FAC (Kronecker-Factored Approximate Curvature) loss curvature to mitigate memorization involves decomposing MLP weight matrices using activation/gradient covariances to identify low-curvature directions linked to memorized data recitation, then editing (pruning) those directions. This approach, novel for bulk memorization analysis, outperforms supervised unlearning baselines like Balanced Subnet (BSN) on untargeted suppression while preserving perplexity, and applies t",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_120",
+      "line": 120,
+      "text": "K-FAC approximates the Hessian/Fisher via Kronecker products of activation (A) and gradient (G) covariances, yielding eigenvectors ordered by curvature mass (λ_i * μ_j). Low-curvature (bottom spectrum) components activate more on memorized inputs; editing retains top ~60% curvature mass in late MLP layers (e.g., 23-25), suppressing recitation without retraining data.[3](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[1](https://arxiv.org/html/2510.24256v2)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_129",
+      "line": 129,
+      "text": "- Loose Accuracy (%): ≥75% token overlap (lower better).[1](https://arxiv.org/html/2510.24256v2)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_141",
+      "line": 141,
+      "text": "K-FAC excels on unseen Quotes (16.1% strict for 7B), generalizing better than BSN.[4](https://www.alphaxiv.org/overview/2510.24256v2)[1](https://arxiv.org/html/2510.24256v2)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_144",
+      "line": 144,
+      "text": "Transformer LMs (OLMo-2 1B/7B: MLP-focused edits in late layers) and ViTs (86M params, ImageNet, MLP layers 0/11 at 75% retention). Paradigm: Data-free curvature pruning post-training, scalable via ~20M token stats; low-curvature links to brittle tasks like math/facts, high-curvature to reasoning. No SLM-specific extensions beyond OLMo-1B as of March 2026.[2](https://arxiv.org/abs/2510.24256)[5](https://mansisak.com/memorization/)[3](https://www.goodfire.ai/research/understanding-memorization-vi",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_150",
+      "line": 150,
+      "text": "<!-- section=datasets generated=2026-03-27T18:08:32.170697+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_183",
+      "line": 183,
+      "text": "<!-- section=related_code generated=2026-03-27T18:08:51.585920+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_208",
+      "line": 208,
+      "text": "<!-- section=limitations generated=2026-03-27T18:09:18.950360+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    }
+  ]
+}

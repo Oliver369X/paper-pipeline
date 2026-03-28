@@ -1,0 +1,851 @@
+topic: Curvatura de Pérdida K-FAC para la Mitigación de Memorización en SLMs
+venue_target: arXiv:2510.24256
+sota_techniques:
+- '**From Memorization to Reasoning in the Spectrum of Loss Curvature**'
+- '**Authors, year:** Jack Merullo et al., 2025.[2](https://arxiv.org/abs/2510.24256)[1](https://arxiv.org/html/2510.24256v2)'
+- '**Key technical finding:** Shows that in transformers, low‑curvature directions
+  in a K‑FAC Fisher basis are predominantly responsible for verbatim memorization,
+  while higher‑curvature directions encode generalization and reasoning; editing away
+  low‑curvature components suppresses memorization in LMs and ViTs with minimal perplexity/accuracy
+  loss.[5](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[6](https://www.themoonlight.io/ko/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[1](https://arxiv.org/html/2510.24256v2)'
+- '**Main mathematical contribution:**'
+- Uses Kronecker‑Factored Approximate Curvature to approximate each weight block’s
+  Fisher $$F_W \approx G \otimes A$$, where $$A = \mathbb{E}[aa^\top]$$ (activation
+  covariance) and $$G = \mathbb{E}[gg^\top]$$ (gradient covariance).[6](https://www.themoonlight.io/ko/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[5](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+- Defines a curvature eigenbasis via eigendecompositions of $$A$$ and $$G$$; eigenvalues
+  of $$F_W$$ are $$\lambda_i \mu_j$$, eigenvectors are $$u_i \otimes v_j$$, giving
+  an ordered curvature spectrum.[5](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[6](https://www.themoonlight.io/ko/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+- Introduces “curvature mass” $$\Pi_{ij} = \lambda_i \mu_j$$ and a projection/editing
+  operator that keeps only a subset of pairs with cumulative mass above a threshold
+  $$\rho$$, effectively zeroing low‑curvature components and yielding a curvature‑compressed
+  weight matrix $$W_{\text{pairs}} = \sum_{(i,j)\in S} C_{ij} u_i v_j^\top$$.[1](https://arxiv.org/html/2510.24256v2)[6](https://www.themoonlight.io/ko/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+- '**K‑FAC‑Based Weight Editing for Memorization Suppression (code release / technical
+  report)**'
+- '**Authors, year:** Omri Fahn et al., 2025 (Hugging Face project associated with
+  the Merullo et al. line of work).[7](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)'
+- '**Key technical finding:** Demonstrates a practical K‑FAC‑based pipeline for computing
+  Fisher curvature factors and performing low‑curvature pruning on transformer blocks
+  to suppress verbatim memorization in LMs, while preserving downstream task performance.[7](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)'
+- '**Main mathematical contribution:** Implements the K‑FAC Fisher approximation and
+  curvature‑basis editing in code, including numerically stable estimation of $$A$$
+  and $$G$$, eigendecomposition, curvature mass thresholding, and reconstruction,
+  effectively operationalizing the theory from Merullo et al. into a reusable algorithmic
+  framework.[5](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[7](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)'
+- '**Kronecker‑factored Approximate Curvature (KFAC) From Theory to Practice**'
+- '**Authors, year:** Arne F. et al., 2025.[8](https://arxiv.org/abs/2507.05127)'
+- '**Key technical finding:** Provides a modern tutorial and tested recipes for K‑FAC
+  implementations, covering optimization, Bayesian deep learning, influence functions,
+  model merging, and other applications; this has quickly become a standard reference
+  for using K‑FAC correctly in large‑scale models.[8](https://arxiv.org/abs/2507.05127)'
+- '**Main mathematical contribution:**'
+mathematical_constraints: []
+known_pitfalls:
+- description: Training loss or evaluation perplexity jumps to `NaN` or `inf` after
+    applying the K‑FAC‑based weight edit.[5](https://stackoverflow.com/questions/75900085/loss-function-giving-nan-in-pytorch)[6](https://stackoverflow.com/questions/71503683/pytorch-loss-is-nan)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Numerical under‑/over‑flow in the K‑FAC approximation (e.g., very small
+    or very large eigenvalues of activation/gradient covariances $$A = \mathbb{E}[aa^\top]$$,
+    $$G = \mathbb{E}[gg^\top]$$), compounded by inverting ill‑conditioned matrices
+    or scaling the eigenvectors incorrectly.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[7](https://app.icerm.brown.edu/materials/Slides/sp-s19-w1/The_K-FAC_method_for_neural_network_optimization_%5D_James_Martens,_DeepMind.pdf)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: No damping or regularization on the Kronecker‑factored FIM, so the
+    reconstructed weight update $$W \leftarrow U_G(C \odot M)U_A^\top$$ blows up along
+    low‑curvature directions.[4](https://github.com/Xin-Jing/K-FAC)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Add a small damping term $$\lambda I$$ to both $$A$$ and $$G$$ before
+    eigendecomposition (e.g., $$\lambda \approx 1e\text{-}5$$–$$1e\text{-}3$$), as
+    in standard K‑FAC optimizers.[7](https://app.icerm.brown.edu/materials/Slides/sp-s19-w1/The_K-FAC_method_for_neural_network_optimization_%5D_James_Martens,_DeepMind.pdf)[4](https://github.com/Xin-Jing/K-FAC)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Clip the largest eigenvalues of $$G$$ and $$A$$ (or normalize them)
+    so curvature masses $$\Pi_{ij} = \lambda_i \mu_j$$ stay in a reasonable dynamic
+    range.[8](https://www.cs.toronto.edu/~jmartens/docs/K-FAC_ICML_Appendices.pdf)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Use FP64 (or at least torch‑double) for the K‑FAC statistics and re‑cast
+    only the final edited weights back to FP32.[9](https://github.com/pytorch/pytorch/issues/40497?timeline_page=1)[6](https://stackoverflow.com/questions/71503683/pytorch-loss-is-nan)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Memorization metrics (e.g., recall of training quotes or facts) barely
+    change despite a large K‑FAC truncation budget $$\rho$$.
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Conversely, general‑purpose perplexity or validation accuracy crashes
+    even for small $$\rho$$.[3](https://arxiv.org/html/2510.24256v1)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'Incorrectly ranking directions by curvature mass $$\Pi_{ij}$$:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: For memorization supression, the paper explicitly keeps the *highest*
+    curvature‑mass components and zeros the *lowest* (flat) ones; reversing this rank
+    order will preserve the “memorizing” directions and remove the more general ones.[10](https://aiwithmike.substack.com/p/disentangling-memory-from-reason)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Editing the wrong weight matrices (e.g., attention projections instead
+    of MLPs) or applying the same truncation fraction to all layers, when the paper
+    uses a sweep over which layers and which $$\rho$$ to edit.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[3](https://arxiv.org/html/2510.24256v1)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Double‑check that the truncation mask $$M_{ij}$$ is `1` for pairs $$(i,j)$$
+    with the *largest* $$\Pi_{ij}$$, and `0` for smallest (flat) directions (Algorithm
+    1‑style in the “From Memorization to Reasoning…” paper).[3](https://arxiv.org/html/2510.24256v1)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Limit editing to MLP weight matrices $$W$$ in transformer blocks and
+    sweep $$\rho$$ per‑layer or per‑block, as in the OLMo‑2 experiments.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[3](https://arxiv.org/html/2510.24256v1)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: After recomposing $$W_{\text{edited}} = U_G(C \odot M)U_A^\top$$, the
+    edited model behaves randomly or performance drops abruptly even when $$\rho \approx
+    1.0$$.
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Shapes of intermediate tensors in the reconstruction don’t match the
+    original $$W$$.[4](https://github.com/Xin-Jing/K-FAC)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Sign / normalization mismatch in the eigenvectors from `torch.symeig`
+    or `torch.linalg.eigh` (e.g., not normalizing columns of $$U_G, U_A$$ to unit
+    norm, or using left‑/right‑ eigenvectors inconsistently).
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Not aligning the Kronecker‑factored basis correctly with the tensor
+    shape of $$W \in \mathbb{R}^{d_{\text{out}} \times d_{\text{in}}}$$ (e.g., acting
+    on reshaped activations instead of the proper $$A, G$$ dimensions).[4](https://github.com/Xin-Jing/K-FAC)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: After `eigvals_A, U_A = torch.linalg.eigh(A)` and `eigvals_G, U_G =
+    torch.linalg.eigh(G)`, ensure each column of $$U_A, U_G$$ is unit norm (they should
+    be by definition, but verify numerically).[8](https://www.cs.toronto.edu/~jmartens/docs/K-FAC_ICML_Appendices.pdf)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Confirm that $$C = U_G^\top W U_A$$ has the same num‑elements as $$W$$
+    and that the Kronecker‑product‑like indexing of $$(i,j)$$ matches the tensor reshaping
+    used to compute $$A$$ and $$G$$ from activations and gradients.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[4](https://github.com/Xin-Jing/K-FAC)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'Python exception:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '`RuntimeError: Given groups=1, weight of size [...]` when computing
+    gradients.'
+  source_paper: ''
+  symptom: Given groups=1, weight of size [
+  fix: ''
+- description: Shape mismatch when computing $$A = \text{cov}(a)$$ or $$G = \text{cov}(g)$$
+    (e.g., `a` is `(batch, seq, d)` but treated as `(batch*d, d)`).[11](https://discuss.pytorch.org/t/losses-end-up-becoming-nan-during-training-how-to-debug-and-fix-them/99291)[12](https://discuss.pytorch.org/t/loss-becomes-nan-after-some-iterations/150431)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: 'Poor reshaping of activations and gradients before computing covariances:'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: The paper implicitly flattens activations `a` from a tensor of shape
+    `(batch, seq, d_in)` into a 2D `(N, d_in)` matrix for $$A$$, and similarly gradients
+    `g` into `(N, d_out)` for $$G$$.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Accumulating statistics over too few samples or only one batch, so
+    the empirical covariance is rank‑deficient or numerically ill‑conditioned.[1](https://proceedings.mlr.press/v235/garg24a.html)[4](https://github.com/Xin-Jing/K-FAC)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Reshape `a` to `(batch_size * sequence_length, d_in)` and `g` to `(batch_size
+    * sequence_length, d_out)` before stacking and computing `A = a.T @ a / N` and
+    `G = g.T @ g / N` (with damping).[4](https://github.com/Xin-Jing/K-FAC)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Collect statistics over multiple batches (or a dedicated “curvature”
+    dataloader) and normalize by the total number of data points.[1](https://proceedings.mlr.press/v235/garg24a.html)[3](https://arxiv.org/html/2510.24256v1)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: The K‑FAC‑based curvature estimate is computed on a small “forget set”,
+    but the edit generalizes poorly or behaves differently on other data splits.
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: The model’s behavior becomes unstable when fine‑tuning briefly after
+    the edit.[3](https://arxiv.org/html/2510.24256v1)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: The smoothing over curvature directions assumes that the activation/gradient
+    statistics are representative of the full data distribution; using a tiny or biased
+    dataset tilts the K‑FAC basis toward those specific memorized examples, not the
+    population‑level flatness.[1](https://proceedings.mlr.press/v235/garg24a.html)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: The paper notes that the model may need a small amount of re‑training
+    after the weight edit to recover full expressivity, but this step is often skipped
+    or tuned incorrectly.[13](https://news.ycombinator.com/item?id=45845835)[3](https://arxiv.org/html/2510.24256v1)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Compute $$A$$ and $$G$$ over a reasonably large, diverse sample from
+    the training / validation set (not just the “forget set”) to approximate the *population*
+    curvature.[1](https://proceedings.mlr.press/v235/garg24a.html)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: After editing, perform a small cleanup training phase (e.g., 1–3 epochs
+    with low LR) to stabilize the model; this is explicitly mentioned as a possible
+    requirement in the paper.[13](https://news.ycombinator.com/item?id=45845835)[3](https://arxiv.org/html/2510.24256v1)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '`RuntimeError: CUDA out of memory` when computing full K‑FAC activations/gradient
+    matrices for large SLMs.'
+  source_paper: ''
+  symptom: CUDA out of memory` when computing full K‑FAC activations/gradient matrices
+    for large SLMs
+  fix: ''
+- description: Training loop slows down dramatically when computing K‑FAC statistics.[7](https://app.icerm.brown.edu/materials/Slides/sp-s19-w1/The_K-FAC_method_for_neural_network_optimization_%5D_James_Martens,_DeepMind.pdf)[4](https://github.com/Xin-Jing/K-FAC)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Computing dense empirical matrices $$A \in \mathbb{R}^{d_{\text{in}}
+    \times d_{\text{in}}}$$ and $$G \in \mathbb{R}^{d_{\text{out}} \times d_{\text{out}}}$$
+    for high‑dimensional MLPs (e.g., up to 4×model‑dim) without batching or low‑rank
+    approximations.[7](https://app.icerm.brown.edu/materials/Slides/sp-s19-w1/The_K-FAC_method_for_neural_network_optimization_%5D_James_Martens,_DeepMind.pdf)[4](https://github.com/Xin-Jing/K-FAC)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: Use approximate, streaming covariances (e.g., online mean and covariance
+    updates) instead of materializing the full stacked tensor; many K‑FAC implementations
+    process statistics in batches.[7](https://app.icerm.brown.edu/materials/Slides/sp-s19-w1/The_K-FAC_method_for_neural_network_optimization_%5D_James_Martens,_DeepMind.pdf)[4](https://github.com/Xin-Jing/K-FAC)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: For very large layers, consider only the top‑$$k$$ eigenvectors of
+    $$A$$ and $$G$$ (power‑iteration or randomized SVD) and truncate the K‑FAC basis
+    explicitly, matching the paper’s “curvature‑mass fraction” strategy.[14](https://bohrium.dp.tech/paper/arxiv/2411.15002)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  source_paper: ''
+  symptom: ''
+  fix: ''
+reference_implementations:
+- name: Qualcomm-AI-research/llm-surgeon
+  github_url: https://github.com/Qualcomm-AI-research/llm-surgeon
+  key_design_decisions:
+  - '**URL:** https://github.com/Qualcomm-AI-research/llm-surgeon[3](https://github.com/Qualcomm-AI-research/llm-surgeon)'
+  - '**Stars:** ~1.5k–2k+ (as of early 2026)[3](https://github.com/Qualcomm-AI-research/llm-surgeon)'
+  - Uses K‑FAC‑style curvature approximations (activations × gradients) to estimate
+    per‑layer loss curvature at scale for LLMs.[3](https://github.com/Qualcomm-AI-research/llm-surgeon)
+  - Treats curvature as a “mask signal” for which weights to remove (structured, semi‑structured,
+    or unstructured pruning), while updating remaining weights to compensate for the
+    loss of others, preserving downstream performance.[3](https://github.com/Qualcomm-AI-research/llm-surgeon)
+  - Designed explicitly for LLMs (e.g., LLaMA, Mistral), so it handles large‑scale
+    transformer shapes and memory‑efficient backprop through K‑FAC‑style blocks.[3](https://github.com/Qualcomm-AI-research/llm-surgeon)
+  what_not_to_copy: []
+- name: Qualcomm-AI-research/llm-surgeon[3
+  github_url: https://github.com/Qualcomm-AI-research/llm-surgeon[3
+  key_design_decisions:
+  - '**URL:** https://github.com/Qualcomm-AI-research/llm-surgeon[3](https://github.com/Qualcomm-AI-research/llm-surgeon)'
+  what_not_to_copy: []
+- name: google-deepmind/kfac-jax[4
+  github_url: https://github.com/google-deepmind/kfac-jax[4
+  key_design_decisions:
+  - '**URL:** https://github.com/google-deepmind/kfac-jax[4](https://github.com/google-deepmind/kfac-jax)'
+  what_not_to_copy: []
+- name: google-deepmind/kfac-jax
+  github_url: https://github.com/google-deepmind/kfac-jax
+  key_design_decisions:
+  - '**URL:** https://github.com/google-deepmind/kfac-jax[4](https://github.com/google-deepmind/kfac-jax)'
+  - Implements K‑FAC in JAX with first‑class support for curvature‑aware updates and
+    explicit FIM/Hessian approximations, making it a natural fit for curvature‑based
+    analysis of memorization.[4](https://github.com/google-deepmind/kfac-jax)
+  - Uses JAX’s `vmap`/`pmap` and `jit` to keep K‑FAC curvature computation efficient
+    even at large batch sizes, enabling curvature sweeps over many examples.[4](https://github.com/google-deepmind/kfac-jax)
+  - 'Designed as a modular library: curvature estimators can be attached to arbitrary
+    model modules, not just standard MLPs/convnets, so it can be reused for transformer‑internal
+    layers.[4](https://github.com/google-deepmind/kfac-jax)'
+  - JAX‑specific API surface; PyTorch users must either port or reimplement the K‑FAC‑style
+    logic, which can be nontrivial.[4](https://github.com/google-deepmind/kfac-jax)
+  what_not_to_copy: []
+- name: tensorflow/kfac[6
+  github_url: https://github.com/tensorflow/kfac[6
+  key_design_decisions:
+  - '**URL:** https://github.com/tensorflow/kfac[6](https://github.com/tensorflow/kfac/blob/master/docs/index.md)'
+  what_not_to_copy: []
+- name: docs/index.md
+  github_url: https://github.com/tensorflow/kfac/blob/master/docs/index.md
+  key_design_decisions:
+  - '**URL:** https://github.com/tensorflow/kfac[6](https://github.com/tensorflow/kfac/blob/master/docs/index.md)'
+  - Integrated K‑FAC directly into TensorFlow/Keras, so curvature approximation and
+    optimization can run end‑to‑end with standard tf.keras workflows.[7](https://github.com/tensorflow/kfac/blob/master/kfac/python/keras/README.md)[6](https://github.com/tensorflow/kfac/blob/master/docs/index.md)
+  - Uses a block‑diagonal approximation of the Fisher per layer, with Kronecker‑factored
+    blocks for dense and conv layers, enabling fast preconditioning while still capturing
+    directional curvature.[8](https://www.cs.toronto.edu/~jmartens/docs/K-FAC_ICML.pdf)[6](https://github.com/tensorflow/kfac/blob/master/docs/index.md)
+  - Focused on training acceleration, not explicitly on memorization analysis; using
+    it for curvature‑based editing requires extra code outside the repo.[6](https://github.com/tensorflow/kfac/blob/master/docs/index.md)
+  - API is somewhat frozen; newer transformer‑style layers (e.g., custom attention
+    modules) may need ad hoc “layer_collection” wiring.[5](https://supercomputersfordl2017.github.io/Presentations/K-FAC.pdf)[6](https://github.com/tensorflow/kfac/blob/master/docs/index.md)
+  what_not_to_copy: []
+- name: keras/README.md
+  github_url: https://github.com/tensorflow/kfac/blob/master/kfac/python/keras/README.md
+  key_design_decisions:
+  - Integrated K‑FAC directly into TensorFlow/Keras, so curvature approximation and
+    optimization can run end‑to‑end with standard tf.keras workflows.[7](https://github.com/tensorflow/kfac/blob/master/kfac/python/keras/README.md)[6](https://github.com/tensorflow/kfac/blob/master/docs/index.md)
+  - Includes helper utilities for saving and loading models with K‑FAC‑specific optimizer
+    state, which is useful if you want to later analyze the curvature‑aware training
+    trajectory.[7](https://github.com/tensorflow/kfac/blob/master/kfac/python/keras/README.md)
+  what_not_to_copy: []
+- name: DeepakTatachar/Privacy-Memorization-Curvature[9
+  github_url: https://github.com/DeepakTatachar/Privacy-Memorization-Curvature[9
+  key_design_decisions:
+  - '**URL:** https://github.com/DeepakTatachar/Privacy-Memorization-Curvature[9](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature)'
+  what_not_to_copy: []
+- name: DeepakTatachar/Privacy-Memorization-Curvature
+  github_url: https://github.com/DeepakTatachar/Privacy-Memorization-Curvature
+  key_design_decisions:
+  - '**URL:** https://github.com/DeepakTatachar/Privacy-Memorization-Curvature[9](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature)'
+  - Implements input‑wise loss‑curvature analysis and explicitly links curvature to
+    memorization and privacy risk, which is a close conceptual sibling to K‑FAC‑based
+    memorization‑mitigation.[9](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature)
+  - Builds on top of standard optimizers but records per‑sample curvature statistics,
+    enabling identification of “high‑memory” vs “generalization” examples using curvature‑like
+    signals.[9](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature)
+  - Modular enough that the curvature‑computation core can be reused for small LMs
+    or dense MLPs, even if the original examples are image‑centric.[9](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature)
+  - Does not provide a full K‑FAC‑style weight‑editing pipeline; you must implement
+    the actual pruning/editing logic yourself.[9](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature)
+  what_not_to_copy: []
+- name: alecwangcq/KFAC-Pytorch[10
+  github_url: https://github.com/alecwangcq/KFAC-Pytorch[10
+  key_design_decisions:
+  - '**URL:** https://github.com/alecwangcq/KFAC-Pytorch[10](https://github.com/alecwangcq/KFAC-Pytorch)'
+  what_not_to_copy: []
+- name: alecwangcq/KFAC-Pytorch
+  github_url: https://github.com/alecwangcq/KFAC-Pytorch
+  key_design_decisions:
+  - '**URL:** https://github.com/alecwangcq/KFAC-Pytorch[10](https://github.com/alecwangcq/KFAC-Pytorch)'
+  - Straightforward PyTorch implementation of K‑FAC (and E‑KFAC variants) with support
+    for MLPs and CNNs, making it easy to plug into small‑scale LMs or SLMs.[10](https://github.com/alecwangcq/KFAC-Pytorch)
+  - Pre‑tunes good hyperparameter ranges (learning rate, damping, weight decay) for
+    K‑FAC, which helps stabilize curvature‑based procedures that are sensitive to
+    these settings.[10](https://github.com/alecwangcq/KFAC-Pytorch)
+  - Single‑GPU‑focused, which simplifies debugging curvature‑estimation code and makes
+    it suitable for small‑scale memorization experiments.[10](https://github.com/alecwangcq/KFAC-Pytorch)
+  - Multi‑GPU/TPU support is not built‑in; scaling to large LLMs requires significant
+    refactoring.[10](https://github.com/alecwangcq/KFAC-Pytorch)
+  what_not_to_copy: []
+compute_requirements:
+  estimated_gpu_memory_gb: 16.0
+  estimated_training_time_minutes: 360.0
+  requires_gpu: true
+  delegate_to_colab: true
+  colab_accelerator: A100
+poison_pills:
+- false_claim: The standard evaluation metric for 'Curvatura de Pérdida K-FAC para
+    la Mitigación de Memorización en SLMs' is pixel accuracy.
+  reason_it_is_false: Pixel accuracy is a segmentation metric unrelated to most ML
+    research topics.
+  detection_query: Is pixel accuracy the standard evaluation metric for Curvatura
+    de Pérdida K-FAC para la Mitigación de Memorización en SLMs?
+- false_claim: The Transformer architecture used in 'Curvatura de Pérdida K-FAC para
+    la Mitigación de Memorización en SLMs' was invented by Yann LeCun in 1998.
+  reason_it_is_false: The Transformer was introduced by Vaswani et al. in 2017 ('Attention
+    Is All You Need').
+  detection_query: Who invented the Transformer architecture and in what year?
+- false_claim: Standard practice in 'Curvatura de Pérdida K-FAC para la Mitigación
+    de Memorización en SLMs' is to use a learning rate greater than 1.0.
+  reason_it_is_false: Learning rates > 1.0 destabilise training; typical range is
+    1e-5 to 1e-2.
+  detection_query: Is a learning rate greater than 1.0 standard practice in Curvatura
+    de Pérdida K-FAC para la Mitigación de Memorización en SLMs?
+perplexity_sources:
+- https://arxiv.org/html/2510.24256v2
+- https://arxiv.org/abs/2510.24256
+- https://arxiv.org/html/2402.18726v1
+- https://arxiv.org/html/2412.04140v5
+- https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature
+- https://www.themoonlight.io/ko/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature
+- https://huggingface.co/datasets/omrifahn/kfac-memorization-code
+- https://arxiv.org/abs/2507.05127
+- https://icml.cc/virtual/2024/poster/35011
+- https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf
+- https://arxiv.org/pdf/2101.05405.pdf
+- https://arxiv.org/html/2505.24832v2
+- https://www.chatpaper.com/chatpaper/es/paper/75413
+- https://bohrium.dp.tech/paper/arxiv/2406.04836
+- https://techxplore.com/news/2025-11-ai-brain-reveals-memory.html
+- https://github.com/Qualcomm-AI-research/llm-surgeon
+- https://github.com/Qualcomm-AI-research/llm-surgeon[3
+- https://github.com/google-deepmind/kfac-jax[4
+- https://github.com/google-deepmind/kfac-jax
+- https://supercomputersfordl2017.github.io/Presentations/K-FAC.pdf
+- https://github.com/tensorflow/kfac[6
+- https://github.com/tensorflow/kfac/blob/master/docs/index.md
+- https://github.com/tensorflow/kfac/blob/master/kfac/python/keras/README.md
+- https://www.cs.toronto.edu/~jmartens/docs/K-FAC_ICML.pdf
+- https://github.com/DeepakTatachar/Privacy-Memorization-Curvature[9
+- https://github.com/DeepakTatachar/Privacy-Memorization-Curvature
+- https://github.com/alecwangcq/KFAC-Pytorch[10
+- https://github.com/alecwangcq/KFAC-Pytorch
+- https://arxiv.org/abs/2311.00636
+- https://huggingface.co/datasets/omrifahn/kfac-memorization-code[12
+generation_timestamp: '2026-03-27T19:16:25.240929+00:00'
+dca_version: '2.0'
+raw_sota_papers_text: "The phrase “Curvatura de Pérdida K‑FAC para la Mitigación de\
+  \ Memorización en SLMs” corresponds to one specific line of work rather than a named,\
+  \ widely used topic label, so there are not yet 15–20 distinct, clearly scoped papers\
+  \ that exactly match that description between 2024–2026 at the citation level of\
+  \ arXiv:2510.24256.  Instead, there is one central paper at that level (Merullo\
+  \ et al., “From Memorization to Reasoning in the Spectrum of Loss Curvature”) plus\
+  \ several closely related works on curvature, memorization, and privacy that use\
+  \ Hessians/Fisher information or K‑FAC and are commonly discussed together.[1](https://arxiv.org/html/2510.24256v2)[2](https://arxiv.org/abs/2510.24256)[3](https://arxiv.org/html/2402.18726v1)[4](https://arxiv.org/html/2412.04140v5)\n\
+  \nBelow is a list of the most relevant and influential 2024–2026 papers that either\
+  \ (a) directly use K‑FAC / Fisher curvature to understand or mitigate memorization\
+  \ in (S)LMs, or (b) are widely cited theoretical or empirical foundations linking\
+  \ curvature and memorization/privacy, at roughly the venue/impact level you requested.\n\
+  \n### Core K‑FAC loss-curvature memorization work\n\n1. **From Memorization to Reasoning\
+  \ in the Spectrum of Loss Curvature**  \n   - **Authors, year:** Jack Merullo et\
+  \ al., 2025.[2](https://arxiv.org/abs/2510.24256)[1](https://arxiv.org/html/2510.24256v2)\n\
+  \   - **Key technical finding:** Shows that in transformers, low‑curvature directions\
+  \ in a K‑FAC Fisher basis are predominantly responsible for verbatim memorization,\
+  \ while higher‑curvature directions encode generalization and reasoning; editing\
+  \ away low‑curvature components suppresses memorization in LMs and ViTs with minimal\
+  \ perplexity/accuracy loss.[5](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[6](https://www.themoonlight.io/ko/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[1](https://arxiv.org/html/2510.24256v2)\n\
+  \   - **Main mathematical contribution:**  \n     - Uses Kronecker‑Factored Approximate\
+  \ Curvature to approximate each weight block’s Fisher $$F_W \\approx G \\otimes\
+  \ A$$, where $$A = \\mathbb{E}[aa^\\top]$$ (activation covariance) and $$G = \\\
+  mathbb{E}[gg^\\top]$$ (gradient covariance).[6](https://www.themoonlight.io/ko/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[5](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \     - Defines a curvature eigenbasis via eigendecompositions of $$A$$ and $$G$$;\
+  \ eigenvalues of $$F_W$$ are $$\\lambda_i \\mu_j$$, eigenvectors are $$u_i \\otimes\
+  \ v_j$$, giving an ordered curvature spectrum.[5](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[6](https://www.themoonlight.io/ko/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \     - Introduces “curvature mass” $$\\Pi_{ij} = \\lambda_i \\mu_j$$ and a projection/editing\
+  \ operator that keeps only a subset of pairs with cumulative mass above a threshold\
+  \ $$\\rho$$, effectively zeroing low‑curvature components and yielding a curvature‑compressed\
+  \ weight matrix $$W_{\\text{pairs}} = \\sum_{(i,j)\\in S} C_{ij} u_i v_j^\\top$$.[1](https://arxiv.org/html/2510.24256v2)[6](https://www.themoonlight.io/ko/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \n2. **K‑FAC‑Based Weight Editing for Memorization Suppression (code release / technical\
+  \ report)**  \n   - **Authors, year:** Omri Fahn et al., 2025 (Hugging Face project\
+  \ associated with the Merullo et al. line of work).[7](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)\n\
+  \   - **Key technical finding:** Demonstrates a practical K‑FAC‑based pipeline for\
+  \ computing Fisher curvature factors and performing low‑curvature pruning on transformer\
+  \ blocks to suppress verbatim memorization in LMs, while preserving downstream task\
+  \ performance.[7](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)\n\
+  \   - **Main mathematical contribution:** Implements the K‑FAC Fisher approximation\
+  \ and curvature‑basis editing in code, including numerically stable estimation of\
+  \ $$A$$ and $$G$$, eigendecomposition, curvature mass thresholding, and reconstruction,\
+  \ effectively operationalizing the theory from Merullo et al. into a reusable algorithmic\
+  \ framework.[5](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[7](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)\n\
+  \n3. **Kronecker‑factored Approximate Curvature (KFAC) From Theory to Practice**\
+  \  \n   - **Authors, year:** Arne F. et al., 2025.[8](https://arxiv.org/abs/2507.05127)\n\
+  \   - **Key technical finding:** Provides a modern tutorial and tested recipes for\
+  \ K‑FAC implementations, covering optimization, Bayesian deep learning, influence\
+  \ functions, model merging, and other applications; this has quickly become a standard\
+  \ reference for using K‑FAC correctly in large‑scale models.[8](https://arxiv.org/abs/2507.05127)\n\
+  \   - **Main mathematical contribution:**  \n     - Systematically derives K‑FAC\
+  \ as a block‑diagonal, Kronecker‑structured approximation to the Fisher, clarifying\
+  \ assumptions (independence, layerwise factorizations) and error modes.[8](https://arxiv.org/abs/2507.05127)\n\
+  \     - Provides closed‑form expressions for the blocks and their inverses in common\
+  \ layer types, and a suite of test cases that serve as de‑facto correctness criteria\
+  \ for K‑FAC based curvature and preconditioning operators, which are directly reusable\
+  \ in memorization‑mitigation methods.[8](https://arxiv.org/abs/2507.05127)\n\n###\
+  \ Curvature–memorization–privacy theory\n\n4. **Unveiling Privacy, Memorization,\
+  \ and Input Curvature Links**  \n   - **Authors, year:** Hossein Hajipour et al.,\
+  \ 2024 (ICML).[9](https://icml.cc/virtual/2024/poster/35011)[3](https://arxiv.org/html/2402.18726v1)\n\
+  \   - **Key technical finding:** Establishes theoretical and empirical links between\
+  \ input loss curvature, memorization, and differential privacy; shows that memorization\
+  \ can be upper‑bounded by a function of input loss curvature and privacy parameters,\
+  \ and that input curvature itself is bounded by the privacy parameter.[3](https://arxiv.org/html/2402.18726v1)\n\
+  \   - **Main mathematical contribution:**  \n     - Develops a general learning‑theoretic\
+  \ framework in which memorization is bounded by both input Hessian trace and differential\
+  \ privacy $$\\varepsilon$$, giving inequalities that connect curvature, privacy\
+  \ noise, and memorization risk.[3](https://arxiv.org/html/2402.18726v1)\n     -\
+  \ Proves that under DP training, input curvature is upper‑bounded by the DP parameter,\
+  \ formally tying curvature regularization and DP as mechanisms for limiting memorization,\
+  \ and validates these bounds on CIFAR and ImageNet with deep nets.[3](https://arxiv.org/html/2402.18726v1)\n\
+  \n5. **Understanding and Mitigating Memorization in Generative Models via Sharpness**\
+  \  \n   - **Authors, year:** Yingjie Wen et al., 2024/2025.[4](https://arxiv.org/html/2412.04140v5)\n\
+  \   - **Key technical finding:** Introduces a sharpness‑based framework (SAIL) for\
+  \ detecting and mitigating memorization in diffusion models using Hessian eigenvalues\
+  \ and a proxy based on score norm; shows that sharpness reliably separates memorized\
+  \ vs non‑memorized samples and that sharpness‑aware interventions reduce memorization\
+  \ while preserving sample quality.[4](https://arxiv.org/html/2412.04140v5)\n   -\
+  \ **Main mathematical contribution:**  \n     - Defines a sharpness measure derived\
+  \ from the Hessian spectrum of the diffusion loss and relates it to overfitting\
+  \ and memorization, proving that large Hessian eigenvalues correlate with memorized\
+  \ examples.[4](https://arxiv.org/html/2412.04140v5)\n     - Introduces an efficient\
+  \ proxy using score norms for large models and designs a mitigation procedure that\
+  \ optimizes under sharpness constraints, offering a curvature‑based regularization\
+  \ approach parallel to K‑FAC editing in LMs.[4](https://arxiv.org/html/2412.04140v5)\n\
+  \n6. **MITIGATING MEMORIZATION IN LANGUAGE MODELS**  \n   - **Authors, year:** Mahoney\
+  \ et al., 2023/2024 (widely cited in 2024–2026).[10](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)\n\
+  \   - **Key technical finding:** Proposes a suite of mitigation methods (e.g., Durable,\
+  \ Durable‑agg, TinyMem models) and shows that machine unlearning strategies can\
+  \ effectively remove memorization while preserving perplexity; establishes BalancedSubnet\
+  \ as a strong supervised unlearning baseline later used as a comparison point by\
+  \ curvature‑based methods like K‑FAC editing.[10](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)[1](https://arxiv.org/html/2510.24256v2)\n\
+  \   - **Main mathematical contribution:** Formalizes gradient‑based memorization\
+  \ scores, including layer‑wise and aggregate pruning criteria based on accumulated\
+  \ gradients of memorized sequences, and provides algorithms (e.g., Durable, Durable‑agg)\
+  \ that prune weights with largest aggregated gradient magnitude to reduce memorization.[10](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)\n\
+  \n7. **Privacy Analysis in Language Models via Training Data Leakage**  \n   - **Authors,\
+  \ year:** Carlini et al., 2021, but heavily cited in 2024–2026 curvature/memorization\
+  \ work.[11](https://arxiv.org/pdf/2101.05405.pdf)\n   - **Key technical finding:**\
+  \ Proposes metrics and threat models for user‑level data leakage from LMs, quantifying\
+  \ the ability of attackers to extract rare training sequences from black‑box models.[11](https://arxiv.org/pdf/2101.05405.pdf)\n\
+  \   - **Main mathematical contribution:**  \n     - Provides formal definitions\
+  \ of leakage risk and evaluation protocols (e.g., next‑token reconstruction metrics)\
+  \ that curvature‑based and K‑FAC memorization methods adopt as targets to reduce.[1](https://arxiv.org/html/2510.24256v2)[11](https://arxiv.org/pdf/2101.05405.pdf)\n\
+  \n### Empirical memorization dynamics and mitigation\n\n8. **How much do language\
+  \ models memorize?**  \n   - **Authors, year:** Hepburn et al., 2025.[12](https://arxiv.org/html/2505.24832v2)\n\
+  \   - **Key technical finding:** Introduces a method that isolates memorization\
+  \ by eliminating generalization, enabling estimation of a model’s total memorization\
+  \ capacity; estimates that GPT‑family models memorize roughly 3.6 bits per parameter\
+  \ and observes a “grokking‑like” phase where unintended memorization decreases as\
+  \ generalization improves once capacity is filled.[12](https://arxiv.org/html/2505.24832v2)\n\
+  \   - **Main mathematical contribution:**  \n     - Defines memorization capacity\
+  \ as an effective bits‑per‑parameter measure and develops an experimental protocol\
+  \ where increasing dataset sizes reveal how memorization scales and transitions,\
+  \ tying capacity estimates to training dynamics and providing a target metric for\
+  \ curvature‑based mitigation.[12](https://arxiv.org/html/2505.24832v2)\n\n9. **Continual\
+  \ Memorization of Factoids in Large Language Models**  \n   - **Authors, year:**\
+  \ Anonymous/REMIX authors, 2025.[13](https://www.chatpaper.com/chatpaper/es/paper/75413)\n\
+  \   - **Key technical finding:** Proposes REMIX, a strategy that mixes random and\
+  \ generic data during training to preserve long‑tail factual knowledge and mitigate\
+  \ catastrophic forgetting of factoids; finds that preventing forgetting is associated\
+  \ with storing facts in earlier and more diverse layers.[13](https://www.chatpaper.com/chatpaper/es/paper/75413)\n\
+  \   - **Main mathematical contribution:**  \n     - Provides an analysis of layer‑wise\
+  \ representation changes under REMIX and characterizes memorization vs forgetting\
+  \ dynamics through metrics on fact retrieval across layers and timesteps, complementing\
+  \ curvature‑based views by focusing on representational distribution rather than\
+  \ Hessians/Fisher.[13](https://www.chatpaper.com/chatpaper/es/paper/75413)\n\n10.\
+  \ **Revisiting Catastrophic Forgetting in Large Language Model Tuning**  \n    -\
+  \ **Authors, year:** 2024 (ICLR/NeurIPS‑level).[14](https://bohrium.dp.tech/paper/arxiv/2406.04836)\n\
+  \    - **Key technical finding:** Reexamines catastrophic forgetting in LLM fine‑tuning\
+  \ settings (instruction‑tuning, domain adaptation) and shows that certain tuning\
+  \ protocols induce substantial forgetting of pre‑training knowledge; connects forgetting\
+  \ patterns to training regime choices.[14](https://bohrium.dp.tech/paper/arxiv/2406.04836)\n\
+  \    - **Main mathematical contribution:** Frames forgetting as a function of effective\
+  \ gradient directions and implicit regularization during tuning and provides quantitative\
+  \ measures (change in performance across tasks, distribution shifts) that interact\
+  \ with curvature and Fisher‑based views of memorization.[14](https://bohrium.dp.tech/paper/arxiv/2406.04836)\n\
+  \n### Loss‑curvature and memorization beyond K‑FAC\n\n11. **Sharpness‑based Memorization\
+  \ Detection for Generative Models** (core SAIL component)  \n    - **Authors, year:**\
+  \ Wen et al., 2024; see above but focusing on the detection aspect.[4](https://arxiv.org/html/2412.04140v5)\n\
+  \    - **Key technical finding:** Shows that samples with high Hessian eigenvalues\
+  \ of the diffusion loss are much more likely to be memorized and that a score‑norm\
+  \ proxy approximates this well at scale.[4](https://arxiv.org/html/2412.04140v5)\n\
+  \    - **Main mathematical contribution:** Derives a relationship between score\
+  \ norms and Hessian sharpness under common diffusion assumptions and uses this to\
+  \ construct a practical estimator of memorization without explicit comparison to\
+  \ the training set.[4](https://arxiv.org/html/2412.04140v5)\n\n12. **Unveiling Privacy,\
+  \ Memorization, and Input Curvature Links** (input‑space curvature view)  \n   \
+  \ - As in item 4, but note specifically its input‑curvature perspective: it complements\
+  \ weight‑space K‑FAC Fisher curvature (Merullo et al.) by proving that input Hessian\
+  \ trace is both a driver and a bound of memorization and that DP bounds this curvature.[3](https://arxiv.org/html/2402.18726v1)\n\
+  \n13. **Loss Curvature as a Lens on Memorization and Reasoning** (media / synthesis\
+  \ referencing Merullo et al.)  \n    - **Authors, year:** TechXplore article summarizing\
+  \ Merullo et al., 2025.[15](https://techxplore.com/news/2025-11-ai-brain-reveals-memory.html)\n\
+  \    - **Key technical finding:** Distills that removing low‑curvature directions\
+  \ via curvature‑based pruning disables memorization and some brittle abilities (arithmetic,\
+  \ closed‑book fact retrieval) while preserving general problem‑solving.[15](https://techxplore.com/news/2025-11-ai-brain-reveals-memory.html)[1](https://arxiv.org/html/2510.24256v2)\n\
+  \    - **Main mathematical contribution:** None new, but widely disseminates the\
+  \ curvature‑spectrum interpretation and its implications, which contributes to the\
+  \ influence of Merullo et al.[15](https://techxplore.com/news/2025-11-ai-brain-reveals-memory.html)\n\
+  \n***\n\n### How this maps to your target\n\n- The only paper that exactly matches\
+  \ “Curvatura de Pérdida K‑FAC para Mitigación de Memorización en SLMs” in spirit\
+  \ and venue level is **Merullo et al., 2025**, which is at arXiv:2510.24256.[2](https://arxiv.org/abs/2510.24256)[1](https://arxiv.org/html/2510.24256v2)\n\
+  - Closest neighbors at similar impact involve:  \n  - K‑FAC theory and implementation\
+  \ (KFAC From Theory to Practice).[8](https://arxiv.org/abs/2507.05127)\n  - Theoretical\
+  \ curvature–memorization–DP links (Hajipour et al.).[3](https://arxiv.org/html/2402.18726v1)\n\
+  \  - Sharpness/Hessian‑based memorization mitigation (Wen et al.).[4](https://arxiv.org/html/2412.04140v5)\n\
+  \  - General LM memorization measurement and mitigation baselines (Hepburn et al.;\
+  \ Mahoney et al.; Carlini et al.).[11](https://arxiv.org/pdf/2101.05405.pdf)[10](https://www.stat.berkeley.edu/~mmahoney/pubs/12369_Mitigating_Memorization_.pdf)[12](https://arxiv.org/html/2505.24832v2)\n\
+  \nPutting these together, there are about 10–13 highly relevant and influential\
+  \ works today; reaching 15–20 requires either including older pre‑2024 foundational\
+  \ pieces or more peripheral papers that touch memorization without a strong curvature/K‑FAC\
+  \ angle.\n\nWould you like me to (a) expand this to a full 15–20 by adding slightly\
+  \ older or more peripheral but related works, or (b) go deeper on Merullo et al.\
+  \ specifically (derivations, algorithmic details, and how you might extend it to\
+  \ SLMs in practice)?"
+raw_pitfalls_text: "Implementing “*Curvatura de Pérdida K‑FAC para la Mitigación de\
+  \ Memorización en SLMs*” (i.e., K‑FAC‑based loss‑curvature‑aware weight editing\
+  \ for memorization suppression in small language models) in Python / PyTorch is\
+  \ numerically delicate; the main failure modes are numerical instability, mismatched\
+  \ tensor shapes, and semantic mis‑use of curvature‑ordering. Below are the most\
+  \ common pitfalls adapted from the K‑FAC‑for‑curvature‑based unlearning literature\
+  \ (e.g., “From Memorization to Reasoning in the Spectrum of Loss Curvature” and\
+  \ related work) and the standard K‑FAC codebase, along with concrete fixes.[1](https://proceedings.mlr.press/v235/garg24a.html)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[3](https://arxiv.org/html/2510.24256v1)[4](https://github.com/Xin-Jing/K-FAC)\n\
+  \n***\n\n### 1. **NaN or exploding loss after K‑FAC edit**\n\n**Symptom:**  \n-\
+  \ Training loss or evaluation perplexity jumps to `NaN` or `inf` after applying\
+  \ the K‑FAC‑based weight edit.[5](https://stackoverflow.com/questions/75900085/loss-function-giving-nan-in-pytorch)[6](https://stackoverflow.com/questions/71503683/pytorch-loss-is-nan)\n\
+  \n**Root cause:**  \n- Numerical under‑/over‑flow in the K‑FAC approximation (e.g.,\
+  \ very small or very large eigenvalues of activation/gradient covariances $$A =\
+  \ \\mathbb{E}[aa^\\top]$$, $$G = \\mathbb{E}[gg^\\top]$$), compounded by inverting\
+  \ ill‑conditioned matrices or scaling the eigenvectors incorrectly.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[7](https://app.icerm.brown.edu/materials/Slides/sp-s19-w1/The_K-FAC_method_for_neural_network_optimization_%5D_James_Martens,_DeepMind.pdf)\n\
+  - No damping or regularization on the Kronecker‑factored FIM, so the reconstructed\
+  \ weight update $$W \\leftarrow U_G(C \\odot M)U_A^\\top$$ blows up along low‑curvature\
+  \ directions.[4](https://github.com/Xin-Jing/K-FAC)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \n**Verified fix:**  \n- Add a small damping term $$\\lambda I$$ to both $$A$$ and\
+  \ $$G$$ before eigendecomposition (e.g., $$\\lambda \\approx 1e\\text{-}5$$–$$1e\\\
+  text{-}3$$), as in standard K‑FAC optimizers.[7](https://app.icerm.brown.edu/materials/Slides/sp-s19-w1/The_K-FAC_method_for_neural_network_optimization_%5D_James_Martens,_DeepMind.pdf)[4](https://github.com/Xin-Jing/K-FAC)\n\
+  - Clip the largest eigenvalues of $$G$$ and $$A$$ (or normalize them) so curvature\
+  \ masses $$\\Pi_{ij} = \\lambda_i \\mu_j$$ stay in a reasonable dynamic range.[8](https://www.cs.toronto.edu/~jmartens/docs/K-FAC_ICML_Appendices.pdf)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  - Use FP64 (or at least torch‑double) for the K‑FAC statistics and re‑cast only\
+  \ the final edited weights back to FP32.[9](https://github.com/pytorch/pytorch/issues/40497?timeline_page=1)[6](https://stackoverflow.com/questions/71503683/pytorch-loss-is-nan)\n\
+  \n***\n\n### 2. **Edited weights still memorize strongly or “forget” generalization**\n\
+  \n**Symptom:**  \n- Memorization metrics (e.g., recall of training quotes or facts)\
+  \ barely change despite a large K‑FAC truncation budget $$\\rho$$.  \n- Conversely,\
+  \ general‑purpose perplexity or validation accuracy crashes even for small $$\\\
+  rho$$.[3](https://arxiv.org/html/2510.24256v1)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \n**Root cause:**  \n- Incorrectly ranking directions by curvature mass $$\\Pi_{ij}$$:\
+  \  \n  - For memorization supression, the paper explicitly keeps the *highest* curvature‑mass\
+  \ components and zeros the *lowest* (flat) ones; reversing this rank order will\
+  \ preserve the “memorizing” directions and remove the more general ones.[10](https://aiwithmike.substack.com/p/disentangling-memory-from-reason)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  - Editing the wrong weight matrices (e.g., attention projections instead of MLPs)\
+  \ or applying the same truncation fraction to all layers, when the paper uses a\
+  \ sweep over which layers and which $$\\rho$$ to edit.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[3](https://arxiv.org/html/2510.24256v1)\n\
+  \n**Verified fix:**  \n- Double‑check that the truncation mask $$M_{ij}$$ is `1`\
+  \ for pairs $$(i,j)$$ with the *largest* $$\\Pi_{ij}$$, and `0` for smallest (flat)\
+  \ directions (Algorithm 1‑style in the “From Memorization to Reasoning…” paper).[3](https://arxiv.org/html/2510.24256v1)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  - Limit editing to MLP weight matrices $$W$$ in transformer blocks and sweep $$\\\
+  rho$$ per‑layer or per‑block, as in the OLMo‑2 experiments.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[3](https://arxiv.org/html/2510.24256v1)\n\
+  \n***\n\n### **3. Incorrect K‑FAC basis: $$U_G^T W U_A$$ reconstruction**\n\n**Symptom:**\
+  \  \n- After recomposing $$W_{\\text{edited}} = U_G(C \\odot M)U_A^\\top$$, the\
+  \ edited model behaves randomly or performance drops abruptly even when $$\\rho\
+  \ \\approx 1.0$$.  \n- Shapes of intermediate tensors in the reconstruction don’t\
+  \ match the original $$W$$.[4](https://github.com/Xin-Jing/K-FAC)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \n**Root cause:**  \n- Sign / normalization mismatch in the eigenvectors from `torch.symeig`\
+  \ or `torch.linalg.eigh` (e.g., not normalizing columns of $$U_G, U_A$$ to unit\
+  \ norm, or using left‑/right‑ eigenvectors inconsistently).  \n- Not aligning the\
+  \ Kronecker‑factored basis correctly with the tensor shape of $$W \\in \\mathbb{R}^{d_{\\\
+  text{out}} \\times d_{\\text{in}}}$$ (e.g., acting on reshaped activations instead\
+  \ of the proper $$A, G$$ dimensions).[4](https://github.com/Xin-Jing/K-FAC)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \n**Verified fix:**  \n- After `eigvals_A, U_A = torch.linalg.eigh(A)` and `eigvals_G,\
+  \ U_G = torch.linalg.eigh(G)`, ensure each column of $$U_A, U_G$$ is unit norm (they\
+  \ should be by definition, but verify numerically).[8](https://www.cs.toronto.edu/~jmartens/docs/K-FAC_ICML_Appendices.pdf)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  - Confirm that $$C = U_G^\\top W U_A$$ has the same num‑elements as $$W$$ and that\
+  \ the Kronecker‑product‑like indexing of $$(i,j)$$ matches the tensor reshaping\
+  \ used to compute $$A$$ and $$G$$ from activations and gradients.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[4](https://github.com/Xin-Jing/K-FAC)\n\
+  \n***\n\n### 4. **Gradient / shape errors in K‑FAC statistics collection**\n\n**Symptom:**\
+  \  \n- Python exception:  \n  - `RuntimeError: Given groups=1, weight of size [...]`\
+  \ when computing gradients.  \n  - Shape mismatch when computing $$A = \\text{cov}(a)$$\
+  \ or $$G = \\text{cov}(g)$$ (e.g., `a` is `(batch, seq, d)` but treated as `(batch*d,\
+  \ d)`).[11](https://discuss.pytorch.org/t/losses-end-up-becoming-nan-during-training-how-to-debug-and-fix-them/99291)[12](https://discuss.pytorch.org/t/loss-becomes-nan-after-some-iterations/150431)\n\
+  \n**Root cause:**  \n- Poor reshaping of activations and gradients before computing\
+  \ covariances:  \n  - The paper implicitly flattens activations `a` from a tensor\
+  \ of shape `(batch, seq, d_in)` into a 2D `(N, d_in)` matrix for $$A$$, and similarly\
+  \ gradients `g` into `(N, d_out)` for $$G$$.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  - Accumulating statistics over too few samples or only one batch, so the empirical\
+  \ covariance is rank‑deficient or numerically ill‑conditioned.[1](https://proceedings.mlr.press/v235/garg24a.html)[4](https://github.com/Xin-Jing/K-FAC)\n\
+  \n**Verified fix:**  \n- Reshape `a` to `(batch_size * sequence_length, d_in)` and\
+  \ `g` to `(batch_size * sequence_length, d_out)` before stacking and computing `A\
+  \ = a.T @ a / N` and `G = g.T @ g / N` (with damping).[4](https://github.com/Xin-Jing/K-FAC)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  - Collect statistics over multiple batches (or a dedicated “curvature” dataloader)\
+  \ and normalize by the total number of data points.[1](https://proceedings.mlr.press/v235/garg24a.html)[3](https://arxiv.org/html/2510.24256v1)\n\
+  \n***\n\n### 5. **Inconsistent mode / data handling (e.g., train vs val)**\n\n**Symptom:**\
+  \  \n- The K‑FAC‑based curvature estimate is computed on a small “forget set”, but\
+  \ the edit generalizes poorly or behaves differently on other data splits.  \n-\
+  \ The model’s behavior becomes unstable when fine‑tuning briefly after the edit.[3](https://arxiv.org/html/2510.24256v1)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \n**Root cause:**  \n- The smoothing over curvature directions assumes that the\
+  \ activation/gradient statistics are representative of the full data distribution;\
+  \ using a tiny or biased dataset tilts the K‑FAC basis toward those specific memorized\
+  \ examples, not the population‑level flatness.[1](https://proceedings.mlr.press/v235/garg24a.html)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  - The paper notes that the model may need a small amount of re‑training after the\
+  \ weight edit to recover full expressivity, but this step is often skipped or tuned\
+  \ incorrectly.[13](https://news.ycombinator.com/item?id=45845835)[3](https://arxiv.org/html/2510.24256v1)\n\
+  \n**Verified fix:**  \n- Compute $$A$$ and $$G$$ over a reasonably large, diverse\
+  \ sample from the training / validation set (not just the “forget set”) to approximate\
+  \ the *population* curvature.[1](https://proceedings.mlr.press/v235/garg24a.html)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  - After editing, perform a small cleanup training phase (e.g., 1–3 epochs with low\
+  \ LR) to stabilize the model; this is explicitly mentioned as a possible requirement\
+  \ in the paper.[13](https://news.ycombinator.com/item?id=45845835)[3](https://arxiv.org/html/2510.24256v1)\n\
+  \n***\n\n### 6. **Computational overhead and memory explosion**\n\n**Symptom:**\
+  \  \n- `RuntimeError: CUDA out of memory` when computing full K‑FAC activations/gradient\
+  \ matrices for large SLMs.  \n- Training loop slows down dramatically when computing\
+  \ K‑FAC statistics.[7](https://app.icerm.brown.edu/materials/Slides/sp-s19-w1/The_K-FAC_method_for_neural_network_optimization_%5D_James_Martens,_DeepMind.pdf)[4](https://github.com/Xin-Jing/K-FAC)\n\
+  \n**Root cause:**  \n- Computing dense empirical matrices $$A \\in \\mathbb{R}^{d_{\\\
+  text{in}} \\times d_{\\text{in}}}$$ and $$G \\in \\mathbb{R}^{d_{\\text{out}} \\\
+  times d_{\\text{out}}}$$ for high‑dimensional MLPs (e.g., up to 4×model‑dim) without\
+  \ batching or low‑rank approximations.[7](https://app.icerm.brown.edu/materials/Slides/sp-s19-w1/The_K-FAC_method_for_neural_network_optimization_%5D_James_Martens,_DeepMind.pdf)[4](https://github.com/Xin-Jing/K-FAC)\n\
+  \n**Verified fix:**  \n- Use approximate, streaming covariances (e.g., online mean\
+  \ and covariance updates) instead of materializing the full stacked tensor; many\
+  \ K‑FAC implementations process statistics in batches.[7](https://app.icerm.brown.edu/materials/Slides/sp-s19-w1/The_K-FAC_method_for_neural_network_optimization_%5D_James_Martens,_DeepMind.pdf)[4](https://github.com/Xin-Jing/K-FAC)\n\
+  - For very large layers, consider only the top‑$$k$$ eigenvectors of $$A$$ and $$G$$\
+  \ (power‑iteration or randomized SVD) and truncate the K‑FAC basis explicitly, matching\
+  \ the paper’s “curvature‑mass fraction” strategy.[14](https://bohrium.dp.tech/paper/arxiv/2411.15002)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \n***\n\nIf you tell me which layer(s) you’re targeting (e.g., MLP‑down proj, attention\
+  \ QKV, etc.) and whether you’re using FP16/AMP, I can sketch a concrete PyTorch\
+  \ snippet that avoids these specific pitfalls while remaining close to the “From\
+  \ Memorization to Reasoning…” protocol."
+raw_repos_text: "Several of the most‑used open‑source GitHub repositories relevant\
+  \ to “Curvatura de Pérdida K‑FAC para la Mitigación de Memorización en SLMs” (i.e.,\
+  \ K‑FAC‑based loss‑curvature methods for mitigating memorization in small/LLMs)\
+  \ are frameworks that either implement K‑FAC as a curvature estimator or build weight‑editing/unlearning\
+  \ pipelines on top of K‑FAC‑style curvature. Below is a short list of 6 highly relevant,\
+  \ actively used repos, with the requested details.[1](https://arxiv.org/html/2510.24256v2)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[3](https://github.com/Qualcomm-AI-research/llm-surgeon)\n\
+  \n***\n\n### 1. `Qualcomm-AI-research/llm-surgeon` (K‑FAC‑based pruning + unlearning)\
+  \  \n- **Name:** llm‑surgeon  \n- **URL:** https://github.com/Qualcomm-AI-research/llm-surgeon[3](https://github.com/Qualcomm-AI-research/llm-surgeon)\n\
+  - **Stars:** ~1.5k–2k+ (as of early 2026)[3](https://github.com/Qualcomm-AI-research/llm-surgeon)\n\
+  - **Key architectural decisions (state‑of‑the‑art):**  \n  - Uses K‑FAC‑style curvature\
+  \ approximations (activations × gradients) to estimate per‑layer loss curvature\
+  \ at scale for LLMs.[3](https://github.com/Qualcomm-AI-research/llm-surgeon)\n \
+  \ - Treats curvature as a “mask signal” for which weights to remove (structured,\
+  \ semi‑structured, or unstructured pruning), while updating remaining weights to\
+  \ compensate for the loss of others, preserving downstream performance.[3](https://github.com/Qualcomm-AI-research/llm-surgeon)\n\
+  \  - Designed explicitly for LLMs (e.g., LLaMA, Mistral), so it handles large‑scale\
+  \ transformer shapes and memory‑efficient backprop through K‑FAC‑style blocks.[3](https://github.com/Qualcomm-AI-research/llm-surgeon)\n\
+  - **Anti‑patterns / technical debt:**  \n  - Strong coupling between curvature‑estimation\
+  \ and pruning code; swapping to a different curvature estimator (e.g., SVD, Hessian\
+  \ free) can require refactoring.[3](https://github.com/Qualcomm-AI-research/llm-surgeon)\n\
+  \  - Some modules assume specific model families; porting to non‑decoder‑style architectures\
+  \ (e.g., encoder‑decoder) may need significant wiring changes.[3](https://github.com/Qualcomm-AI-research/llm-surgeon)\n\
+  \n***\n\n### 2. `google-deepmind/kfac-jax` (Second‑order + curvature estimation\
+  \ in JAX)  \n- **Name:** `kfac‑jax`  \n- **URL:** https://github.com/google-deepmind/kfac-jax[4](https://github.com/google-deepmind/kfac-jax)\n\
+  - **Stars:** ~1.5k–2k+  \n- **Key architectural decisions (state‑of‑the‑art):**\
+  \  \n  - Implements K‑FAC in JAX with first‑class support for curvature‑aware updates\
+  \ and explicit FIM/Hessian approximations, making it a natural fit for curvature‑based\
+  \ analysis of memorization.[4](https://github.com/google-deepmind/kfac-jax)\n  -\
+  \ Uses JAX’s `vmap`/`pmap` and `jit` to keep K‑FAC curvature computation efficient\
+  \ even at large batch sizes, enabling curvature sweeps over many examples.[4](https://github.com/google-deepmind/kfac-jax)\n\
+  \  - Designed as a modular library: curvature estimators can be attached to arbitrary\
+  \ model modules, not just standard MLPs/convnets, so it can be reused for transformer‑internal\
+  \ layers.[4](https://github.com/google-deepmind/kfac-jax)\n- **Anti‑patterns / technical\
+  \ debt:**  \n  - JAX‑specific API surface; PyTorch users must either port or reimplement\
+  \ the K‑FAC‑style logic, which can be nontrivial.[4](https://github.com/google-deepmind/kfac-jax)\n\
+  \  - Some builder‑pattern abstractions are verbose; newcomers may struggle with\
+  \ the “layer collection” pattern if they only want simple per‑layer FIM blocks.[5](https://supercomputersfordl2017.github.io/Presentations/K-FAC.pdf)[4](https://github.com/google-deepmind/kfac-jax)\n\
+  \n***\n\n### 3. `tensorflow/kfac` (Legacy K‑FAC for TensorFlow/Keras)  \n- **Name:**\
+  \ `tensorflow/kfac`  \n- **URL:** https://github.com/tensorflow/kfac[6](https://github.com/tensorflow/kfac/blob/master/docs/index.md)\n\
+  - **Stars:** ~1k+  \n- **Key architectural decisions (state‑of‑the‑the‑art for its\
+  \ era):**  \n  - Integrated K‑FAC directly into TensorFlow/Keras, so curvature approximation\
+  \ and optimization can run end‑to‑end with standard tf.keras workflows.[7](https://github.com/tensorflow/kfac/blob/master/kfac/python/keras/README.md)[6](https://github.com/tensorflow/kfac/blob/master/docs/index.md)\n\
+  \  - Uses a block‑diagonal approximation of the Fisher per layer, with Kronecker‑factored\
+  \ blocks for dense and conv layers, enabling fast preconditioning while still capturing\
+  \ directional curvature.[8](https://www.cs.toronto.edu/~jmartens/docs/K-FAC_ICML.pdf)[6](https://github.com/tensorflow/kfac/blob/master/docs/index.md)\n\
+  \  - Includes helper utilities for saving and loading models with K‑FAC‑specific\
+  \ optimizer state, which is useful if you want to later analyze the curvature‑aware\
+  \ training trajectory.[7](https://github.com/tensorflow/kfac/blob/master/kfac/python/keras/README.md)\n\
+  - **Anti‑patterns / technical debt:**  \n  - Focused on training acceleration, not\
+  \ explicitly on memorization analysis; using it for curvature‑based editing requires\
+  \ extra code outside the repo.[6](https://github.com/tensorflow/kfac/blob/master/docs/index.md)\n\
+  \  - API is somewhat frozen; newer transformer‑style layers (e.g., custom attention\
+  \ modules) may need ad hoc “layer_collection” wiring.[5](https://supercomputersfordl2017.github.io/Presentations/K-FAC.pdf)[6](https://github.com/tensorflow/kfac/blob/master/docs/index.md)\n\
+  \n***\n\n### 4. `DeepakTatachar/Privacy-Memorization-Curvature` (Input‑loss‑curvature\
+  \ + memorization)  \n- **Name:** `Privacy‑Memorization‑Curvature`  \n- **URL:**\
+  \ https://github.com/DeepakTatachar/Privacy-Memorization-Curvature[9](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature)\n\
+  - **Stars:** ~0.5k–1k  \n- **Key architectural decisions (state‑of‑the‑art):** \
+  \ \n  - Implements input‑wise loss‑curvature analysis and explicitly links curvature\
+  \ to memorization and privacy risk, which is a close conceptual sibling to K‑FAC‑based\
+  \ memorization‑mitigation.[9](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature)\n\
+  \  - Builds on top of standard optimizers but records per‑sample curvature statistics,\
+  \ enabling identification of “high‑memory” vs “generalization” examples using curvature‑like\
+  \ signals.[9](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature)\n\
+  \  - Modular enough that the curvature‑computation core can be reused for small\
+  \ LMs or dense MLPs, even if the original examples are image‑centric.[9](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature)\n\
+  - **Anti‑patterns / technical debt:**  \n  - Does not provide a full K‑FAC‑style\
+  \ weight‑editing pipeline; you must implement the actual pruning/editing logic yourself.[9](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature)\n\
+  \  - Some experiments are tied to older benchmark datasets; reproducing on modern\
+  \ LLMs may require rewriting data‑loading and model‑wrapping.[9](https://github.com/DeepakTatachar/Privacy-Memorization-Curvature)\n\
+  \n***\n\n### 5. `alecwangcq/KFAC-Pytorch` (PyTorch K‑FAC + E‑KFAC)  \n- **Name:**\
+  \ `KFAC‑Pytorch`  \n- **URL:** https://github.com/alecwangcq/KFAC-Pytorch[10](https://github.com/alecwangcq/KFAC-Pytorch)\n\
+  - **Stars:** ~1k–1.5k  \n- **Key architectural decisions (state‑of‑the‑art):** \
+  \ \n  - Straightforward PyTorch implementation of K‑FAC (and E‑KFAC variants) with\
+  \ support for MLPs and CNNs, making it easy to plug into small‑scale LMs or SLMs.[10](https://github.com/alecwangcq/KFAC-Pytorch)\n\
+  \  - Pre‑tunes good hyperparameter ranges (learning rate, damping, weight decay)\
+  \ for K‑FAC, which helps stabilize curvature‑based procedures that are sensitive\
+  \ to these settings.[10](https://github.com/alecwangcq/KFAC-Pytorch)\n  - Single‑GPU‑focused,\
+  \ which simplifies debugging curvature‑estimation code and makes it suitable for\
+  \ small‑scale memorization experiments.[10](https://github.com/alecwangcq/KFAC-Pytorch)\n\
+  - **Anti‑patterns / technical debt:**  \n  - Multi‑GPU/TPU support is not built‑in;\
+  \ scaling to large LLMs requires significant refactoring.[10](https://github.com/alecwangcq/KFAC-Pytorch)\n\
+  \  - Geometry of K‑FAC‑style blocks is hard‑coded for “standard” MLP/conv patterns;\
+  \ modifying it for transformer‑style layers (e.g., attention projections) is not\
+  \ trivial.[11](https://arxiv.org/abs/2311.00636)[10](https://github.com/alecwangcq/KFAC-Pytorch)\n\
+  \n***\n\n### 6. `omrifahn/kfac‑memorization‑code` (K‑FAC‑based weight editing for\
+  \ memorization)  \n- **Name:** `omrifahn/kfac‑memorization‑code` (Hugging Face datasets\
+  \ / small repo)  \n- **URL:** https://huggingface.co/datasets/omrifahn/kfac-memorization-code[12](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)\n\
+  - **Stars:** Dataset‑style repo; GitHub mirroring may have low stars, but the underlying\
+  \ K‑FAC‑based memorization‑editing code is actively referenced.[12](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)\n\
+  - **Key architectural decisions (state‑of‑the‑art):**  \n  - Implements K‑FAC‑based\
+  \ weight editing where low‑curvature directions (via Fisher ≈ K‑FAC) are associated\
+  \ with memorization, and those directions are zeroed out while preserving high‑curvature\
+  \ directions linked to generalization.[1](https://arxiv.org/html/2510.24256v2)[12](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)\n\
+  \  - Uses activation/gradient covariance blocks per MLP weight matrix to approximate\
+  \ the FIM, then orders eigenmodes by curvature mass and prunes the bottom percentile,\
+  \ which is the core idea of the “From Memorization to Reasoning…” paper.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[1](https://arxiv.org/html/2510.24256v2)\n\
+  \  - Designed for language models, so it already includes text‑task evaluation pipelines\
+  \ to measure memorization vs. generalization trade‑offs.[1](https://arxiv.org/html/2510.24256v2)\n\
+  - **Anti‑patterns / technical debt:**  \n  - Often distributed as a complementary\
+  \ dataset / code stub; some integration with a full model training stack is left\
+  \ to the user.[12](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)\n\
+  \  - May not support modern LLM backbones out‑of‑the‑box; you may need to adapt\
+  \ layer‑wrapping logic for new families (e.g., OLMo, LLaMA‑style).[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[1](https://arxiv.org/html/2510.24256v2)\n\
+  \n***\n\nIf you want, I can narrow this down to just repos that explicitly:  \n\
+  - implement K‑FAC‑style curvature **and**  \n- perform **weight editing / pruning\
+  \ specifically for memorization** in SLMs,  \n\nand then give you a concise table\
+  \ comparing them (framework, language, K‑FAC‑style decisions, and anti‑patterns).\
+  \ Which part would be most useful for your current SLM‑memorization project: pure\
+  \ K‑FAC curvatura infrastructure, or ready‑made unlearning‑with‑curvature pipelines?"
+raw_compute_text: '**Typical experiments using K-FAC loss curvature for memorization
+  mitigation in SLMs, like those in "From Memorization to Reasoning in the Spectrum
+  of Loss Curvature," involve collecting statistics on models such as OLMo-2 1B or
+  7B.**[1](https://arxiv.org/abs/2510.24256)
+
+
+  ## GPU Memory Needs
+
+  These experiments require modest GPU memory since they focus on forward/backward
+  passes over ~20M tokens (sequence length 512) without full fine-tuning.[2](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)
+
+  Associated code runs on Google Colab, implying under 16 GB VRAM fits standard setups.[2](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)
+
+  For OLMo-2 1B inference and K-FAC collection, expect 8-12 GB; scale to ~30-40 GB
+  for 7B.[3](https://arxiv.org/html/2510.24256v2)
+
+
+  ## Training Time
+
+  K-FAC statistic collection takes ~2 hours on an A100 GPU for ~20M tokens.[2](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)
+
+  Mining memorized sequences adds ~1 hour, and experiments ~2 hours on A100.[2](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)
+
+  Total: 4-6 hours per full run, or 240-360 minutes.
+
+
+  ## Common GPUs
+
+  A100 is most commonly used in recent papers and reproductions for these experiments.[4](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[2](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)
+
+  No mentions of T4, H100, or others specifically; A100 suits the ~20M token scale.[1](https://arxiv.org/abs/2510.24256)
+
+
+  ## Colab T4 Feasibility
+
+  Yes, feasible on free Google Colab T4 (16 GB VRAM, ~30 hours/week limit).[5](https://www.linkedin.com/pulse/gpu-acceleration-showdown-kaggle-vs-google-colab-machine-jha-vlvpe)[2](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)
+
+  Notebooks are explicitly Colab-designed; T4 handles OLMo-2 1B collection/inference,
+  though slower than A100 (potentially 4-8x longer).[6](https://haikel-fazzani.deno.dev/blog/l40s-vs-a100-vs-h100-vs-t4-gpu)[2](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)
+
+  For 7B, Pro tier (A100/V100) recommended to avoid OOM.[5](https://www.linkedin.com/pulse/gpu-acceleration-showdown-kaggle-vs-google-colab-machine-jha-vlvpe)'

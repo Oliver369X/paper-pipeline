@@ -1,0 +1,69 @@
+[project]
+name = "paper-pipeline"
+version = "0.1.0"
+description = "LLM-assisted research drafting pipeline: mission.md → Perplexity → draft → optional experiments, quality, Notion, Cursor CLI"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "perplexity-webui-scraper",
+    "pyyaml>=6.0.1",
+    "pydantic>=2.12",
+    "python-dotenv>=1.0",
+    "filelock>=3.13",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "nbformat>=5.9",
+    "google-genai>=1.0",
+    "psycopg[binary]>=3.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.15", "pytest-cov>=4.1", "httpx>=0.28.1", "pytest-asyncio>=1.0"]
+e2e = ["playwright>=1.49"]
+rag_qdrant = ["qdrant-client>=1.12"]
+figures = ["matplotlib>=3.8"]
+experiments = ["numpy>=1.24"]
+# torch + HF: micro-entrenamiento causal LM y datasets desde el Hub (``experiment_runner.profile: hf_llm_micro``).
+llm = ["numpy>=1.24", "torch>=2.0", "transformers>=4.40", "datasets>=2.18", "accelerate>=0.27"]
+
+[project.scripts]
+paper-pipeline = "paper_pipeline.__main__:main"
+paper-meta-loop = "paper_pipeline.meta_main:main"
+paper-meta-watch = "paper_pipeline.meta_watch:main"
+paper-record-visual = "paper_pipeline.record_visual:main"
+paper-cursor-agent = "paper_pipeline.cursor_cli_main:main"
+paper-loop = "paper_pipeline.integrated_loop_main:main"
+paper-racing-loop = "paper_pipeline.racing_loop_main:main"
+paper-web = "paper_pipeline.server_cli:main"
+paper-parallel = "paper_pipeline.parallel_cli:main"
+paper-agent-step = "paper_pipeline.agent.scheduler:main"
+paper-report-figures = "paper_pipeline.reporting.paper_figures:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["paper_pipeline*"]
+
+[tool.setuptools.package-data]
+paper_pipeline = ["brain/brain_capabilities.md", "schemas/*.json"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+markers = [
+    "e2e: Playwright contra visual-flow (requiere extra e2e y playwright install chromium)",
+    "cockpit_e2e: Playwright contra Cockpit React (requiere web/dist, uvicorn, playwright chromium)",
+    "integration: llamada real a Perplexity (PERPLEXITY_SESSION_TOKEN; consume cuota)",
+    "autonomy_integration: humo Perplexity para escenarios autonomía manuales (PERPLEXITY_SESSION_TOKEN; consume cuota)",
+    "notion_real: llamada real a Notion (NOTION_TOKEN; opcional NOTION_SMOKE_PAGE_ID para escritura)",
+]
+
+[tool.coverage.run]
+source = ["paper_pipeline"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+fail_under = 45

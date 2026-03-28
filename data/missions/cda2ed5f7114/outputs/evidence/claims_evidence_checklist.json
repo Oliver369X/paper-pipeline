@@ -1,0 +1,281 @@
+{
+  "schema_version": 1,
+  "note": "evidence_status unverified until human or external tool confirms source",
+  "paper_target_hint": "cross-check arXiv ID matches the paper you cite (see docs/ARXIV_TARGET_ALIGNMENT.md)",
+  "replication_phase": "AB",
+  "replication_fidelity": "extension_exploratory",
+  "items": [
+    {
+      "claim_id": "line_18",
+      "line": 18,
+      "text": "<!-- section=abstract generated=2026-03-27T20:36:50.096624+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_49",
+      "line": 49,
+      "text": "<!-- section=methodology generated=2026-03-27T20:37:41.023987+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_91",
+      "line": 91,
+      "text": "| **K-FAC truncation** (baseline principal) | No [3](https://arxiv.org/html/2510.24256v1)[5](https://news.ycombinator.com/item?id=45845835) | 3.4% strict (Dolma), 16.1% (quotes OOD) [3](https://arxiv.org/html/2510.24256v1) | 22.84 [3](https://arxiv.org/html/2510.24256v1) |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_92",
+      "line": 92,
+      "text": "| **BalancedSubnet (BSN)** | Sí (forget/retain sets) [3](https://arxiv.org/html/2510.24256v1)[4](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature) | 6.0% strict (Dolma), 60.0% (quotes) [3](https://arxiv.org/html/2510.24256v1) | 23.59 [3](https://arxiv.org/html/2510.24256v1) |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_93",
+      "line": 93,
+      "text": "| **SVD truncation** | No [3](https://arxiv.org/html/2510.24256v1) | 3.0% strict (Dolma), 17.5% (quotes) [3](https://arxiv.org/html/2510.24256v1) | 22.49 [3](https://arxiv.org/html/2510.24256v1) |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_105",
+      "line": 105,
+      "text": "- Logical reasoning: 95–106% retention[3](https://arxiv.org/html/2510.24256v1)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_106",
+      "line": 106,
+      "text": "- Open-book QA: 93–99%[3](https://arxiv.org/html/2510.24256v1)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_107",
+      "line": 107,
+      "text": "- Closed-book QA: 74–86%[3](https://arxiv.org/html/2510.24256v1)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_108",
+      "line": 108,
+      "text": "- Math/arithmetic: 66–74%[3](https://arxiv.org/html/2510.24256v1)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_109",
+      "line": 109,
+      "text": "- Memorización: 3–16%[3](https://arxiv.org/html/2510.24256v1)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_155",
+      "line": 155,
+      "text": "donde $$C_{(p)}$$ = componentes en percentil $$p$$ (top 10%, bottom 50%, etc.)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_182",
+      "line": 182,
+      "text": "**Capas a editar:** Layers 23–25 para OLMo-7B, up/gate projections a 60% energy.[3](https://arxiv.org/html/2510.24256v1)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_260",
+      "line": 260,
+      "text": "- Memorización suppression: strict accuracy < 3.4% (Dolma)[3](https://arxiv.org/html/2510.24256v1)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_261",
+      "line": 261,
+      "text": "- Retención math: > 74% (vs. baseline 66–74%)[3](https://arxiv.org/html/2510.24256v1)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_271",
+      "line": 271,
+      "text": "- Sea robusta a edición (retención > 90%) **a pesar** de alta activación en baja curvatura, **o**",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_272",
+      "line": 272,
+      "text": "- Sea frágil (retención < 50%) **a pesar** de baja activación en baja curvatura",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_284",
+      "line": 284,
+      "text": "- Mostrar recuperación de > 50% memorización original",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_351",
+      "line": 351,
+      "text": "<!-- section=experiments generated=2026-03-27T20:38:03.035903+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_365",
+      "line": 365,
+      "text": "Train/fine-tune small-to-medium LMs (e.g., OLMo-1B/7B) on mixtures: 70% clean Dolma/Pile (generalization), 30% duplicates/noised labels (induce memorization). Vary interpolation regime by scaling data repeats (1x to 100x) or model size (100M-7B params). Compute K-FAC covariances (A=activation, G=gradient) on 20M tokens per checkpoint. Edit MLPs in late layers (23-25) at 60% curvature mass retention (ρ=0.6).[3](https://arxiv.org/html/2510.24256v2)[1](https://arxiv.org/html/2510.24256v1)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_368",
+      "line": 368,
+      "text": "- Memorization: Strict/loose accuracy (exact/75% match on heldout prefixes), Levenshtein distance.[1](https://arxiv.org/html/2510.24256v1)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_374",
+      "line": 374,
+      "text": "- Curvature threshold: Vary ρ (40-80%) to map transition sharpness.",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_375",
+      "line": 375,
+      "text": "- Data regime: Clean vs. duplicate-heavy mixtures; noised labels (10-50%).",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_387",
+      "line": 387,
+      "text": "| K-FAC ρ=0.6  | 3.4                 | 66-74              | 22.84 | 0.6                    | 1.6x (mem/clean)       |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_389",
+      "line": 389,
+      "text": "| SVD          | 3.0                 | ~85                        | 22.49 | N/A                    | 1.2x[5](https://www.semanticscholar.org/paper/From-Memorization-to-Reasoning-in-the-Spectrum-of-Merullo-Vatsavaya/6d1a57fc3fa4487d17a56c5b178a99bd25265057)                    |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_390",
+      "line": 390,
+      "text": "| High Dups    | 95                          | 50                         | 25    | 1.5                    | 2.0x                           |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_396",
+      "line": 396,
+      "text": "<!-- section=related_code generated=2026-03-27T20:38:27.294024+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_462",
+      "line": 462,
+      "text": "<!-- section=gaps generated=2026-03-27T20:38:43.136091+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_477",
+      "line": 477,
+      "text": "<!-- section=sota generated=2026-03-27T20:39:13.976904+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_479",
+      "line": 479,
+      "text": "The current state of the art for **análisis de la curvatura de la pérdida en la transición memorización–razonamiento** gira en torno a descomposiciones de la matriz de Fisher (o su aproximación K‑FAC) para separar direcciones “memorísticas” (baja curvatura agregada) de direcciones “generalistas/razonadoras” (curvatura moderada pero consistente) en modelos transformer.[1](https://arxiv.org/abs/2510.24256)[2](https://proceedings.mlr.press/v235/garg24a.html)[3](https://www.themoonlight.io/fr/review",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_507",
+      "line": 507,
+      "text": "- Exactitud en “out‑of‑distribution” memorized quotes (e.g., 16.1% strict accuracy vs 60.0% en BalancedSubnet, con mejor perplexity en OLMo‑2 7B).[1](https://arxiv.org/abs/2510.24256)[3](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_509",
+      "line": 509,
+      "text": "- Perplexity en test, accuracy en validación (en ViTs se reporta mejora de 67.0% → 71.7% tras edición por curvatura).[3](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[1](https://arxiv.org/abs/2510.24256)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_546",
+      "line": 546,
+      "text": "- Se seleccionan pares $$(i,j)$$ con curvatura acumulada hasta una fracción $$\\rho$$ (e.g., 80–90%) y se reconstruyen los pesos usando solo esas direcciones.",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_554",
+      "line": 554,
+      "text": "- En OLMo‑2 7B, edición K‑FAC reduce **strict memorization accuracy** de quotes a ~16.1% frente a ~60.0% en BalancedSubnet, manteniendo perplexity más baja.[1](https://arxiv.org/abs/2510.24256)[3](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_556",
+      "line": 556,
+      "text": "- En ViTs con etiquetas ruidosas, se observa mejora de **67.0% → 71.7%** en validación y mejor recuperación de etiquetas verdaderas tras edición por curvatura.[3](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[1](https://arxiv.org/abs/2510.24256)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    }
+  ]
+}

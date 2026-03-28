@@ -1,0 +1,10 @@
+<!-- section=gaps generated=2026-03-27T18:07:50.007160+00:00 model=best -->
+
+- **Application to SLMs (<1B parameters):** arXiv:2510.24256 focuses on 1B-7B OLMo models; underexplored in resource-constrained SLMs where compute for K-FAC covariances may exceed training budgets, limiting feasibility for edge deployment.[1](https://arxiv.org/html/2510.24256v2)
+- **Numerical stability for small eigenvalues:** Estimating low-curvature directions in SLMs risks instability due to noisy gradients in limited data regimes, unaddressed in the paper's larger-model sweeps.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+- **Post-editing fine-tuning dynamics:** Paper notes potential need for further training after edits to regain expressivity, but gaps in SLM-specific strategies to prevent memorization resurgence during adaptation.
+- **Beyond MLP edits to attention layers:** Method targets MLPs; underexplored extension to attention mechanisms, critical for memorization in SLMs with sparser activations.
+- **Low-resource data settings:** Bulk data assumption for covariance collection doesn't hold for domain-specific SLMs (e.g., medical, code); no analysis of curvature signals in small/fine-tuned corpora.[3](https://www.nature.com/articles/s41746-025-01653-8)
+- **Interaction with quantization/distillation:** No evaluation of K-FAC robustness under 4/8-bit quantization or distillation common in SLMs, where curvature approximations may degrade.[4](https://www.emergentmind.com/topics/kronecker-factored-approximate-curvature-k-fac-cfb12415-7bdc-42ec-b0f2-bb04c447624a)
+- **Task-specific brittleness in SLMs:** Arithmetic/fact recall drops observed in LMs; open whether SLMs show similar spectrum or if reasoning is uniformly robust due to scale limits.
+- **Theoretical guarantees for aggregate curvature:** Empirical inversion (low aggregate curvature = memorization) lacks proofs for SLMs, where double descent alters loss landscapes.

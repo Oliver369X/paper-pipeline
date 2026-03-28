@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "root_objective": "Maximizar evidencia reproducible de una contribución publicable",
+  "status": "healthy",
+  "utility_total": 1.6,
+  "terms": {
+    "contribution_estimate": 0.0,
+    "quality_score": 1.0,
+    "cost_score": 0.4,
+    "risk_score": 0.0,
+    "coherence_score": 1.0
+  },
+  "gates": {
+    "metrics_valid": true,
+    "publishable": true,
+    "loop_stopped": false,
+    "requires_human_approval": false
+  },
+  "source_artifacts": [
+    "validation/quality_validation.json",
+    "publication/publish_decision.json",
+    "run_ledger.json",
+    "safety_trace.jsonl"
+  ],
+  "last_updated_at": "2026-03-27T14:49:07.562606+00:00"
+}

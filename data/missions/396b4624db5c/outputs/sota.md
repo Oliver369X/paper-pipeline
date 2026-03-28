@@ -1,0 +1,15 @@
+<!-- section=sota generated=2026-03-26T20:59:36.016762+00:00 model=best -->
+
+**Sparse Autoencoders (SAEs) represent the state-of-the-art paradigm in mechanistic interpretability for LLMs, focusing on decomposing superimposed activations into monosemantic features.**[1](https://arxiv.org/html/2406.04093v1)[2](https://cdn.openai.com/papers/sparse-autoencoders.pdf)
+
+## Benchmark Datasets
+Common datasets include activations from language models like GPT-2 Small, Pythia, Gemma, Llama-3 (1-8B), and GPT-4 residuals, often using millions of tokens from Pile or similar corpora. Specialized benchmarks like SAEBench feature 8 diverse evaluations (unsupervised metrics, downstream tasks), while synthetic data tests recovery and MIB assesses circuit/causal variable localization across 4 tasks and 5 models.[3](https://www.perplexity.ai/search/ca3e1039-a249-44be-925b-62d93d64cdc4)[4](https://github.com/jbloomAus/SAELens)[5](https://www.alphaxiv.org/overview/2504.13151v2)[6](https://arxiv.org/html/2602.14687v1)[7](https://www.alignmentforum.org/posts/jGG24BzLdYvi9dugm/saebench-a-comprehensive-benchmark-for-sparse-autoencoders)[1](https://arxiv.org/html/2406.04093v1)
+
+## Standard Metrics
+Key metrics are reconstruction-focused (MSE, explained variance/R², loss recovery), sparsity (L0 norm 50-150, dead latents <1-5%), monosemanticity (FMS, MS score via Jensen-Shannon distance, auto-interpretability F1), and downstream (sparse probing accuracy, MCC, feature uniqueness, CPR/CMD for circuits).[8](https://arxiv.org/html/2506.19382v1)[9](https://arxiv.org/html/2503.09532v3)[10](https://arxiv.org/html/2504.02821v3)[6](https://arxiv.org/html/2602.14687v1)[11](https://arxiv.org/abs/2508.15094)[1](https://arxiv.org/html/2406.04093v1)
+
+## Reported Scores
+SOTA SAEs achieve MSE scaling as L(N,K) ≈ 0.1-0.5 (joint n latents, k sparsity on GPT-4), >90-95% loss recovery, R² >0.9, dead latents <1%, auto-interp F1 0.4-0.7, sparse probing 70-90% on tasks; G-SAEs double monosemanticity vs. vanilla. Domain-specific SAEs boost variance explained and clinical F1 vs. broad-domain.[12](https://www.perplexity.ai/search/7412d7a1-e7cc-485a-8095-57eb69490d3b)[13](https://huggingface.co/papers/2506.19382)[14](https://arxiv.org/html/2508.09363v1)[9](https://arxiv.org/html/2503.09532v3)[1](https://arxiv.org/html/2406.04093v1)
+
+## Architectures & Paradigms
+Dominant setups use overcomplete (4-128x expansion, millions latents) encoder-decoder with L1/TopK sparsity, JumpReLU/ProLu activation; variants include Gated/TopK/BatchTopK/LayerGroup/Switch/Matryoshka SAEs for better scaling/steering. Trained via TransformerLens/SAELens/Sparsify on residual streams; shift to domain-specific training and automated circuit discovery.[15](https://www.taskade.com/blog/what-is-mechanistic-interpretability)[16](https://www.emergentmind.com/topics/sparse-autoencoder-based-framework)[2](https://cdn.openai.com/papers/sparse-autoencoders.pdf)[4](https://github.com/jbloomAus/SAELens)[17](https://github.com/EleutherAI/sparsify)[7](https://www.alignmentforum.org/posts/jGG24BzLdYvi9dugm/saebench-a-comprehensive-benchmark-for-sparse-autoencoders)

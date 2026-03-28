@@ -1,0 +1,11 @@
+{
+  "id": "integrity_runner_isolation",
+  "description": "Eval runner only writes under the allowed temp root.",
+  "target": "integrity",
+  "axis": ["integrity_eval"],
+  "safety_context": {},
+  "goal_inputs": {},
+  "expectations": {
+    "isolation_ok": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "nodes": [
+    {
+      "id": "root-1",
+      "parent_id": null,
+      "description": "Exploración inicial de literatura sobre: Curvatura de Pérdida K-FAC para la Mitigación de Memorización en SLMs",
+      "goal_type": "literature",
+      "status": "pending",
+      "priority": 0.5,
+      "source_artifacts": [
+        "goals.json"
+      ]
+    }
+  ],
+  "mission_topic_hint": "Curvatura de Pérdida K-FAC para la Mitigación de Memorización en SLMs"
+}

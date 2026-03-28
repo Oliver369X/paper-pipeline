@@ -1,0 +1,30 @@
+{
+  "command_preview": [
+    "C:\\Users\\OLIVER\\AppData\\Local\\cursor-agent\\agent.cmd",
+    "-p",
+    "--force",
+    "--output-format",
+    "text",
+    "--model",
+    "composer-2-fast"
+  ],
+  "cwd": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\cda2ed5f7114",
+  "exit_code": 0,
+  "stderr_truncated": "\nAborting operation...\n",
+  "stdout_truncated": "�Desea terminar el trabajo por lotes (S/N)? \n",
+  "timed_out": false,
+  "error": null,
+  "remediation_hints": [],
+  "iteration": {
+    "max_attempts": 3,
+    "stopped_after_attempt": 1,
+    "reason": "success",
+    "rounds": [
+      {
+        "attempt": 1,
+        "process_returncode": 0,
+        "pipeline_exit_kind": 0
+      }
+    ]
+  }
+}

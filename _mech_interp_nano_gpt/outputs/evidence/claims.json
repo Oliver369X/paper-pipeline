@@ -1,0 +1,44 @@
+[
+  {
+    "claim_id": "line_9",
+    "line": 9,
+    "text": "<!-- section=related_work generated=2026-03-26T19:30:00.281030+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_225",
+    "line": 225,
+    "text": "<!-- section=gaps generated=2026-03-26T19:30:30.229101+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_277",
+    "line": 277,
+    "text": "<!-- section=methodology generated=2026-03-26T19:31:17.251792+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_418",
+    "line": 418,
+    "text": "<!-- section=experiments generated=2026-03-26T19:31:48.390340+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_552",
+    "line": 552,
+    "text": "<!-- section=abstract generated=2026-03-26T19:39:58.055621+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_598",
+    "line": 598,
+    "text": "<!-- section=conclusion generated=2026-03-26T19:40:11.357607+00:00 model=best -->",
+    "type": "literature_or_performance"
+  },
+  {
+    "claim_id": "line_618",
+    "line": 618,
+    "text": "<!-- section=limitations generated=2026-03-26T19:40:40.023723+00:00 model=best -->",
+    "type": "literature_or_performance"
+  }
+]

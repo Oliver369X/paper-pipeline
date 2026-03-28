@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paper pipeline — flujo visual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;450;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1412;
+      --surface: #1a221e;
+      --surface2: #243028;
+      --ink: #e8f0ea;
+      --muted: #8fa89a;
+      --accent: #c4f542;
+      --accent-dim: #7a9a3a;
+      --flow: #5ee0b8;
+      --warn: #ffb347;
+      --radius: 14px;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Outfit", system-ui, sans-serif;
+      font-weight: 450;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 0%, rgba(94, 224, 184, 0.12), transparent 55%),
+        radial-gradient(ellipse 60% 50% at 100% 30%, rgba(196, 245, 66, 0.08), transparent 50%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    header {
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-weight: 400;
+      font-size: clamp(1.75rem, 4vw, 2.35rem);
+      letter-spacing: -0.02em;
+      margin: 0 0 0.5rem;
+    }
+
+    .lede {
+      color: var(--muted);
+      max-width: 52ch;
+      font-size: 1.05rem;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin: 1.75rem 0 2rem;
+    }
+
+    button {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.8rem;
+      padding: 0.65rem 1.1rem;
+      border-radius: 999px;
+      border: 1px solid var(--surface2);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
+
+    button:hover {
+      background: var(--surface2);
+      border-color: var(--accent-dim);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, var(--accent-dim), var(--accent));
+      color: #0f1412;
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    button.primary:hover {
+      filter: brightness(1.08);
+    }
+
+    .step-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .flow-panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .flow-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .nodes {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .node-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+
+    .connector {
+      width: 2px;
+      min-height: 1.25rem;
+      margin-left: calc(1rem + 11px);
+      background: linear-gradient(var(--surface2), var(--flow));
+      opacity: 0.35;
+      transition: opacity 0.35s, box-shadow 0.35s;
+    }
+
+    .connector.lit {
+      opacity: 1;
+      box-shadow: 0 0 12px var(--flow);
+    }
+
+    .node {
+      flex: 1;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      background: var(--bg);
+      border: 1px solid transparent;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.25s;
+    }
+
+    .node.active {
+      border-color: var(--flow);
+      box-shadow: 0 0 0 1px rgba(94, 224, 184, 0.25), 0 12px 32px rgba(0, 0, 0, 0.35);
+      transform: translateX(4px);
+    }
+
+    .node.done {
+      border-color: rgba(196, 245, 66, 0.35);
+    }
+
+    .node-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: var(--surface2);
+      display: grid;
+      place-items: center;
+      font-size: 0.65rem;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--flow);
+      flex-shrink: 0;
+    }
+
+    .node.active .node-icon {
+      background: rgba(94, 224, 184, 0.2);
+      color: var(--accent);
+    }
+
+    .node h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .node p {
+      margin: 0.35rem 0 0;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .detail-panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      min-height: 320px;
+    }
+
+    .detail-panel h2 {
+      font-family: "DM Serif Display", serif;
+      font-weight: 400;
+      font-size: 1.35rem;
+      margin: 0 0 1rem;
+    }
+
+    .detail-body {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .detail-body strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .detail-body code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      background: var(--bg);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      color: var(--flow);
+    }
+
+    .legend {
+      margin-top: 2rem;
+      padding: 1rem 1.25rem;
+      border-radius: 10px;
+      background: rgba(255, 179, 71, 0.08);
+      border: 1px solid rgba(255, 179, 71, 0.2);
+      font-size: 0.85rem;
+      color: var(--warn);
+    }
+
+    .legend strong {
+      color: var(--ink);
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .mcp-note {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--surface2);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .mcp-note a {
+      color: var(--flow);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--surface2);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .tab-btn[aria-selected="true"] {
+      background: var(--surface);
+      color: var(--ink);
+      border-color: var(--flow);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .hero {
+      background: linear-gradient(145deg, var(--surface2), var(--surface));
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(94, 224, 184, 0.15);
+    }
+
+    .hero h2 {
+      font-family: "DM Serif Display", serif;
+      font-size: 1.15rem;
+      margin: 0 0 0.75rem;
+      font-weight: 400;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .badge {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.68rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      border: 1px solid var(--surface2);
+      color: var(--muted);
+    }
+
+    .badge.idle { border-color: #5a6570; }
+    .badge.run { border-color: var(--flow); color: var(--flow); }
+    .badge.review { border-color: var(--warn); color: var(--warn); }
+    .badge.safe { border-color: #ff6b6b; color: #ff9a9a; }
+    .badge.done { border-color: var(--accent-dim); color: var(--accent); }
+    .badge.watch { border-color: #6eb5ff; color: #9dc8ff; }
+
+    .hero p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+      max-width: 65ch;
+    }
+
+    .safety-list {
+      margin-top: 1.25rem;
+      padding: 1rem;
+      background: var(--bg);
+      border-radius: 10px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .safety-list ul {
+      margin: 0.5rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    .safety-list li {
+      margin-bottom: 0.35rem;
+    }
+
+    .node.meta-node h3 {
+      font-size: 0.88rem;
+    }
+
+    .file-map {
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      background: var(--bg);
+      border-radius: 8px;
+      border: 1px solid var(--surface2);
+      font-size: 0.78rem;
+    }
+
+    .file-map table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .file-map th {
+      text-align: left;
+      color: var(--muted);
+      font-weight: 600;
+      padding: 0.35rem 0.5rem 0.35rem 0;
+    }
+
+    .file-map td {
+      padding: 0.25rem 0.5rem 0.25rem 0;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--flow);
+    }
+
+    .panel-escenarios-intro {
+      max-width: 72ch;
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.55;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .scenario-card {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      box-shadow: var(--shadow);
+    }
+
+    .scenario-card h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-family: "DM Serif Display", serif;
+      font-weight: 400;
+      color: var(--ink);
+    }
+
+    .scenario-card p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+      flex: 1;
+      line-height: 1.45;
+    }
+
+    .scenario-card .kbd {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.65rem;
+      color: var(--warn);
+    }
+
+    .log-wrap {
+      background: #0a0e0c;
+      border: 1px solid var(--surface2);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.85rem;
+      background: var(--surface2);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    #demo-log {
+      margin: 0;
+      padding: 1rem 1.1rem;
+      min-height: 220px;
+      max-height: 420px;
+      overflow: auto;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem;
+      line-height: 1.55;
+      color: #c5e8d5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .log-line-warn {
+      color: var(--warn);
+    }
+
+    .log-line-ok {
+      color: var(--flow);
+    }
+
+    .log-line-stop {
+      color: #ff8a8a;
+    }
+
+    .escenario-progress {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="tabs" role="tablist" aria-label="Vistas">
+      <button type="button" class="tab-btn" role="tab" aria-selected="true" id="tab-pipeline" data-panel="panel-pipeline">Pipeline investigación</button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false" id="tab-meta" data-panel="panel-meta">Meta-agente (supervisión)</button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false" id="tab-escenarios" data-panel="panel-escenarios">Escenarios &amp; log</button>
+    </nav>
+
+    <div id="panel-pipeline" class="tab-panel active">
+    <header>
+      <h1>Flujo del paper pipeline</h1>
+      <p class="lede">
+        <strong>Demo visual</strong> (sin llamar APIs). El flujo real con Perplexity/Notion/Cursor va por terminal:
+        <code>paper-pipeline</code>, <code>paper-loop</code> (bucle con <code>@PERPLEXITY</code> / <code>@NOTION</code> / <code>@CURSOR</code> en los .md). Pulsa <strong>Simular flujo</strong> solo para animar el diagrama.
+      </p>
+      <div class="toolbar">
+        <button type="button" class="primary" id="btn-sim">Simular flujo</button>
+        <button type="button" id="btn-reset">Reiniciar</button>
+        <span class="step-label" id="step-indicator">Paso — / —</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <section class="flow-panel" aria-label="Diagrama de flujo">
+        <div class="flow-title">Secuencia</div>
+        <div class="nodes" id="nodes"></div>
+      </section>
+
+      <section class="detail-panel">
+        <h2 id="detail-title">Detalle</h2>
+        <div class="detail-body" id="detail-body">
+          <p>
+            Usa <strong>Simular flujo</strong> para iluminar cada etapa. Cada bloque corresponde a un componente real del repositorio <code>paper-pipeline</code>.
+          </p>
+          <div class="file-map">
+            <table>
+              <thead><tr><th>Artefacto</th><th>Rol</th></tr></thead>
+              <tbody>
+                <tr><td>mission.md</td><td>Entrada YAML (tema, secciones, límites)</td></tr>
+                <tr><td>outputs/*.md</td><td>Respuestas por sección</td></tr>
+                <tr><td>draft_paper.md</td><td>Borrador unificado</td></tr>
+                <tr><td>quality_gaps.md</td><td>Revisión vs venue</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mcp-note">
+          <strong>MCP (Cursor):</strong> el servidor <code>perplexity-webui-scraper</code> expone herramientas aparte; el orquestador usa la <strong>librería Python</strong> directamente. Herramientas de hilo: <code>pplx_thread_*</code>.
+        </div>
+      </section>
+    </div>
+
+    <p class="legend">
+      <strong>Nota:</strong> el paso “Código en Cursor” no se ejecuta desde el script; es un paso manual o con agente según <code>.cursorrules</code>.
+    </p>
+    </div>
+
+    <div id="panel-meta" class="tab-panel">
+    <header>
+      <h1>Meta-agente: Cursor sin escribir en el chat</h1>
+      <p class="lede">
+        <code>paper-meta-watch</code> vigila <code>outputs/cursor_turn.md</code> y, al guardar, lanza el mismo revisor que <code>paper-meta-loop</code> (Perplexity → <code>next_instruction.md</code>). Cursor sigue ese archivo (<code>.cursorrules</code>). Sin API de chat: archivos + reglas.
+      </p>
+    </header>
+
+    <section class="hero">
+      <h2>Modo supervisión — estados (hero)</h2>
+      <div class="badges">
+        <span class="badge idle">IDLE · esperando</span>
+        <span class="badge run">RUNNING · Cursor trabaja</span>
+        <span class="badge watch">WATCH · vigilancia de archivo</span>
+        <span class="badge review">REVIEW · Perplexity lee cursor_turn</span>
+        <span class="badge safe">SAFE_STOP · límite o STOP</span>
+        <span class="badge done">DONE · objetivo cumplido</span>
+      </div>
+      <p>
+        La simulación de abajo ilumina el ciclo. <strong>Parada segura:</strong> <code>META_MAX_ROUNDS</code>, primera línea <code>STOP</code> del revisor, error de red, token inválido, o <strong>Ctrl+C</strong> para el watcher.
+      </p>
+      <div class="safety-list">
+        <strong>Cuándo se detiene (sin infinito)</strong>
+        <ul>
+          <li>Tope de rondas: <code>META_MAX_ROUNDS</code> (por defecto 12).</li>
+          <li>Revisor <code>STOP</code> en <code>next_instruction.md</code> (riesgo o tarea lista).</li>
+          <li>Watcher: <code>META_WATCH_POLL</code> (s), <code>META_WATCH_DEBOUNCE</code> (s tras último guardado). Opcional <code>META_WATCH_EXIT_ON_STOP=1</code> para cerrar al ver STOP.</li>
+          <li><code>cursor_turn.md</code> vacío → no se llama a Perplexity.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <button type="button" class="primary" id="btn-sim-meta">Simular ciclo meta</button>
+      <button type="button" id="btn-reset-meta">Reiniciar</button>
+      <span class="step-label" id="meta-indicator">Paso — / —</span>
+    </div>
+
+    <div class="layout">
+      <section class="flow-panel" aria-label="Meta ciclo">
+        <div class="flow-title">Secuencia meta-agente</div>
+        <div class="nodes" id="nodes-meta"></div>
+      </section>
+      <section class="detail-panel">
+        <h2 id="meta-detail-title">Detalle</h2>
+        <div class="detail-body" id="meta-detail-body">
+          <p>Pulsa <strong>Simular ciclo meta</strong> (5 pasos) o un bloque. Flujo completo: archivo → <strong>watcher</strong> → Perplexity → instrucción → Cursor → otra vez el archivo.</p>
+        </div>
+      </section>
+    </div>
+
+    <p class="legend">
+      <strong>Automático:</strong> con <code>paper-meta-watch</code> no hace falta ejecutar <code>paper-meta-loop</code> a mano cada vez: el watcher dispara el revisor al estabilizar <code>cursor_turn.md</code>. Sin API de chat en Cursor; el humano puede reducirse a “dejar corriendo el watcher” y revisar <code>next_instruction.md</code>.
+    </p>
+    </div>
+
+    <div id="panel-escenarios" class="tab-panel">
+    <header>
+      <h1>Escenarios de prueba — log en vivo</h1>
+      <p class="panel-escenarios-intro">
+        Aquí no hay red: son <strong>simulaciones narradas</strong> que imitan objetivos pequeños, varias interacciones en cadena (2–3 vueltas o más) y un <strong>punto de parada</strong>.
+        El panel inferior <strong>registra todo</strong> como haría una consola. Úsalo para enseñar el sistema o ensayar el orden mental antes de correr <code>pytest</code> o los comandos reales.
+      </p>
+    </header>
+
+    <div class="scenario-grid">
+      <div class="scenario-card">
+        <h3>Sprint investigación (3 pasos + borrador)</h3>
+        <p>Objetivo mínimo: tema + 3 secciones → fragmentos → ensamblado. Se detiene antes de calidad/Notion.</p>
+        <span class="kbd">pytest: test_scenarios_e2e_style</span>
+        <button type="button" class="primary" data-scenario="sprint">Ejecutar escenario</button>
+      </div>
+      <div class="scenario-card">
+        <h3>Meta: 2 rondas Cursor ↔ revisor</h3>
+        <p>Alterna guardados en <code>cursor_turn</code>, debounce, CONTINUE, nuevo trabajo del Agent, segunda revisión y cierre.</p>
+        <span class="kbd">pytest: test_meta_loop_mocked</span>
+        <button type="button" class="primary" data-scenario="meta2">Ejecutar escenario</button>
+      </div>
+      <div class="scenario-card">
+        <h3>Parada segura (tope de rondas)</h3>
+        <p><code>META_MAX_ROUNDS</code> alcanzado: el sistema escribe STOP y no encadena infinito.</p>
+        <span class="kbd">pytest: test_pipeline_mocked (max_calls)</span>
+        <button type="button" class="primary" data-scenario="safe">Ejecutar escenario</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <button type="button" id="btn-log-clear">Limpiar log</button>
+      <button type="button" id="btn-log-copy">Copiar log</button>
+      <span class="step-label" id="escenario-status">Listo</span>
+    </div>
+    <p class="escenario-progress" id="escenario-progress"></p>
+
+    <div class="log-wrap">
+      <div class="log-header"><span>Salida simulada (consola)</span><span id="log-lines">0 líneas</span></div>
+      <pre id="demo-log"></pre>
+    </div>
+
+    <p class="legend" style="margin-top: 1.25rem;">
+      <strong>Tests reales:</strong> en la carpeta <code>tests/</code> — <code>pytest tests/ -q</code>. Los escenarios de esta pestaña son solo demostración en el navegador.
+    </p>
+    </div>
+
+    <footer>
+      Archivo estático: <code>paper-pipeline/visual-flow/index.html</code> — ábrelo en el navegador (doble clic o Live Server).
+    </footer>
+  </div>
+
+  <script>
+    const STEPS = [
+      {
+        id: "mission",
+        title: "mission.md",
+        short: "Entrada única (YAML): tema, venue, secciones, límites.",
+        detail:
+          "Defines <strong>topic</strong>, <strong>paper_target</strong>, <strong>sections_needed</strong>, <strong>max_perplexity_calls</strong>, flags como <code>code_needed</code> y opcionalmente <code>notion_page_id</code>. El parser vive en <code>paper_pipeline/mission.py</code>.",
+      },
+      {
+        id: "orch",
+        title: "Orquestador",
+        short: "Lee la misión y recorre las plantillas por sección.",
+        detail:
+          "En <code>orchestrator.py</code>: por cada clave en <code>sections_needed</code> se construye el prompt desde <code>templates.py</code> (CALLS), respetando el techo de llamadas a Perplexity.",
+      },
+      {
+        id: "pplx",
+        title: "Perplexity (librería)",
+        short: "Cliente web: una conversación por sección (o hilo MCP aparte).",
+        detail:
+          "Usa <code>perplexity_webui_scraper.Perplexity</code> + <code>ConversationConfig</code>. Requiere <code>PERPLEXITY_SESSION_TOKEN</code>. Escribe <code>outputs/&lt;sección&gt;.md</code>.",
+      },
+      {
+        id: "outputs",
+        title: "outputs/*.md",
+        short: "Fragmentos por sección (related_work, gaps, etc.).",
+        detail:
+          "Cada respuesta se guarda con cabecera HTML comentada (timestamp, modelo). Si <code>code_needed</code>, se crea <code>outputs/code/README.md</code> con instrucciones.",
+      },
+      {
+        id: "draft",
+        title: "draft_paper.md",
+        short: "Borrador concatenado a partir de las secciones.",
+        detail:
+          "El orquestador ensambla título, venue y el contenido de los .md generados en un único borrador para revisión.",
+      },
+      {
+        id: "quality",
+        title: "quality_gaps.md",
+        short: "Última llamada: qué falta para el venue objetivo.",
+        detail:
+          "Si <code>enable_quality_check</code> y queda cupo en <code>max_perplexity_calls</code>, se envía el borrador (truncado si hace falta) y se guarda el informe de brechas.",
+      },
+      {
+        id: "notion",
+        title: "Notion (opcional)",
+        short: "API oficial: append de bloques a la página.",
+        detail:
+          "Con <code>enable_notion: true</code>, <code>NOTION_TOKEN</code> y <code>notion_page_id</code>, <code>notion_sync.py</code> vuelca secciones y deja trazas en <code>notion_sync.log</code>.",
+      },
+      {
+        id: "cursor",
+        title: "Código (Cursor / CLI opcional)",
+        short: "IDE + <code>paper-cursor-agent</code> headless con <code>CURSOR_API_KEY</code>.",
+        detail:
+          "Con <code>enable_cursor_cli: true</code> en la misión, el orquestador puede llamar al CLI oficial (<code>agent -p --force</code>) tras el borrador. Sin eso, abre el proyecto en Cursor y ejecuta el Agent, o ejecuta <code>paper-cursor-agent</code> a mano. Reglas en <code>.cursorrules</code>; salida también en <code>outputs/cursor_turn.md</code>.",
+      },
+    ];
+
+    const nodesEl = document.getElementById("nodes");
+    const detailTitle = document.getElementById("detail-title");
+    const detailBody = document.getElementById("detail-body");
+    const indicator = document.getElementById("step-indicator");
+
+    function renderNodes() {
+      nodesEl.innerHTML = "";
+      STEPS.forEach((step, i) => {
+        const row = document.createElement("div");
+        row.className = "node-row";
+        const node = document.createElement("div");
+        node.className = "node";
+        node.dataset.index = String(i);
+        node.innerHTML =
+          '<div class="node-icon">' +
+          String(i + 1).padStart(2, "0") +
+          "</div>" +
+          "<div><h3>" +
+          step.title +
+          "</h3><p>" +
+          step.short +
+          "</p></div>";
+        node.addEventListener("click", () => setActive(i, false));
+        row.appendChild(node);
+        nodesEl.appendChild(row);
+        if (i < STEPS.length - 1) {
+          const conn = document.createElement("div");
+          conn.className = "connector";
+          conn.dataset.connIndex = String(i);
+          nodesEl.appendChild(conn);
+        }
+      });
+    }
+
+    function setDetail(i) {
+      const s = STEPS[i];
+      detailTitle.textContent = s.title;
+      detailBody.innerHTML = "<p>" + s.detail + "</p>";
+    }
+
+    function setActive(index, fromSim) {
+      const nodes = nodesEl.querySelectorAll(".node");
+      const conns = nodesEl.querySelectorAll(".connector");
+      nodes.forEach((n, i) => {
+        n.classList.toggle("active", i === index);
+        n.classList.toggle("done", i < index);
+      });
+      conns.forEach((c, i) => {
+        c.classList.toggle("lit", i < index);
+      });
+      setDetail(index);
+      indicator.textContent = "Paso " + (index + 1) + " / " + STEPS.length + (fromSim ? " (simulación)" : "");
+    }
+
+    let simTimer = null;
+    let simIndex = 0;
+
+    function clearSim() {
+      if (simTimer) {
+        clearInterval(simTimer);
+        simTimer = null;
+      }
+    }
+
+    document.getElementById("btn-sim").addEventListener("click", () => {
+      clearSim();
+      simIndex = 0;
+      setActive(0, true);
+      simTimer = setInterval(() => {
+        simIndex += 1;
+        if (simIndex >= STEPS.length) {
+          clearSim();
+          indicator.textContent = "Flujo completo — " + STEPS.length + " pasos";
+          return;
+        }
+        setActive(simIndex, true);
+      }, 1400);
+    });
+
+    document.getElementById("btn-reset").addEventListener("click", () => {
+      clearSim();
+      nodesEl.querySelectorAll(".node").forEach((n) => {
+        n.classList.remove("active", "done");
+      });
+      nodesEl.querySelectorAll(".connector").forEach((c) => c.classList.remove("lit"));
+      detailTitle.textContent = "Detalle";
+      detailBody.innerHTML =
+        "<p>Pulsa un paso en la columna izquierda o <strong>Simular flujo</strong> para ver la secuencia.</p>";
+      indicator.textContent = "Paso — / —";
+    });
+
+    renderNodes();
+
+    /* --- Tabs --- */
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-panel");
+        document.querySelectorAll(".tab-btn").forEach((b) => b.setAttribute("aria-selected", "false"));
+        document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+        btn.setAttribute("aria-selected", "true");
+        const panel = document.getElementById(id);
+        if (panel) panel.classList.add("active");
+      });
+    });
+
+    /* --- Meta panel --- */
+    const META_STEPS = [
+      {
+        title: "cursor_turn.md",
+        short: "Último resultado del Agent (pegado o resumen automático).",
+        detail:
+          "Ruta: <code>outputs/cursor_turn.md</code>. Sin texto, el revisor no se ejecuta.",
+      },
+      {
+        title: "paper-meta-watch",
+        short: "Bucle en segundo plano: detecta cambios y espera debounce.",
+        detail:
+          "Comando: <code>paper-meta-watch</code>. Variables: <code>META_WATCH_POLL</code> (s), <code>META_WATCH_DEBOUNCE</code> (s tras último guardado). Opcional <code>META_WATCH_EXIT_ON_STOP=1</code>. Detener: Ctrl+C.",
+      },
+      {
+        title: "Revisor Perplexity",
+        short: "Misma lógica que paper-meta-loop: objetivo vs output.",
+        detail:
+          "Necesita <code>PERPLEXITY_SESSION_TOKEN</code>. Cuenta rondas con <code>META_MAX_ROUNDS</code>. Escribe <code>next_instruction.md</code>.",
+      },
+      {
+        title: "next_instruction.md",
+        short: "CONTINUE + instrucciones, o STOP + motivo.",
+        detail:
+          "Cursor lee reglas del proyecto. Si empieza por STOP, no ampliar alcance.",
+      },
+      {
+        title: "Cursor Agent",
+        short: "Ejecuta; luego actualiza cursor_turn para el siguiente ciclo.",
+        detail:
+          "El Agent puede seguir <code>next_instruction.md</code> y volcar resumen en <code>cursor_turn.md</code> — el watcher reacciona al guardar.",
+      },
+    ];
+
+    const nodesMetaEl = document.getElementById("nodes-meta");
+    const metaDetailTitle = document.getElementById("meta-detail-title");
+    const metaDetailBody = document.getElementById("meta-detail-body");
+    const metaIndicator = document.getElementById("meta-indicator");
+
+    function renderNodesMeta() {
+      nodesMetaEl.innerHTML = "";
+      META_STEPS.forEach((step, i) => {
+        const row = document.createElement("div");
+        row.className = "node-row";
+        const node = document.createElement("div");
+        node.className = "node meta-node";
+        node.dataset.mindex = String(i);
+        node.innerHTML =
+          '<div class="node-icon">' +
+          String(i + 1).padStart(2, "0") +
+          "</div><div><h3>" +
+          step.title +
+          "</h3><p>" +
+          step.short +
+          "</p></div>";
+        node.addEventListener("click", () => setActiveMeta(i));
+        row.appendChild(node);
+        nodesMetaEl.appendChild(row);
+        if (i < META_STEPS.length - 1) {
+          const conn = document.createElement("div");
+          conn.className = "connector";
+          nodesMetaEl.appendChild(conn);
+        }
+      });
+    }
+
+    function setActiveMeta(index) {
+      const nodes = nodesMetaEl.querySelectorAll(".node");
+      const conns = nodesMetaEl.querySelectorAll(".connector");
+      nodes.forEach((n, i) => {
+        n.classList.toggle("active", i === index);
+        n.classList.toggle("done", i < index);
+      });
+      conns.forEach((c, i) => c.classList.toggle("lit", i < index));
+      const s = META_STEPS[index];
+      metaDetailTitle.textContent = s.title;
+      metaDetailBody.innerHTML = "<p>" + s.detail + "</p>";
+      metaIndicator.textContent = "Meta paso " + (index + 1) + " / " + META_STEPS.length;
+    }
+
+    let metaSimTimer = null;
+
+    function clearMetaSim() {
+      if (metaSimTimer) {
+        clearInterval(metaSimTimer);
+        metaSimTimer = null;
+      }
+    }
+
+    document.getElementById("btn-sim-meta").addEventListener("click", () => {
+      clearMetaSim();
+      let i = 0;
+      setActiveMeta(0);
+      metaSimTimer = setInterval(() => {
+        i += 1;
+        if (i >= META_STEPS.length) {
+          clearMetaSim();
+          metaIndicator.textContent = "Ciclo meta completo — revisa SAFE_STOP en la vida real";
+          return;
+        }
+        setActiveMeta(i);
+      }, 1200);
+    });
+
+    document.getElementById("btn-reset-meta").addEventListener("click", () => {
+      clearMetaSim();
+      nodesMetaEl.querySelectorAll(".node").forEach((n) => n.classList.remove("active", "done"));
+      nodesMetaEl.querySelectorAll(".connector").forEach((c) => c.classList.remove("lit"));
+      metaDetailTitle.textContent = "Detalle";
+      metaDetailBody.innerHTML =
+        "<p>Pulsa <strong>Simular ciclo meta</strong> (5 pasos) o un bloque. <code>paper-meta-watch</code> automatiza el paso del centro.</p>";
+      metaIndicator.textContent = "Paso — / —";
+    });
+
+    renderNodesMeta();
+
+    /* --- Escenarios: log en vivo + narrativa --- */
+    const demoLogEl = document.getElementById("demo-log");
+    const logLinesEl = document.getElementById("log-lines");
+    const escenarioStatus = document.getElementById("escenario-status");
+    const escenarioProgress = document.getElementById("escenario-progress");
+    let scenarioToken = 0;
+
+    function ts() {
+      return new Date().toLocaleTimeString("es-ES", { hour12: false });
+    }
+
+    function appendLog(line) {
+      demoLogEl.textContent += "[" + ts() + "] " + line + "\n";
+      const n = demoLogEl.textContent.split("\n").filter(function (x) {
+        return x.length > 0;
+      }).length;
+      logLinesEl.textContent = n + " líneas";
+      demoLogEl.scrollTop = demoLogEl.scrollHeight;
+    }
+
+    function clearLog() {
+      demoLogEl.textContent = "";
+      logLinesEl.textContent = "0 líneas";
+      escenarioProgress.textContent = "";
+    }
+
+    document.getElementById("btn-log-clear").addEventListener("click", clearLog);
+    document.getElementById("btn-log-copy").addEventListener("click", function () {
+      navigator.clipboard.writeText(demoLogEl.textContent).then(function () {
+        escenarioStatus.textContent = "Copiado";
+        setTimeout(function () {
+          escenarioStatus.textContent = "Listo";
+        }, 1500);
+      });
+    });
+
+    function sleep(ms) {
+      return new Promise(function (resolve) {
+        setTimeout(resolve, ms);
+      });
+    }
+
+    async function runScenario(name, myToken) {
+      escenarioStatus.textContent = "Ejecutando…";
+      appendLog("═══ Escenario: " + name + " ═══");
+
+      if (name === "sprint") {
+        appendLog("OBJETIVO: borrador con 3 secciones (sin calidad/Notion).");
+        await sleep(350);
+        if (myToken !== scenarioToken) return;
+        appendLog("→ Leer mission.md: topic=«detección de anomalías», max_perplexity_calls=6");
+        setActive(0, true);
+        await sleep(450);
+        if (myToken !== scenarioToken) return;
+        appendLog("→ Orquestador: encolar gaps, sota, methodology");
+        setActive(1, true);
+        await sleep(400);
+        if (myToken !== scenarioToken) return;
+        appendLog("→ Perplexity ×3 → outputs/gaps.md, sota.md, methodology.md");
+        setActive(2, true);
+        await sleep(500);
+        if (myToken !== scenarioToken) return;
+        setActive(3, true);
+        await sleep(400);
+        if (myToken !== scenarioToken) return;
+        appendLog("→ Ensamblar draft_paper.md");
+        setActive(4, true);
+        await sleep(450);
+        if (myToken !== scenarioToken) return;
+        appendLog("PARADA: sin quality_gaps en este sprint (enable_quality_check=false).");
+        escenarioProgress.textContent = "Fin sprint — pasos 01–05 iluminados en Pipeline (pestaña anterior).";
+        escenarioStatus.textContent = "Listo";
+        return;
+      }
+
+      if (name === "meta2") {
+        appendLog("OBJETIVO: dos vueltas Agent ↔ Perplexity (simulado).");
+        await sleep(300);
+        if (myToken !== scenarioToken) return;
+        appendLog("Ronda 1 — Agent escribe resumen en outputs/cursor_turn.md y guarda.");
+        setActiveMeta(0);
+        await sleep(500);
+        if (myToken !== scenarioToken) return;
+        appendLog("paper-meta-watch: mtime cambió → debounce " + (1.5).toFixed(1) + "s…");
+        setActiveMeta(1);
+        await sleep(600);
+        if (myToken !== scenarioToken) return;
+        appendLog("Revisor Perplexity → next_instruction.md = CONTINUE + «añade tests»");
+        setActiveMeta(2);
+        await sleep(500);
+        if (myToken !== scenarioToken) return;
+        setActiveMeta(3);
+        await sleep(400);
+        if (myToken !== scenarioToken) return;
+        appendLog("Cursor Agent ejecuta; vuelve a guardar cursor_turn.md (ronda 2).");
+        setActiveMeta(4);
+        await sleep(550);
+        if (myToken !== scenarioToken) return;
+        appendLog("Segunda pasada revisor → CONTINUE más corto (mismo ciclo 01→05).");
+        setActiveMeta(2);
+        await sleep(400);
+        if (myToken !== scenarioToken) return;
+        appendLog("PARADA elegida: tercera vuelta devolvería STOP en escenario real (no infinito).");
+        escenarioProgress.textContent = "Fin escenario meta×2 — revisa pestaña Meta-agente.";
+        escenarioStatus.textContent = "Listo";
+        return;
+      }
+
+      if (name === "safe") {
+        appendLog("OBJETIVO: respetar techo META_MAX_ROUNDS / max_perplexity_calls.");
+        await sleep(250);
+        if (myToken !== scenarioToken) return;
+        appendLog("mission: 4 secciones pedidas, max_perplexity_calls=2");
+        setActive(0, true);
+        await sleep(500);
+        if (myToken !== scenarioToken) return;
+        appendLog("→ Sección 1: related_work.md ✓");
+        setActive(3, true);
+        await sleep(400);
+        if (myToken !== scenarioToken) return;
+        appendLog("→ Sección 2: sota.md ✓");
+        await sleep(350);
+        if (myToken !== scenarioToken) return;
+        appendLog("WARN: tope alcanzado — gaps y methodology NO generados (seguridad).");
+        appendLog("STOP lógico: el orquestador no consume más llamadas.");
+        escenarioProgress.textContent = "Alineado con test_pipeline_stops_at_max_perplexity_calls.";
+        escenarioStatus.textContent = "Listo";
+        return;
+      }
+    }
+
+    document.querySelectorAll("[data-scenario]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        scenarioToken += 1;
+        var myToken = scenarioToken;
+        var name = btn.getAttribute("data-scenario");
+        runScenario(name, myToken);
+      });
+    });
+  </script>
+</body>
+</html>

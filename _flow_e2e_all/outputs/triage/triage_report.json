@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "tier": 3,
+  "label": "breakthrough",
+  "reason": "Main metric crosses breakthrough margin vs baseline",
+  "detail": {
+    "main": 0.85,
+    "baseline": 0.8,
+    "margin": 0.02
+  },
+  "metrics": {
+    "exit_code": 0,
+    "main": 0.85,
+    "baseline": 0.8,
+    "coverage": 0.92,
+    "math_checks": "PASS",
+    "anomaly_detected": false,
+    "oom_error": false,
+    "notes": ""
+  },
+  "quality_gates": {
+    "target_metric": "",
+    "higher_is_better": true,
+    "sota_baseline_value": 0.0,
+    "breakthrough_margin": 0.02,
+    "replication_tolerance": 0.01,
+    "require_statistical_significance": true
+  }
+}

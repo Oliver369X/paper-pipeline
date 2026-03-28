@@ -1,0 +1,7 @@
+{
+  "ok": false,
+  "exit_code": 1,
+  "reason": "metrics exit_code=1",
+  "mission_topic": "Curvatura de Pérdida K-FAC para la Mitigación de Memorización en SLMs",
+  "metrics_exit_code": 1
+}

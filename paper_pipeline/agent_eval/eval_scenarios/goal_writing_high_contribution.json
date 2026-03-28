@@ -1,0 +1,23 @@
+{
+  "id": "goal_writing_high_contribution",
+  "description": "Publishable with strong contribution → writing.",
+  "target": "goal_selection",
+  "axis": ["capacity", "research_quality"],
+  "goal_inputs": {
+    "objective_state": {
+      "status": "healthy",
+      "gates": {"publishable": true},
+      "terms": {"contribution_estimate": 0.75}
+    },
+    "memory_index": {
+      "latest_by_kind": {
+        "publish": {"payload": {"eligible_for_publication": true}}
+      }
+    },
+    "safety_latest": {},
+    "loop_state": {}
+  },
+  "expectations": {
+    "selected_goal_type": "writing"
+  }
+}

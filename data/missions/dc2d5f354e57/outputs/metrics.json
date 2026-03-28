@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "exit_code": 1,
+  "main": null,
+  "math_checks": "UNKNOWN",
+  "anomaly_detected": true,
+  "experiment_runner": {
+    "status": "error",
+    "detail": "hf_llm_micro requiere torch, transformers, datasets. Instal\u00e1: pip install paper-pipeline[llm]; instal\u00e1: pip install paper-pipeline[llm]"
+  }
+}

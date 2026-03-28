@@ -1,0 +1,77 @@
+version: 1
+experiment_id: b64e2c5f69c8
+domain_preview: Mitigating Memorization in Language Models via BalancedSubnet
+phases:
+  DOMAIN_ACQUISITION:
+    skills:
+    - technical-research
+    - hf-mcp
+    - hugging-face-paper-publisher
+    mcps:
+    - perplexity-web
+    - firecrawl-mcp
+    - github
+  HYPOTHESIS_DESIGN:
+    skills:
+    - brainstorming
+    - writing-plans
+    mcps:
+    - perplexity-web
+  IMPLEMENTATION_PLAN:
+    skills:
+    - writing-plans
+    - subagent-driven-development
+    - dispatching-parallel-agents
+    mcps:
+    - github
+  CODE_GENERATION:
+    skills:
+    - test-driven-development
+    - executing-plans
+    - hugging-face-model-trainer
+    - gradio
+    mcps:
+    - github
+    - TestSprite
+  DEBUGGING:
+    skills:
+    - systematic-debugging
+    - verification-before-completion
+    - receiving-code-review
+    mcps:
+    - perplexity-web
+    - TestSprite
+  EVALUATION:
+    skills:
+    - verification-before-completion
+    - hugging-face-evaluation
+    - hugging-face-trackio
+    mcps:
+    - TestSprite
+    - github
+  WEB_PACKAGING:
+    skills: []
+    mcps:
+    - plugin-vercel-vercel
+    - plugin-notion-workspace-notion
+    - playwright
+    skills_after_evaluation_phase:
+    - nextjs
+    - vercel-cli
+    - shadcn
+    - ai-elements
+    - vercel-storage
+    - gradio
+    - hf-cli
+  DOCUMENTATION:
+    skills:
+    - knowledge-capture
+    - tasks-explain-diff
+    - finishing-a-development-branch
+    - using-git-worktrees
+    mcps:
+    - github
+    - plugin-notion-workspace-notion
+  HUMAN_REVIEW:
+    skills: []
+    mcps: []

@@ -1,0 +1,223 @@
+{
+  "$defs": {
+    "LedgerDecision": {
+      "properties": {
+        "triage_tier": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Triage Tier"
+        },
+        "publishable": {
+          "default": false,
+          "title": "Publishable",
+          "type": "boolean"
+        },
+        "blocking_reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Reasons",
+          "type": "array"
+        }
+      },
+      "title": "LedgerDecision",
+      "type": "object"
+    },
+    "LedgerIntegrations": {
+      "properties": {
+        "perplexity": {
+          "additionalProperties": true,
+          "title": "Perplexity",
+          "type": "object"
+        },
+        "notion": {
+          "additionalProperties": true,
+          "title": "Notion",
+          "type": "object"
+        },
+        "cursor_cli": {
+          "additionalProperties": true,
+          "title": "Cursor Cli",
+          "type": "object"
+        }
+      },
+      "title": "LedgerIntegrations",
+      "type": "object"
+    },
+    "LedgerPhase": {
+      "description": "One pipeline phase entry.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "status": {
+          "default": "pending",
+          "enum": [
+            "pending",
+            "running",
+            "done",
+            "failed",
+            "skipped"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Started At"
+        },
+        "ended_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ended At"
+        },
+        "artifacts": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifacts",
+          "type": "array"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        },
+        "meta": {
+          "additionalProperties": true,
+          "title": "Meta",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "LedgerPhase",
+      "type": "object"
+    }
+  },
+  "description": "Single source of truth for a pipeline run (canonical).\n\n``manifest.json`` may be derived from this for backward compatibility.",
+  "properties": {
+    "schema_version": {
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "run_id": {
+      "default": "",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "mission_id": {
+      "default": "",
+      "title": "Mission Id",
+      "type": "string"
+    },
+    "mission_version": {
+      "default": 1,
+      "title": "Mission Version",
+      "type": "integer"
+    },
+    "status": {
+      "default": "pending",
+      "enum": [
+        "pending",
+        "running",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "current_phase": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Current Phase"
+    },
+    "started_at": {
+      "default": "",
+      "title": "Started At",
+      "type": "string"
+    },
+    "ended_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ended At"
+    },
+    "phases": {
+      "items": {
+        "$ref": "#/$defs/LedgerPhase"
+      },
+      "title": "Phases",
+      "type": "array"
+    },
+    "integrations": {
+      "$ref": "#/$defs/LedgerIntegrations"
+    },
+    "decision": {
+      "$ref": "#/$defs/LedgerDecision"
+    },
+    "artifacts_index": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Artifacts Index",
+      "type": "object"
+    },
+    "meta": {
+      "additionalProperties": true,
+      "title": "Meta",
+      "type": "object"
+    }
+  },
+  "title": "RunLedger",
+  "type": "object"
+}

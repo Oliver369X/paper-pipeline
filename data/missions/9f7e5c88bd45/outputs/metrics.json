@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "exit_code": 0,
+  "main": null,
+  "math_checks": "UNKNOWN",
+  "experiment_runner": {
+    "status": "skipped",
+    "reason": "numpy not installed; pip install paper-pipeline[experiments] or pip install numpy",
+    "fallback_from_hf_import": true,
+    "hf_import_error": "hf_llm_micro requiere torch, transformers, datasets. Instalá: pip install paper-pipeline[llm]",
+    "remediation": "pip install paper-pipeline[llm]",
+    "notes": "Perfil hf_llm_micro no ejecutado: dependencias HF ausentes; se usó benchmark numpy sintético."
+  }
+}

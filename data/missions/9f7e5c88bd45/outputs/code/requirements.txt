@@ -1,0 +1,6 @@
+# K-FAC memorization mitigation demo (SLM pipeline)
+# Core demo runs with torch only (--mode synthetic).
+torch>=2.0.0
+numpy>=1.24.0
+# Optional: real LM hooks (--mode gpt2)
+transformers>=4.36.0

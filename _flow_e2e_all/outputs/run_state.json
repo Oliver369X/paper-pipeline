@@ -1,0 +1,13 @@
+{
+  "last_run": "2026-03-26T19:17:52.300798+00:00",
+  "completed_steps": [
+    "perplexity:gaps"
+  ],
+  "pending_steps": [],
+  "errors": [],
+  "draft_version": 1,
+  "draft_hash": "22de7c8d4586",
+  "meta_loop_cycles": 0,
+  "perplexity_backend_uuid": null,
+  "perplexity_read_write_token": null
+}

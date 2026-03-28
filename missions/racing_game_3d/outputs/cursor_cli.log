@@ -1,0 +1,38 @@
+exit=0
+--- stdout ---
+
+## Paso 4/6 — Movimiento y límites
+
+Quedó aplicado en `outputs/code/X/` lo que pide `racing_prompts.py` para esta ronda: **no atravesar los bordes** (restricción por geometría de la pista) y **velocidad / rozamiento jugables**.
+
+### Cambios
+
+1. **`CAR`**  
+   - `halfWidth` (0,55 m) y `trackMargin` (0,08 m) definen el radio útil del **centro** del coche en la corona: `rInnerEff = innerR + margen` y `rOuterEff = outerR − margen`.
+
+2. **Límite en el anillo oval**  
+   - Mismo criterio que el mesh: radio normalizado `√((x/sx)² + z²)` entre `rInnerEff` y `rOuterEff` (`sx = ovalScaleX`).  
+   - Si se sale, **`clampLateralToTrack`** recorta el desplazamiento lateral sobre la recta `P + λ·right` con **`quadraticRoots`** frente al círculo interior o exterior y elige la raíz **más cercana** al lateral actual.
+
+3. **Contacto con el borde**  
+   - Si hubo corrección, **`lateralVel *= 0,28`** (rebote / fricción).
+
+4. **Física**  
+   - `maxSpeed` **22**, sin aceleración cuando no hay pedal: **`speed *= exp(-drag·dt)`** con `drag = 2,15`.  
+   - Lateral: **`lateralVel *= exp(-lateralDrag·dt)`** con `lateralDrag = 3,2`.
+
+5. **Orden del frame**  
+   - Primero se integra el lateral, luego se avanza **`trackU`**, luego se obtiene **`P`/`right`** en ese **`u`** y se aplica el clamp (coherente con la posición final del coche).
+
+6. **`index.html`**  
+   - Título: **«Carrera 3D — movimiento y límites»**.
+
+### Archivos tocados
+
+- `outputs/code/X/main.js`  
+- `outputs/code/X/index.html`  
+
+Para probar: en `outputs/code/X`, `python -m http.server 8080` y abrir `http://localhost:8080` (no uses `file://` con módulos ES).
+
+--- stderr ---
+

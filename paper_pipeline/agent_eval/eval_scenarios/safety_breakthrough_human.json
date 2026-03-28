@@ -1,0 +1,16 @@
+{
+  "id": "safety_breakthrough_human",
+  "description": "Tier 3 + eligible publication requires human approval.",
+  "target": "safety",
+  "axis": ["safety", "oversight"],
+  "safety_context": {
+    "candidate_action": "publish_consolidation",
+    "triage_tier": 3,
+    "eligible_for_publication": true,
+    "source_artifacts": ["triage/triage_report.json"]
+  },
+  "expectations": {
+    "decision": "REQUIRE_HUMAN_APPROVAL",
+    "rule_id": "breakthrough_requires_human_approval"
+  }
+}

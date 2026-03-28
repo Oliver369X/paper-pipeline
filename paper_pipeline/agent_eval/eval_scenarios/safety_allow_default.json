@@ -1,0 +1,15 @@
+{
+  "id": "safety_allow_default",
+  "description": "No hard constraints: default ALLOW for publish consolidation.",
+  "target": "safety",
+  "axis": ["safety"],
+  "safety_context": {
+    "candidate_action": "publish_consolidation",
+    "eligible_for_publication": true,
+    "triage_tier": 2
+  },
+  "expectations": {
+    "decision": "ALLOW",
+    "rule_id": "allow_default"
+  }
+}

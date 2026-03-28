@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-03-27T14-46-18Z__1fa7ceda",
+  "mission_id": "14f4fe9109bd",
+  "mission_version": 2,
+  "status": "completed",
+  "current_phase": null,
+  "started_at": "2026-03-27T14:46:18.092150+00:00",
+  "ended_at": "2026-03-27T14:49:07.629121+00:00",
+  "phases": [
+    {
+      "name": "mission_validation",
+      "status": "done",
+      "started_at": null,
+      "ended_at": "2026-03-27T14:46:18.094150+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "preflight",
+      "status": "done",
+      "started_at": "2026-03-27T14:46:18.101695+00:00",
+      "ended_at": "2026-03-27T14:46:18.104204+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "perplexity_sections",
+      "status": "done",
+      "started_at": "2026-03-27T14:46:18.105739+00:00",
+      "ended_at": "2026-03-27T14:48:49.740065+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "assembly_draft",
+      "status": "done",
+      "started_at": "2026-03-27T14:48:49.741180+00:00",
+      "ended_at": "2026-03-27T14:48:49.867217+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "quality_check",
+      "status": "done",
+      "started_at": "2026-03-27T14:48:49.868845+00:00",
+      "ended_at": "2026-03-27T14:49:07.457134+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "notion_sync",
+      "status": "done",
+      "started_at": "2026-03-27T14:49:07.459180+00:00",
+      "ended_at": "2026-03-27T14:49:07.471268+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "cursor_cli",
+      "status": "skipped",
+      "started_at": null,
+      "ended_at": "2026-03-27T14:49:07.472794+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {}
+    },
+    {
+      "name": "final_decision",
+      "status": "done",
+      "started_at": null,
+      "ended_at": "2026-03-27T14:49:07.628610+00:00",
+      "artifacts": [],
+      "error": null,
+      "meta": {
+        "publishable_hint": true
+      }
+    }
+  ],
+  "integrations": {
+    "perplexity": {},
+    "notion": {},
+    "cursor_cli": {}
+  },
+  "decision": {
+    "triage_tier": null,
+    "publishable": false,
+    "blocking_reasons": []
+  },
+  "artifacts_index": {},
+  "meta": {
+    "mission_path": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\14f4fe9109bd\\mission.md"
+  }
+}

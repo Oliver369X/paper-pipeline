@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "nodes": [
+    {
+      "id": "root-1",
+      "parent_id": null,
+      "description": "Exploración inicial de literatura sobre: Smoke test flujo real: una sección breve sobre atención en transformers",
+      "goal_type": "literature",
+      "status": "pending",
+      "priority": 0.5,
+      "source_artifacts": [
+        "goals.json"
+      ]
+    }
+  ],
+  "mission_topic_hint": "Smoke test flujo real: una sección breve sobre atención en transformers"
+}
