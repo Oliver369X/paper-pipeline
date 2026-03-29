@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "replication_tier": "planning_only",
+  "capability_contract": {
+    "hf_model_load": "unavailable",
+    "kfac_statistics": "unavailable",
+    "gradient_collection": "unavailable",
+    "full_paper_replication": "unavailable",
+    "human_summary": "Sin numpy: sin benchmark empírico local."
+  },
+  "experiment_runner_fallback_from_hf_import": true,
+  "cursor_cli": {
+    "exit_code": 0,
+    "stderr_preview": "\nAborting operation...\n"
+  },
+  "experiment_diagnostics": {
+    "replication_tier": "planning_only",
+    "degraded_success": true
+  },
+  "cursor_cli_prompt_last_path": "cursor_cli_prompt_last.txt"
+}

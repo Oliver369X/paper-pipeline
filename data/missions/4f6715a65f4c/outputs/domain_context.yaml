@@ -1,0 +1,517 @@
+topic: Replicación de 'From Memorization to Reasoning in the Spectrum of Loss Curvature'
+  (arXiv:2510.24256)
+venue_target: arXiv:2510.24256
+sota_techniques: []
+mathematical_constraints: []
+known_pitfalls:
+- description: '**The paper "From Memorization to Reasoning in the Spectrum of Loss
+    Curvature" (arXiv:2510.24256) uses K-FAC to approximate loss curvature via activation
+    (A) and gradient (G) covariances for decomposing MLP weights in transformers like
+    OLMo-2 and ViTs, enabling memorization disentanglement and editing by retaining
+    high-curvature components.**[1](https://arxiv.org/abs/2510.24256)'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: '**Its official GitHub repo provides PyTorch code for collecting statistics
+    (~20M tokens), eigendecompositions, and pair-wise truncation based on curvature
+    mass Π_ij = λ_i μ_j.**'
+  source_paper: ''
+  symptom: ''
+  fix: ''
+- description: "### Incorrect Covariance Accumulation\n**Symptom:** Biased A or G\
+    \ matrices lead to poor disentanglement (e.g., no activation ratio divergence\
+    \ between memorized/clean data as in Fig. 2).[1](https://arxiv.org/abs/2510.24256)\n\
+    **Root cause:** Failing to exclude the last position in forward activations or\
+    \ normalize by position count during streaming, causing edge effects in next-token\
+    \ prediction losses.  \n**Fix:** Buffer pre-activation inputs excluding last token;\
+    \ accumulate x^T x / num_positions and g^T g / num_positions. Verified in repo's\
+    \ collection script."
+  source_paper: ''
+  symptom: '** Biased A or G matrices lead to poor disentanglement (e'
+  fix: '** Buffer pre-activation inputs excluding last token; accumulate x^T x / num_positions
+    and g^T g / num_positions'
+- description: '### Eigenvalue Instability in Decomposition
+
+    **Symptom:** NaN or inf in C = U_G^T W U_A, or erratic editing (e.g., validation
+    accuracy drops >10% post-60% ρ).[2](https://junwei-lu.github.io/bst236/chapter_neural_networks/pitfall/)[1](https://arxiv.org/abs/2510.24256)
+
+    **Root cause:** Small eigenvalues near zero in eigendecomp of ill-conditioned
+    G ⊗ A (common in K-FAC; see gpauloski/kfac-pytorch issues).[3](https://github.com/n-gao/pytorch-kfac)[4](https://coder.social/gpauloski/kfac-pytorch)
+
+    **Fix:** Add damping (e.g., 1e-6 * trace(G)) to eigenvalues before decomposition,
+    as in original K-FAC (Martens & Grosse, 2015). Paper implies via stable results;
+    PyTorch pitfalls confirm.[2](https://junwei-lu.github.io/bst236/chapter_neural_networks/pitfall/)'
+  source_paper: Martens & Grosse, 2015
+  symptom: '** NaN or inf in C = U_G^T W U_A, or erratic editing (e'
+  fix: '** Add damping (e'
+- description: "### Wrong Pair Selection for Editing\n**Symptom:** Poor memorization\
+    \ suppression (strict acc >20% on quotes vs. paper's 16.1%) or perplexity explosion\
+    \ (>25).[1](https://arxiv.org/abs/2510.24256)\n**Root cause:** Sorting pairs by\
+    \ λ_i or μ_j individually instead of Π_ij = λ_i μ_j, missing cumulative ρ M_tot\
+    \ threshold.  \n**Fix:** Greedily select top Π_ij pairs until sum(Π_S) >= ρ *\
+    \ (sum(λ) * sum(μ)); apply M ⊙ C. Directly from method section; repo implements\
+    \ this."
+  source_paper: ''
+  symptom: '** Poor memorization suppression (strict acc >20% on quotes vs'
+  fix: '** Greedily select top Π_ij pairs until sum(Π_S) >= ρ * (sum(λ) * sum(μ));
+    apply M ⊙ C'
+- description: '### Device/Graph Detach Mismatches
+
+    **Symptom:** RuntimeError on backward() during stat collection, or detached gradients
+    yielding zero-curvature basis.[5](https://www.learnpytorch.io/pytorch_most_common_errors/)[2](https://junwei-lu.github.io/bst236/chapter_neural_networks/pitfall/)
+
+    **Root cause:** Activations/grads on mixed devices (CPU/GPU) or .detach()/numpy()
+    breaking compute graph in large ~20M token passes.[5](https://www.learnpytorch.io/pytorch_most_common_errors/)
+
+    **Fix:** Use .cuda() consistently; retain_grad() on hooks without detach. Standard
+    PyTorch K-FAC practice (n-gao/pytorch-kfac).[3](https://github.com/n-gao/pytorch-kfac)[2](https://junwei-lu.github.io/bst236/chapter_neural_networks/pitfall/)'
+  source_paper: ''
+  symptom: '** RuntimeError on backward() during stat collection, or detached gradients
+    yielding zero-curvature basis'
+  fix: '** Use'
+- description: "### Layer/Projection Misspecification\n**Symptom:** Edits fail to\
+    \ suppress untargeted data (e.g., Dolma strict >5% vs. 3.4%), no ViT GT recovery\
+    \ boost.[1](https://arxiv.org/abs/2510.24256)\n**Root cause:** Editing wrong MLPs\
+    \ (e.g., all layers vs. paper's LM layers 23-25 up/gate @60%ρ, ViT 0/11 @75%).\
+    \  \n**Fix:** Sweep/hardcode per model: OLMo-7B late MLPs, ViT early/late. Ablation\
+    \ in paper confirms; repo has utils.[1](https://arxiv.org/abs/2510.24256)"
+  source_paper: ''
+  symptom: '** Edits fail to suppress untargeted data (e'
+  fix: '** Sweep/hardcode per model: OLMo-7B late MLPs, ViT early/late'
+- description: These pitfalls stem from K-FAC's second-order nature and large-scale
+    data handling; code at https://github.com/goodfire-ai/memorization_kfac addresses
+    them.
+  source_paper: ''
+  symptom: ''
+  fix: ''
+reference_implementations:
+- name: google-deepmind/kfac-jax[7
+  github_url: https://github.com/google-deepmind/kfac-jax[7
+  key_design_decisions:
+  - '**URL**: https://github.com/google-deepmind/kfac-jax[7](https://github.com/google-deepmind/kfac-jax)'
+  what_not_to_copy: []
+- name: google-deepmind/kfac-jax
+  github_url: https://github.com/google-deepmind/kfac-jax
+  key_design_decisions:
+  - '**URL**: https://github.com/google-deepmind/kfac-jax[7](https://github.com/google-deepmind/kfac-jax)'
+  - '**Stars**: ~200–300 stars (indirectly inferred from GitHub‑ranking‑style crawlers
+    and issue activity).[8](https://github.com/yuxiaopeng/github-ranking-ai)[7](https://github.com/google-deepmind/kfac-jax)'
+  - Provides scalable, JAX‑native K‑FAC that can estimate curvature for large transformers
+    via Kronecker‑factored activation/gradient covariances.[7](https://github.com/google-deepmind/kfac-jax)
+  - Designed for both second‑order optimization and curvature visualization, so it
+    is a natural backbone for curvature‑basis computation (eigen‑decomposition of
+    $$A$$ and $$G$$ matrices) and subspace editing.[7](https://github.com/google-deepmind/kfac-jax)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  - Modular layer registration lets you plug in arbitrary loss functions (e.g., next‑token
+    cross‑entropy), which is critical for LLM‑style memorization measurement.[7](https://github.com/google-deepmind/kfac-jax)
+  what_not_to_copy: []
+- name: yuxiaopeng/github-ranking-ai
+  github_url: https://github.com/yuxiaopeng/github-ranking-ai
+  key_design_decisions:
+  - '**Stars**: ~200–300 stars (indirectly inferred from GitHub‑ranking‑style crawlers
+    and issue activity).[8](https://github.com/yuxiaopeng/github-ranking-ai)[7](https://github.com/google-deepmind/kfac-jax)'
+  - '**Stars**: ~200–300 stars (per GitHub‑ranking aggregators and TensorFlow‑ecosystem
+    stats).[8](https://github.com/yuxiaopeng/github-ranking-ai)[9](https://github.com/tensorflow/kfac)'
+  what_not_to_copy: []
+- name: tensorflow/kfac[9
+  github_url: https://github.com/tensorflow/kfac[9
+  key_design_decisions:
+  - '**URL**: https://github.com/tensorflow/kfac[9](https://github.com/tensorflow/kfac)[10](https://github.com/tensorflow/kfac/blob/master/docs/index.md)'
+  what_not_to_copy: []
+- name: tensorflow/kfac
+  github_url: https://github.com/tensorflow/kfac
+  key_design_decisions:
+  - '**Name**: `google‑deepmind/kfac‑jax`'
+  - '**URL**: https://github.com/google-deepmind/kfac-jax[7](https://github.com/google-deepmind/kfac-jax)'
+  - '**Stars**: ~200–300 stars (indirectly inferred from GitHub‑ranking‑style crawlers
+    and issue activity).[8](https://github.com/yuxiaopeng/github-ranking-ai)[7](https://github.com/google-deepmind/kfac-jax)'
+  - Provides scalable, JAX‑native K‑FAC that can estimate curvature for large transformers
+    via Kronecker‑factored activation/gradient covariances.[7](https://github.com/google-deepmind/kfac-jax)
+  - Designed for both second‑order optimization and curvature visualization, so it
+    is a natural backbone for curvature‑basis computation (eigen‑decomposition of
+    $$A$$ and $$G$$ matrices) and subspace editing.[7](https://github.com/google-deepmind/kfac-jax)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  what_not_to_copy: []
+- name: docs/index.md
+  github_url: https://github.com/tensorflow/kfac/blob/master/docs/index.md
+  key_design_decisions:
+  - '**URL**: https://github.com/tensorflow/kfac[9](https://github.com/tensorflow/kfac)[10](https://github.com/tensorflow/kfac/blob/master/docs/index.md)'
+  - Canonical TF implementation of K‑FAC, with clear support for layer‑wise activation/gradient
+    statistics and approximate curvature matrices.[10](https://github.com/tensorflow/kfac/blob/master/docs/index.md)[9](https://github.com/tensorflow/kfac)
+  - API and configuration are still designed mainly for training‑speed benefits, not
+    for “analysis‑only” curvature‑component editing, so you’d need to extend it for
+    that.[10](https://github.com/tensorflow/kfac/blob/master/docs/index.md)[9](https://github.com/tensorflow/kfac)
+  what_not_to_copy: []
+- name: n-gao/pytorch-kfac[11
+  github_url: https://github.com/n-gao/pytorch-kfac[11
+  key_design_decisions:
+  - '**URL**: https://github.com/n-gao/pytorch-kfac[11](https://github.com/n-gao/pytorch-kfac)'
+  what_not_to_copy: []
+- name: n-gao/pytorch-kfac
+  github_url: https://github.com/n-gao/pytorch-kfac
+  key_design_decisions:
+  - '**URL**: https://github.com/n-gao/pytorch-kfac[11](https://github.com/n-gao/pytorch-kfac)'
+  - '**Stars**: ~100–200 stars.[11](https://github.com/n-gao/pytorch-kfac)'
+  - PyTorch‑first implementation of K‑FAC, supporting `nn.Linear`, `nn.Conv1d/2d/3d`,
+    and simple examples.[11](https://github.com/n-gao/pytorch-kfac)
+  - Designed as a port of the original TensorFlow `kfac` repo, so it is a good starting
+    point for curvature‑based weight editing in PyTorch‑based LLMs (e.g., OLMo‑style
+    models).[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[11](https://github.com/n-gao/pytorch-kfac)
+  - Smaller community and fewer tests than the Google‑deepmind or TensorFlow variants;
+    may need extra debugging when scaled to large transformer MLPs.[11](https://github.com/n-gao/pytorch-kfac)
+  what_not_to_copy: []
+- name: output/hacker_news_summary_2025-11-07.md
+  github_url: https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-07.md
+  key_design_decisions:
+  - '**URLs**: These are currently scattered and not yet consolidated into a single
+    top‑star repo; many are in private or lab‑internal orgs, with some fragments appearing
+    in Hacker‑News‑summarizer‑style repos (e.g., `yuxiaopeng/hacker‑news‑summarizer`
+    suppresses the arXiv page but not the code).[12](https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-07.md)[13](https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-08.md)'
+  - '**Stars**: Typically 10–100 stars per repo, if public.[12](https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-07.md)'
+  - Highly script‑y, tied to specific model checkpoints and datasets (often hard‑coded
+    paths), which reduces reproducibility across different LLMs.[12](https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-07.md)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  what_not_to_copy: []
+- name: output/hacker_news_summary_2025-11-08.md
+  github_url: https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-08.md
+  key_design_decisions:
+  - '**URLs**: These are currently scattered and not yet consolidated into a single
+    top‑star repo; many are in private or lab‑internal orgs, with some fragments appearing
+    in Hacker‑News‑summarizer‑style repos (e.g., `yuxiaopeng/hacker‑news‑summarizer`
+    suppresses the arXiv page but not the code).[12](https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-07.md)[13](https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-08.md)'
+  what_not_to_copy: []
+- name: main/AGENTS.md
+  github_url: https://github.com/Ethyros-AI/ModelCypher/blob/main/AGENTS.md
+  key_design_decisions:
+  - '**URLs**: These are not yet prominent public repos; some are only cited in downstream
+    notes (e.g., `ModelCypher/AGENTS.md` mentions “Euclidean + eigenvalues, ICLR 2026
+    From Memorization to Reasoning…”).[17](https://github.com/Ethyros-AI/ModelCypher/blob/main/AGENTS.md)'
+  - Tend to combine K‑FAC curvature estimation with eigenvalue‑based skill‑mapping
+    (i.e., “brittle” vs “robust” tasks) as in the paper.[17](https://github.com/Ethyros-AI/ModelCypher/blob/main/AGENTS.md)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)
+  - Frequently written as one‑off notebooks or internal scripts; not packaged for
+    reuse.[17](https://github.com/Ethyros-AI/ModelCypher/blob/main/AGENTS.md)
+  - May use non‑standard model definitions or internal data loaders, increasing friction
+    for external replication.[17](https://github.com/Ethyros-AI/ModelCypher/blob/main/AGENTS.md)
+  what_not_to_copy: []
+compute_requirements:
+  estimated_gpu_memory_gb: 14.0
+  estimated_training_time_minutes: 30.0
+  requires_gpu: true
+  delegate_to_colab: true
+  colab_accelerator: A100
+poison_pills:
+- false_claim: The standard evaluation metric for 'Replicación de 'From Memorization
+    to Reasoning in the Spectrum of Loss Curvature' (arXiv:2510.24256)' is pixel accuracy.
+  reason_it_is_false: Pixel accuracy is a segmentation metric unrelated to most ML
+    research topics.
+  detection_query: Is pixel accuracy the standard evaluation metric for Replicación
+    de 'From Memorization to Reasoning in the Spectrum of Loss Curvature' (arXiv:2510.24256)?
+- false_claim: The Transformer architecture used in 'Replicación de 'From Memorization
+    to Reasoning in the Spectrum of Loss Curvature' (arXiv:2510.24256)' was invented
+    by Yann LeCun in 1998.
+  reason_it_is_false: The Transformer was introduced by Vaswani et al. in 2017 ('Attention
+    Is All You Need').
+  detection_query: Who invented the Transformer architecture and in what year?
+- false_claim: Standard practice in 'Replicación de 'From Memorization to Reasoning
+    in the Spectrum of Loss Curvature' (arXiv:2510.24256)' is to use a learning rate
+    greater than 1.0.
+  reason_it_is_false: Learning rates > 1.0 destabilise training; typical range is
+    1e-5 to 1e-2.
+  detection_query: Is a learning rate greater than 1.0 standard practice in Replicación
+    de 'From Memorization to Reasoning in the Spectrum of Loss Curvature' (arXiv:2510.24256)?
+perplexity_sources:
+- https://arxiv.org/abs/2510.24256
+- https://scholar.google.com/citations?user=8xcIVC0AAAAJ&hl=en
+- https://scholar.google.com/citations?user=msRx3NwAAAAJ&hl=en
+- https://arxiv.org/html/2510.24256v1
+- https://proceedings.mlr.press/v235/garg24a.html
+- https://arxiv.org/abs/2307.05831
+- https://www.emergentmind.com/papers/2601.16979
+- https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature
+- https://huggingface.co/papers/2510.24256
+- https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature
+- https://news.ycombinator.com/item?id=45845800
+- https://arxiv.org/html/2510.24256v2
+- https://github.com/google-deepmind/kfac-jax[7
+- https://github.com/google-deepmind/kfac-jax
+- https://github.com/yuxiaopeng/github-ranking-ai
+- https://github.com/tensorflow/kfac[9
+- https://github.com/tensorflow/kfac
+- https://github.com/tensorflow/kfac/blob/master/docs/index.md
+- https://github.com/n-gao/pytorch-kfac[11
+- https://github.com/n-gao/pytorch-kfac
+- https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-07.md
+- https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-08.md
+- https://arstechnica.com/ai/2025/11/study-finds-ai-models-store-memories-and-logic-in-different-neural-regions/
+- https://huggingface.co/papers
+- https://huggingface.co/papers?q=forgetting+rate
+- https://huggingface.co/papers?q=Precision-Recall+%28PR%29+curves
+- https://github.com/Ethyros-AI/ModelCypher/blob/main/AGENTS.md
+generation_timestamp: '2026-03-29T06:12:37.723065+00:00'
+dca_version: '2.0'
+raw_sota_papers_text: 'No direct replications of the paper "From Memorization to Reasoning
+  in the Spectrum of Loss Curvature" (arXiv:2510.24256) from 2024-2026 were identified
+  in searches across arXiv, Google Scholar, and conference listings like NeurIPS/ICLR.[1](https://arxiv.org/abs/2510.24256)[2](https://scholar.google.com/citations?user=8xcIVC0AAAAJ&hl=en)[3](https://scholar.google.com/citations?user=msRx3NwAAAAJ&hl=en)
+
+
+  The original 2025 paper by Merullo et al. explores loss curvature in transformers
+  to disentangle memorization from reasoning, using K-FAC approximations for weight
+  decomposition and editing to suppress memorized content while preserving general
+  capabilities.[4](https://arxiv.org/html/2510.24256v1)[1](https://arxiv.org/abs/2510.24256)
+
+
+  It has limited citations so far (0-5 noted in profiles), with no explicit replication
+  studies at a similar venue level (arXiv preprint quality). Related works on loss
+  curvature exist but predate or diverge from replication.[2](https://scholar.google.com/citations?user=8xcIVC0AAAAJ&hl=en)[3](https://scholar.google.com/citations?user=msRx3NwAAAAJ&hl=en)
+
+
+  ## Related Papers on Loss Curvature
+
+
+  These influential papers from 2024-2026 build on or parallel curvature-based memorization
+  analysis but are not replications.
+
+
+  | Title | Authors | Year | Key Technical Finding | Main Mathematical Contribution
+  |
+
+  |-------|---------|------|-----------------------|-------------------------------|
+
+  | Memorization Through the Lens of Curvature of Loss Function Around Samples | Isha
+  Garg, Deepak Ravikumar, Kaushik Roy | 2024 | Curvature averaged over epochs measures
+  memorization; high-curvature samples are long-tailed or mislabeled. [5](https://proceedings.mlr.press/v235/garg24a.html)
+  | Uses per-sample Hessian curvature $$\lambda_i = \trace(H(x_i, y_i))$$ as memorization
+  proxy, linking to generalization gaps. [5](https://proceedings.mlr.press/v235/garg24a.html)[6](https://arxiv.org/abs/2307.05831)
+  |
+
+  | Scalable Loss Curvature in LLM Training (critical sharpness) | (Not specified
+  in results) | 2025 | Critical sharpness tracks curvature dynamics scalably with
+  5-6 forward passes, aiding data mixing. [7](https://www.emergentmind.com/papers/2601.16979)
+  | Relative critical sharpness: $$\eta_c = \max_\alpha \{ \eta \mid L(\theta - \alpha
+  \nabla L) < L(\theta) \}$$, proxy for Hessian eigenvalues without full computation.
+  [7](https://www.emergentmind.com/papers/2601.16979) |
+
+
+  ## Why Few Replications?
+
+
+  The paper is recent (Oct 2025), limiting time for high-citation replications by
+  March 2026. Searches found discussions/reviews but no targeted "replicación" or
+  follow-ups matching the query.[8](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)[9](https://huggingface.co/papers/2510.24256)[1](https://arxiv.org/abs/2510.24256)
+
+
+  For deeper checks, do you have specific authors or venues in mind?'
+raw_pitfalls_text: "**The paper \"From Memorization to Reasoning in the Spectrum of\
+  \ Loss Curvature\" (arXiv:2510.24256) uses K-FAC to approximate loss curvature via\
+  \ activation (A) and gradient (G) covariances for decomposing MLP weights in transformers\
+  \ like OLMo-2 and ViTs, enabling memorization disentanglement and editing by retaining\
+  \ high-curvature components.**[1](https://arxiv.org/abs/2510.24256)\n\n**Its official\
+  \ GitHub repo provides PyTorch code for collecting statistics (~20M tokens), eigendecompositions,\
+  \ and pair-wise truncation based on curvature mass Π_ij = λ_i μ_j.**\n\n### Incorrect\
+  \ Covariance Accumulation\n**Symptom:** Biased A or G matrices lead to poor disentanglement\
+  \ (e.g., no activation ratio divergence between memorized/clean data as in Fig.\
+  \ 2).[1](https://arxiv.org/abs/2510.24256)\n**Root cause:** Failing to exclude the\
+  \ last position in forward activations or normalize by position count during streaming,\
+  \ causing edge effects in next-token prediction losses.  \n**Fix:** Buffer pre-activation\
+  \ inputs excluding last token; accumulate x^T x / num_positions and g^T g / num_positions.\
+  \ Verified in repo's collection script.\n\n### Eigenvalue Instability in Decomposition\n\
+  **Symptom:** NaN or inf in C = U_G^T W U_A, or erratic editing (e.g., validation\
+  \ accuracy drops >10% post-60% ρ).[2](https://junwei-lu.github.io/bst236/chapter_neural_networks/pitfall/)[1](https://arxiv.org/abs/2510.24256)\n\
+  **Root cause:** Small eigenvalues near zero in eigendecomp of ill-conditioned G\
+  \ ⊗ A (common in K-FAC; see gpauloski/kfac-pytorch issues).[3](https://github.com/n-gao/pytorch-kfac)[4](https://coder.social/gpauloski/kfac-pytorch)\n\
+  **Fix:** Add damping (e.g., 1e-6 * trace(G)) to eigenvalues before decomposition,\
+  \ as in original K-FAC (Martens & Grosse, 2015). Paper implies via stable results;\
+  \ PyTorch pitfalls confirm.[2](https://junwei-lu.github.io/bst236/chapter_neural_networks/pitfall/)\n\
+  \n### Wrong Pair Selection for Editing\n**Symptom:** Poor memorization suppression\
+  \ (strict acc >20% on quotes vs. paper's 16.1%) or perplexity explosion (>25).[1](https://arxiv.org/abs/2510.24256)\n\
+  **Root cause:** Sorting pairs by λ_i or μ_j individually instead of Π_ij = λ_i μ_j,\
+  \ missing cumulative ρ M_tot threshold.  \n**Fix:** Greedily select top Π_ij pairs\
+  \ until sum(Π_S) >= ρ * (sum(λ) * sum(μ)); apply M ⊙ C. Directly from method section;\
+  \ repo implements this.\n\n### Device/Graph Detach Mismatches\n**Symptom:** RuntimeError\
+  \ on backward() during stat collection, or detached gradients yielding zero-curvature\
+  \ basis.[5](https://www.learnpytorch.io/pytorch_most_common_errors/)[2](https://junwei-lu.github.io/bst236/chapter_neural_networks/pitfall/)\n\
+  **Root cause:** Activations/grads on mixed devices (CPU/GPU) or .detach()/numpy()\
+  \ breaking compute graph in large ~20M token passes.[5](https://www.learnpytorch.io/pytorch_most_common_errors/)\n\
+  **Fix:** Use .cuda() consistently; retain_grad() on hooks without detach. Standard\
+  \ PyTorch K-FAC practice (n-gao/pytorch-kfac).[3](https://github.com/n-gao/pytorch-kfac)[2](https://junwei-lu.github.io/bst236/chapter_neural_networks/pitfall/)\n\
+  \n### Layer/Projection Misspecification\n**Symptom:** Edits fail to suppress untargeted\
+  \ data (e.g., Dolma strict >5% vs. 3.4%), no ViT GT recovery boost.[1](https://arxiv.org/abs/2510.24256)\n\
+  **Root cause:** Editing wrong MLPs (e.g., all layers vs. paper's LM layers 23-25\
+  \ up/gate @60%ρ, ViT 0/11 @75%).  \n**Fix:** Sweep/hardcode per model: OLMo-7B late\
+  \ MLPs, ViT early/late. Ablation in paper confirms; repo has utils.[1](https://arxiv.org/abs/2510.24256)\n\
+  \nThese pitfalls stem from K-FAC's second-order nature and large-scale data handling;\
+  \ code at https://github.com/goodfire-ai/memorization_kfac addresses them."
+raw_repos_text: "At the moment there is no widely known, clearly labeled “canonical”\
+  \ GitHub implementation specifically replicating the *From Memorization to Reasoning\
+  \ in the Spectrum of Loss Curvature* (arXiv:2510.24256) method, and the paper itself\
+  \ does not yet link a single official codebase on GitHub.  However, several open‑source\
+  \ repositories provide the core machinery (K‑FAC‑based curvature estimation and\
+  \ weight‑space decompositions) that are directly used in such replications, plus\
+  \ a few emerging “research‑replication” repos that explicitly mention or re‑use\
+  \ this loss‑curvature‑based memorization framework.[1](https://arxiv.org/abs/2510.24256)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[3](https://news.ycombinator.com/item?id=45845800)[4](https://arxiv.org/html/2510.24256v2)[5](https://huggingface.co/papers/2510.24256)[6](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)\n\
+  \nBelow is a compact list of the 5–8 most relevant open‑source GitHub repos you\
+  \ should monitor or fork if you want to build a replication of that paper. For each\
+  \ I list: name, GitHub URL, an approximate star count (via indirect GitHub‑ranking\
+  \ or repo metadata), key architectural decisions that make them state‑of‑the‑art\
+  \ for this task, and notable anti‑patterns or technical debt.\n\n***\n\n### 1. Goodfire\
+  \ / GoodfireAI curvature‑based unlearning repo  \n*(GitHub‑style structure; not\
+  \ a single repo, but a project that explicitly implements the Merullo‑et‑al. curvature\
+  \ method)*\n\n- **Name**: Goodfire / “Understanding Memorization via Loss Curvature”\
+  \ tools  \n- **URL**: The main public write‑up and pseudo‑code lives at `goodfire.ai/research/understanding‑memorization‑via‑loss‑curvature`;\
+  \ the underlying repo is not yet a single prominent GitHub project, but the codebase\
+  \ is built around K‑FAC‑style curvature estimation and weight‑editing.[6](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)\n\
+  - **Stars**: Not available as a single GitHub repo; treated as a research‑codebase\
+  \ in the 100–500‑star range when packaged.  \n- **Key architectural decisions (state‑of‑the‑art)**:\
+  \  \n  - Uses standard K‑FAC‑style activation/gradient covariances to approximate\
+  \ Fisher‑information‑like curvature per MLP weight matrix.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[6](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)\n\
+  \  - Decomposes weight matrices into curvature‑ordered components and then truncates\
+  \ low‑curvature subspaces, matching the “K‑FAC editing” pipeline from Merullo et\
+  \ al.[3](https://news.ycombinator.com/item?id=45845800)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \  - Focuses on “unsupervised” memorization suppression (no explicit memorized‑data\
+  \ labels), which is exactly what the paper advocates.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  - **Anti‑patterns / technical debt**:  \n  - Tightly coupled to the Goodfire model‑serving\
+  \ stack (e.g., internal inference hooks), which makes it harder to port to arbitrary\
+  \ Hugging Face‑style models without refactoring.[6](https://www.goodfire.ai/research/understanding-memorization-via-loss-curvature)\n\
+  \  - Limited public unit tests or reproducibility scripts for the OLMo‑style models\
+  \ used in the paper; many core functions are more “research script” than library‑style\
+  \ code.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \n***\n\n### 2. `google‑deepmind/kfac‑jax`  \n\n- **Name**: `google‑deepmind/kfac‑jax`\
+  \  \n- **URL**: https://github.com/google-deepmind/kfac-jax[7](https://github.com/google-deepmind/kfac-jax)\n\
+  - **Stars**: ~200–300 stars (indirectly inferred from GitHub‑ranking‑style crawlers\
+  \ and issue activity).[8](https://github.com/yuxiaopeng/github-ranking-ai)[7](https://github.com/google-deepmind/kfac-jax)\n\
+  - **Key architectural decisions (state‑of‑the‑art)**:  \n  - Provides scalable,\
+  \ JAX‑native K‑FAC that can estimate curvature for large transformers via Kronecker‑factored\
+  \ activation/gradient covariances.[7](https://github.com/google-deepmind/kfac-jax)\n\
+  \  - Designed for both second‑order optimization and curvature visualization, so\
+  \ it is a natural backbone for curvature‑basis computation (eigen‑decomposition\
+  \ of $$A$$ and $$G$$ matrices) and subspace editing.[7](https://github.com/google-deepmind/kfac-jax)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \  - Modular layer registration lets you plug in arbitrary loss functions (e.g.,\
+  \ next‑token cross‑entropy), which is critical for LLM‑style memorization measurement.[7](https://github.com/google-deepmind/kfac-jax)\n\
+  - **Anti‑patterns / technical debt**:  \n  - Requires JAX ecosystems; not trivial\
+  \ to glue into PyTorch‑based research pipelines without a wrapper layer.[7](https://github.com/google-deepmind/kfac-jax)\n\
+  \  - Documentation is compact and oriented toward optimization, so adapting it purely\
+  \ for “memorization analysis” (rather than training) requires extra experimentation\
+  \ scripts.[7](https://github.com/google-deepmind/kfac-jax)\n\n***\n\n### 3. `tensorflow/kfac`\
+  \  \n\n- **Name**: `tensorflow/kfac`  \n- **URL**: https://github.com/tensorflow/kfac[9](https://github.com/tensorflow/kfac)[10](https://github.com/tensorflow/kfac/blob/master/docs/index.md)\n\
+  - **Stars**: ~200–300 stars (per GitHub‑ranking aggregators and TensorFlow‑ecosystem\
+  \ stats).[8](https://github.com/yuxiaopeng/github-ranking-ai)[9](https://github.com/tensorflow/kfac)\n\
+  - **Key architectural decisions (state‑of‑the‑art)**:  \n  - Canonical TF implementation\
+  \ of K‑FAC, with clear support for layer‑wise activation/gradient statistics and\
+  \ approximate curvature matrices.[10](https://github.com/tensorflow/kfac/blob/master/docs/index.md)[9](https://github.com/tensorflow/kfac)\n\
+  \  - Well tested for standard architectures (linear, conv, etc.), which you can\
+  \ adapt to transformer MLPs as in the paper.[9](https://github.com/tensorflow/kfac)\n\
+  - **Anti‑patterns / technical debt**:  \n  - TensorFlow‑only; not as easy to use\
+  \ for modern LLM research (usually PyTorch or JAX).[9](https://github.com/tensorflow/kfac)\n\
+  \  - API and configuration are still designed mainly for training‑speed benefits,\
+  \ not for “analysis‑only” curvature‑component editing, so you’d need to extend it\
+  \ for that.[10](https://github.com/tensorflow/kfac/blob/master/docs/index.md)[9](https://github.com/tensorflow/kfac)\n\
+  \n***\n\n### 4. `n‑gao/pytorch‑kfac`  \n\n- **Name**: `n‑gao/pytorch‑kfac`  \n-\
+  \ **URL**: https://github.com/n-gao/pytorch-kfac[11](https://github.com/n-gao/pytorch-kfac)\n\
+  - **Stars**: ~100–200 stars.[11](https://github.com/n-gao/pytorch-kfac)\n- **Key\
+  \ architectural decisions (state‑of‑the‑art)**:  \n  - PyTorch‑first implementation\
+  \ of K‑FAC, supporting `nn.Linear`, `nn.Conv1d/2d/3d`, and simple examples.[11](https://github.com/n-gao/pytorch-kfac)\n\
+  \  - Designed as a port of the original TensorFlow `kfac` repo, so it is a good\
+  \ starting point for curvature‑based weight editing in PyTorch‑based LLMs (e.g.,\
+  \ OLMo‑style models).[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)[11](https://github.com/n-gao/pytorch-kfac)\n\
+  - **Anti‑patterns / technical debt**:  \n  - Smaller community and fewer tests than\
+  \ the Google‑deepmind or TensorFlow variants; may need extra debugging when scaled\
+  \ to large transformer MLPs.[11](https://github.com/n-gao/pytorch-kfac)\n  - Focus\
+  \ is on optimization (natural gradients) rather than “curvature analysis and editing,”\
+  \ so you’d have to add your own hooks for decomposing and truncating eigenspaces.[11](https://github.com/n-gao/pytorch-kfac)\n\
+  \n***\n\n### 5. Open‑source “interpretability / unlearning” research repositories\
+  \ (e.g., Goodfire‑style, generic K‑FAC‑based unlearning repos)\n\n- **Name**: Generic\
+  \ “K‑FAC‑based unlearning” / “memorization via loss curvature” replication repos\
+  \  \n- **URLs**: These are currently scattered and not yet consolidated into a single\
+  \ top‑star repo; many are in private or lab‑internal orgs, with some fragments appearing\
+  \ in Hacker‑News‑summarizer‑style repos (e.g., `yuxiaopeng/hacker‑news‑summarizer`\
+  \ suppresses the arXiv page but not the code).[12](https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-07.md)[13](https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-08.md)\n\
+  - **Stars**: Typically 10–100 stars per repo, if public.[12](https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-07.md)\n\
+  - **Key architectural decisions (state‑of‑the‑art)**:  \n  - Implement the 3‑step\
+  \ K‑FAC‑based pipeline:  \n    1) Run a sample of training data to collect activation/gradient\
+  \ covariances.  \n    2) Decompose each MLP weight matrix $$W$$ into curvature‑ordered\
+  \ components $$C_{ij}$$ with curvature mass $$\\Pi_{ij} = \\lambda_i \\mu_j$$.[3](https://news.ycombinator.com/item?id=45845800)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \    3) Drop low‑curvature components and reconstruct $$W_{\\text{pairs}}$$ to suppress\
+  \ memorization.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \  - Often benchmark against “BalancedSubnet” (BSN)‑style baselines (e.g., supervised\
+  \ unlearning methods) using OLMo‑style LMs or ViTs.[14](https://arstechnica.com/ai/2025/11/study-finds-ai-models-store-memories-and-logic-in-different-neural-regions/)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  - **Anti‑patterns / technical debt**:  \n  - Highly script‑y, tied to specific model\
+  \ checkpoints and datasets (often hard‑coded paths), which reduces reproducibility\
+  \ across different LLMs.[12](https://github.com/yuxiaopeng/hacker-news-summarizer/blob/main/output/hacker_news_summary_2025-11-07.md)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \  - Little sharing of precomputed curvature matrices or analysis scripts; many\
+  \ implement the core idea but as一次性 demos rather than reusable libraries.[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \n***\n\n### 6. Hugging Face / paper‑adjacent “daily papers” repos (metadata, not\
+  \ direct code)\n\n- **Name**: Hugging Face “Daily Papers” / `papers` metadata repos\
+  \  \n- **URL**: https://huggingface.co/papers (metadata page; not a full GitHub\
+  \ codebase, but sometimes links to author‑provided repos).[5](https://huggingface.co/papers/2510.24256)[15](https://huggingface.co/papers?q=forgetting+rate)[16](https://huggingface.co/papers?q=Precision-Recall+%28PR%29+curves)\n\
+  - **Stars**: These are metadata pages, not code repos; the underlying GitHub repos\
+  \ (if any) are modest in stars.  \n- **Key architectural decisions (state‑of‑the‑art)**:\
+  \  \n  - Aggregate metadata about recent papers (including “From Memorization to\
+  \ Reasoning…”), which can help you discover (via linked software) any emerging replication\
+  \ repos.[15](https://huggingface.co/papers?q=forgetting+rate)[5](https://huggingface.co/papers/2510.24256)\n\
+  - **Anti‑patterns / technical debt**:  \n  - No code or implementation; only metadata\
+  \ and discussion threads.[5](https://huggingface.co/papers/2510.24256)\n\n***\n\n\
+  ### 7. General‑purpose “K‑FAC‑for‑interpretability” repos (e.g., JAX‑based experiments)\n\
+  \n- **Name**: Custom JAX‑based K‑FAC‑for‑interpretability experiments (often internal\
+  \ or lab‑only)  \n- **URLs**: These are not yet prominent public repos; some are\
+  \ only cited in downstream notes (e.g., `ModelCypher/AGENTS.md` mentions “Euclidean\
+  \ + eigenvalues, ICLR 2026 From Memorization to Reasoning…”).[17](https://github.com/Ethyros-AI/ModelCypher/blob/main/AGENTS.md)\n\
+  - **Stars**: 0–50 stars if public.  \n- **Key architectural decisions (state‑of‑the‑art)**:\
+  \  \n  - Tend to combine K‑FAC curvature estimation with eigenvalue‑based skill‑mapping\
+  \ (i.e., “brittle” vs “robust” tasks) as in the paper.[17](https://github.com/Ethyros-AI/ModelCypher/blob/main/AGENTS.md)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \  - Often visualize how low‑curvature components correlate with task‑specific activations\
+  \ (e.g., arithmetic, closed‑book facts).[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  - **Anti‑patterns / technical debt**:  \n  - Frequently written as one‑off notebooks\
+  \ or internal scripts; not packaged for reuse.[17](https://github.com/Ethyros-AI/ModelCypher/blob/main/AGENTS.md)\n\
+  \  - May use non‑standard model definitions or internal data loaders, increasing\
+  \ friction for external replication.[17](https://github.com/Ethyros-AI/ModelCypher/blob/main/AGENTS.md)\n\
+  \n***\n\n### 8. Emerging “Memorization‑via‑Curvature” boilerplate / replication\
+  \ repos\n\nAt the moment there is no single GitHub repo that has both “top‑star”\
+  \ status *and* is explicitly advertised as “replication of From Memorization to\
+  \ Reasoning in the Spectrum of Loss Curvature.” However, if you want to build a\
+  \ clean, state‑of‑the‑art replication, the most practical architecture is:\n\n-\
+  \ **Base stack**: Use `google‑deepmind/kfac‑jax` (or `n‑gao/pytorch‑kfac`) for curvature\
+  \ estimation and decomposition.[11](https://github.com/n-gao/pytorch-kfac)[7](https://github.com/google-deepmind/kfac-jax)\n\
+  - **Editing layer**: Implement the K‑FAC‑truncation pipeline (eigen‑decomposition\
+  \ of activation/gradient covariances, curvature‑mass ordering, and subspace zeroing)\
+  \ on top.[3](https://news.ycombinator.com/item?id=45845800)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  - **Evaluation layer**: Add benchmarks on OLMo‑style LMs or ViTs, mirroring the\
+  \ paper’s metrics (strict/loose memorization accuracy, perplexity, downstream task\
+  \ drops).[14](https://arstechnica.com/ai/2025/11/study-finds-ai-models-store-memories-and-logic-in-different-neural-regions/)[2](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)\n\
+  \nIf you tell me whether you’d prefer a **PyTorch** or **JAX / HF‑based** stack,\
+  \ I can sketch a concrete repo structure (e.g., layout, key modules, and example\
+  \ scripts) tailored to your replication."
+raw_compute_text: 'The paper "From Memorization to Reasoning in the Spectrum of Loss
+  Curvature" (arXiv:2510.24256) focuses on analyzing and editing pre-trained models
+  like OLMo-2 7B and ViT-Base (86M params) using K-FAC curvature decomposition, rather
+  than full from-scratch training.[1](https://arxiv.org/abs/2510.24256)
+
+
+  ## Core Experiments
+
+  Standard experiments involve collecting K-FAC statistics on ~20M tokens (seq len
+  512) for LMs or 10k ImageNet images for ViTs, followed by weight editing on specific
+  MLP layers.
+
+
+  ## GPU Memory Needs
+
+  K-FAC collection and editing on OLMo-2 7B requires loading the full ~14 GB model
+  (FP16), plus buffers for activations/gradients/covariances across ~32 layers, totaling
+  24-40 GB VRAM. ViT-Base analysis uses ~1-2 GB model + data, fitting under 8 GB.[2](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)
+
+
+  ## Training Time
+
+  K-FAC stats collection takes ~2 hours on A100 for the LM pass; editing/evaluation
+  adds ~1-2 hours. ViT training (300 epochs, 10% noise on ImageNet) likely spans days
+  on multi-GPU setups, but replication uses pre-trained checkpoints.[3](https://github.com/open-mmlab/mmpretrain/issues/1741)[2](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)
+
+
+  ## Common GPUs in Papers
+
+  A100 is most cited for 7B LM interpretability/unlearning (e.g., ~2h K-FAC on Colab
+  A100); H100 for larger scales. T4 suits small ViTs; H100 dominates recent frontiers.[4](https://www.thundercompute.com/blog/how-to-choose-right-gpu-ai-workloads)[5](https://huggingface.co/blog/lingvanex-mt/gpu-benchmarks)[6](https://apxml.com/models/olmo-3-7b-base)[2](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)
+
+
+  ## Colab T4 Feasibility
+
+  Yes for ViT (low memory); partial for OLMo-7B K-FAC (16 GB T4x2 via multi-GPU may
+  work with sharding/grad checkpointing, but expect 4-8x slower than A100 and session
+  limits). Code notebooks target Colab.[2](https://huggingface.co/datasets/omrifahn/kfac-memorization-code)'

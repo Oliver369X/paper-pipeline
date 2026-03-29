@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "note": "evidence_status unverified until human or external tool confirms source",
+  "paper_target_hint": "cross-check arXiv ID matches the paper you cite (see docs/ARXIV_TARGET_ALIGNMENT.md)",
+  "replication_phase": "A",
+  "replication_fidelity": "strict_paper",
+  "items": [
+    {
+      "claim_id": "line_18",
+      "line": 18,
+      "text": "<!-- section=methodology generated=2026-03-29T06:13:16.481598+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_119",
+      "line": 119,
+      "text": "- Perform **sparse pruning** experiments: remove only the top‑10% heads/channels most correlated with low‑curvature modes and compare with K‑FAC‑based editing.",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_135",
+      "line": 135,
+      "text": "- A **lighter / more modular curvature‑based editing rule** (e.g., structured pruning, layer‑wise thresholds) that matches or beats the original K‑FAC method on a subset of metrics.",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_136",
+      "line": 136,
+      "text": "- A **mechanistic story**: show that low‑curvature directions are spatially concentrated in certain attention heads or MLP channels, and that pruning those is a viable alternative to K‑FAC editing.[4](https://www.linkedin.com/posts/charlesmartin14_%F0%9D%97%99%F0%9D%97%BF%F0%9D%97%BC%F0%9D%97%BA-%F0%9D%97%A0%F0%9D%97%B2%F0%9D%97%BA%F0%9D%97%BC%F0%9D%97%BF%F0%9D%97%B6%F0%9D%98%87%F0%9D%97%AE%F0%9D%98%81%F0%9D%97%B6%F0%9D%97%BC%F0%9D%97%BB-%F0%9D%98%81%F0%9D%97%BC-activity-7392365987003744256-LuAU",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_152",
+      "line": 152,
+      "text": "<!-- section=experiments generated=2026-03-29T06:13:52.964643+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_194",
+      "line": 194,
+      "text": "- Average activation strength of each task’s data on low‑curvature components (K‑FAC modes with $$\\Pi_{ij}$$ in the lowest 20–30%).[2](https://arxiv.org/html/2510.24256v2)[3](https://www.themoonlight.io/ko/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_251",
+      "line": 251,
+      "text": "| LLM‑2B (memorized‑text)                      | K‑FAC         | 0.5               | -78.3%                   | -92.1%                 | +1.2%             | -23.4%           | -18.7%                 | -2.1%                  | +3.5%               |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_252",
+      "line": 252,
+      "text": "| LLM‑2B (memorized‑text)                      | K‑FAC         | 0.7               | -61.2%                   | -80.3%                 | +0.8%             | -12.1%           | -9.3%                  | -1.0%                  | +1.2%               |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_253",
+      "line": 253,
+      "text": "| LLM‑2B (memorized‑text)                      | K‑FAC         | 0.9               | -29.1%                   | -45.7%                 | +0.3%             | -5.2%            | -3.8%                  | -0.5%                  | +0.4%               |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_254",
+      "line": 254,
+      "text": "| LLM‑2B (memorized‑text)                      | SVD           | 0.5               | -50.1%                   | -68.4%                 | +3.1%             | -18.9%           | -15.2%                 | -4.3%                  | -2.1%               |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_255",
+      "line": 255,
+      "text": "| LLM‑2B (memorized‑text)                      | SVD           | 0.7               | -32.7%                   | -49.6%                 | +1.9%             | -9.7%            | -8.1%                  | -2.2%                  | -1.0%               |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_256",
+      "line": 256,
+      "text": "| LLM‑2B (memorized‑text)                      | Random‑K‑FAC  | 0.5               | -25.3%                   | -38.2%                 | +1.5%             | -6.4%            | -4.9%                  | -0.8%                  | +0.3%               |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_257",
+      "line": 257,
+      "text": "| LLM‑2B (memorized‑text)                      | BSN (fine‑tune) | –              | -60.0%                   | -85.0%                 | +5.7%             | -21.3%           | -17.4%                 | -3.9%                  | -3.2%               |",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_271",
+      "line": 271,
+      "text": "<!-- section=gaps generated=2026-03-29T06:14:14.480009+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_316",
+      "line": 316,
+      "text": "- The **trade‑off Pareto front** between memorization removal, generalization, and reasoning is not explicitly mapped across multiple baselines (e.g., K‑FAC vs SVD vs BSN), leaving the “best” operating point underspecified.[2](https://arxiv.org/html/2510.24256v2)[3](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvature)",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_326",
+      "line": 326,
+      "text": "<!-- section=related_code generated=2026-03-29T06:14:36.852543+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_366",
+      "line": 366,
+      "text": "Relevance: **Community‑driven overview and pointer to implementation details** such as dataset choices and practical gotchas in K‑FAC passes.[5](https://www.techzeitgeist.de/memorization-vs-reasoning-neural%E2%80%91pfade-in-llms-verstehen/)[6](https://www.reddit.com/r/ArtificialInteligence/comments/1ov65jx/from_memorization_to_reasoning_in_the_spectrum_of/)",
+      "type": "quantitative",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_376",
+      "line": 376,
+      "text": "<!-- section=discussion generated=2026-03-29T06:15:09.261666+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_419",
+      "line": 419,
+      "text": "Add an **RAG‑style retrieval component** before or after low‑curvature pruning and measure how the interplay between in‑weight memory and external retrieval evolves; this could reveal whether curvature‑based editing is most effective as a **privacy‑preserving “internal‑memory‑limiter”** that works best in concert with external retrieval.[7](https://x.com/betterhn20/status/1986810225677017557)[3](https://www.themoonlight.io/fr/review/from-memorization-to-reasoning-in-the-spectrum-of-loss-curvatur",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_427",
+      "line": 427,
+      "text": "<!-- section=limitations generated=2026-03-29T06:15:42.989779+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    },
+    {
+      "claim_id": "line_489",
+      "line": 489,
+      "text": "<!-- section=conclusion generated=2026-03-29T06:15:54.553181+00:00 model=best -->",
+      "type": "literature_or_performance",
+      "evidence_status": "unverified",
+      "evidence_source": null
+    }
+  ]
+}

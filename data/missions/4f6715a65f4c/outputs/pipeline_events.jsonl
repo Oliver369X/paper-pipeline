@@ -1,0 +1,16 @@
+{"event": "section_start", "ts": "2026-03-29T06:09:31.136415+00:00", "section": "methodology", "step": "perplexity:methodology"}
+{"event": "section_start", "ts": "2026-03-29T06:12:37.871381+00:00", "section": "methodology", "step": "perplexity:methodology"}
+{"event": "section_done", "ts": "2026-03-29T06:13:16.485552+00:00", "section": "methodology", "duration_s": 38.625, "chars": 11159}
+{"event": "section_start", "ts": "2026-03-29T06:13:16.488584+00:00", "section": "experiments", "step": "perplexity:experiments"}
+{"event": "section_done", "ts": "2026-03-29T06:13:52.967909+00:00", "section": "experiments", "duration_s": 36.469, "chars": 10429}
+{"event": "section_start", "ts": "2026-03-29T06:13:52.973632+00:00", "section": "gaps", "step": "perplexity:gaps"}
+{"event": "section_done", "ts": "2026-03-29T06:14:14.483101+00:00", "section": "gaps", "duration_s": 21.5, "chars": 6084}
+{"event": "section_start", "ts": "2026-03-29T06:14:14.488344+00:00", "section": "related_code", "step": "perplexity:related_code"}
+{"event": "section_done", "ts": "2026-03-29T06:14:36.854555+00:00", "section": "related_code", "duration_s": 22.359, "chars": 3839}
+{"event": "section_start", "ts": "2026-03-29T06:14:36.858615+00:00", "section": "discussion", "step": "perplexity:discussion"}
+{"event": "section_done", "ts": "2026-03-29T06:15:09.265746+00:00", "section": "discussion", "duration_s": 32.391, "chars": 7387}
+{"event": "section_start", "ts": "2026-03-29T06:15:09.271397+00:00", "section": "limitations", "step": "perplexity:limitations"}
+{"event": "section_done", "ts": "2026-03-29T06:15:42.991287+00:00", "section": "limitations", "duration_s": 33.719, "chars": 8642}
+{"event": "section_start", "ts": "2026-03-29T06:15:42.995422+00:00", "section": "conclusion", "step": "perplexity:conclusion"}
+{"event": "section_done", "ts": "2026-03-29T06:15:54.554702+00:00", "section": "conclusion", "duration_s": 11.562, "chars": 1703}
+{"event": "draft_assembled", "ts": "2026-03-29T06:15:54.724490+00:00", "path": "D:\\oliver\\Actividades\\mcp_perplesity\\paper-pipeline\\data\\missions\\4f6715a65f4c\\outputs\\draft_paper.md"}

@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "items": [
+    {
+      "claim_id": "line_18",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_119",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_135",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_136",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_152",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_194",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_251",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_252",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_253",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_254",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_255",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_256",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_257",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_271",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_316",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_326",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_366",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_376",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_419",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_427",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    },
+    {
+      "claim_id": "line_489",
+      "provenance_label": "unclassified",
+      "phase_hint": "A",
+      "notes": "Clasificar como paper_supported | system_proposed | hypothesis | measured"
+    }
+  ],
+  "checklist_path": "evidence/claims_evidence_checklist.json"
+}

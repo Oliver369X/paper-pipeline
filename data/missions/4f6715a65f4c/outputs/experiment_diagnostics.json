@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "exit_code": 0,
+  "reason": null,
+  "replication_tier": "planning_only",
+  "mission_topic": "Replicación de 'From Memorization to Reasoning in the Spectrum of Loss Curvature' (arXiv:2510.24256)",
+  "metrics_exit_code": 0,
+  "metrics_snapshot": {
+    "replication_tier": "planning_only",
+    "capability_contract": {
+      "hf_model_load": "unavailable",
+      "kfac_statistics": "unavailable",
+      "gradient_collection": "unavailable",
+      "full_paper_replication": "unavailable",
+      "human_summary": "Sin numpy: sin benchmark empírico local."
+    }
+  },
+  "degraded_success": true
+}

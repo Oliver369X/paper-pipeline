@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "nodes": [
+    {
+      "id": "root-1",
+      "parent_id": null,
+      "description": "Exploración inicial de literatura sobre: Replicación de 'From Memorization to Reasoning in the Spectrum of Loss Curvature' (arXiv:2510.24256)",
+      "goal_type": "literature",
+      "status": "pending",
+      "priority": 0.5,
+      "source_artifacts": [
+        "goals.json"
+      ]
+    }
+  ],
+  "mission_topic_hint": "Replicación de 'From Memorization to Reasoning in the Spectrum of Loss Curvature' (arXiv:2510.24256)"
+}
