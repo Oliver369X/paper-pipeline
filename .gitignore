@@ -15,3 +15,6 @@ recordings/
 .env
 .env.*
 !.env.example
+# Mermaid CLI output (regenerate with scripts/export_architecture_figure.*)
+docs/assets/generated/*.png
+docs/assets/generated/*.svg

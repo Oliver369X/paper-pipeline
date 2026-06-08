@@ -14,6 +14,12 @@ from paper_pipeline.mission import Mission
 from paper_pipeline.state import RunState
 from paper_pipeline.templates import CODE_README_TEMPLATE
 
+from .citation_index import (
+    apply_citation_index_to_draft,
+    build_citation_index,
+    write_citation_index,
+)
+
 
 def run_assembly(
     mission: Mission,
@@ -50,22 +56,29 @@ def run_assembly(
         "",
         f"**Target venue / reference:** {mission.paper_target}",
         "",
-        "_Disclaimer: borrador asistido por LLM (Perplexity); no sustituye experimentos ejecutados, números reproducibles "
-        "ni revisión por pares. Ver `docs/MODE_NARRATIVE_VS_EMPIRICAL.md` y `docs/ARXIV_TARGET_ALIGNMENT.md` en el repositorio._",
+        "_Disclaimer: borrador asistido por LLM; no sustituye experimentos ejecutados, números reproducibles "
+        "ni revisión por pares. Ver `docs/MODE_NARRATIVE_VS_EMPIRICAL.md` y `docs/ARXIV_TARGET_ALIGNMENT.md`._",
         "",
         f"_Generated {datetime.now(UTC).isoformat()} UTC_",
         "",
     ]
+
+    index, rewrites = build_citation_index(written)
+    write_citation_index(out, index)
+
     for section, path in written:
         if section == "code/README" or section.startswith("code/") and section.endswith(".py"):
             continue
         if path.suffix.lower() == ".md" and path.exists():
+            body = rewrites.get(section, path.read_text(encoding="utf-8"))
             draft_parts.append(f"## {section}\n")
-            draft_parts.append(path.read_text(encoding="utf-8"))
+            draft_parts.append(body)
             draft_parts.append("\n")
 
     draft_path = out / "draft_paper.md"
-    draft_path.write_text("\n".join(draft_parts), encoding="utf-8")
+    draft_text = "\n".join(draft_parts)
+    draft_text = apply_citation_index_to_draft(draft_text, index)
+    draft_path.write_text(draft_text, encoding="utf-8")
     written.append(("draft_paper", draft_path))
     dh = plog.draft_snapshot(draft_path)
     state.draft_hash = dh

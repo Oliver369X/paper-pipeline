@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "kind": "safety_usecase_p2",
+  "fixture_sha256": "7bbd33c7d6b10bfad2c69a5253e66aa8b3ac133fd66d7675aabc3adfe5652b50",
+  "claims_count": 2,
+  "note": "Regenerate with scripts/safety_usecase_repro.py after editing fixture_draft.md"
+}

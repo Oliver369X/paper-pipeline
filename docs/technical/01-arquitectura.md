@@ -2,6 +2,8 @@
 
 ## Vista general
 
+Fuente canónica del diagrama (export LaTeX / PNG): [`docs/assets/architecture_overview.mmd`](../assets/architecture_overview.mmd). Ver [`docs/assets/README.md`](../assets/README.md).
+
 ```mermaid
 flowchart LR
   CLI[CLI paper-pipeline] --> Runner[pipeline.runner]

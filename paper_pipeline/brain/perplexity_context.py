@@ -61,12 +61,13 @@ def fetch_perplexity_context(
     max_chars = brain_perplexity_context_max_chars()
     try:
         from perplexity_webui_scraper import ClientConfig, ConversationConfig, Perplexity
-        from perplexity_webui_scraper.models import MODELS
+        from paper_pipeline.pipeline.common import _available_model_ids, _resolve_perplexity_model_id
     except ImportError as exc:
         logger.warning("Perplexity client import failed: %s", exc)
         return None
 
-    model = "best" if "best" in MODELS else MODELS[0]
+    ids = _available_model_ids()
+    model = _resolve_perplexity_model_id("best") if ids else "best"
     pt = paper_target.strip()
     paper_line = (
         f"\nPaper / objetivo explícito (arXiv, DOI o título): {pt[:1500]}\n"

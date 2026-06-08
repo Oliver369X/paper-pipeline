@@ -300,11 +300,50 @@ pytest tests/test_research_memory.py -q
 pytest tests/test_goal_selection.py -q
 ```
 
-**Agent eval harness (oráculos deterministas, sin Perplexity):** valida `SafetyController` y `GoalSelector` contra escenarios JSON versionados en `paper_pipeline/agent_eval/eval_scenarios/`. Ver [technical/agent-eval-spec.md](technical/agent-eval-spec.md).
+**Agent eval harness (oráculos deterministas, sin Perplexity):** valida `SafetyController` y `GoalSelector` contra escenarios JSON versionados en `paper_pipeline/agent_eval/eval_scenarios/`. Ver [technical/agent-eval-spec.md](technical/agent-eval-spec.md). Baseline versionado: [examples/baselines/agent_eval_baseline.json](../examples/baselines/agent_eval_baseline.json).
 
 ```bash
-pytest tests/test_agent_eval_runner.py -q
+pytest tests/test_agent_eval_runner.py tests/test_agent_eval_baseline.py -q
 python -m paper_pipeline.agent_eval --out /tmp/eval_report.json
+python -m paper_pipeline.agent_eval --check-baseline examples/baselines/agent_eval_baseline.json
+# Desde la raíz del repo (mismo chequeo, ruta por defecto):
+paper-agent-eval-check
+```
+
+**Caso de uso P2 (memorización / trazabilidad de claims, sin API):** fixture + informe en [examples/safety_usecase/README.md](../examples/safety_usecase/README.md).
+
+```bash
+pytest tests/test_safety_usecase_repro.py -q
+python scripts/safety_usecase_repro.py
+```
+
+**Bundle anexo preprint (sin `.env`):** escribe `benchmark_bundle.json` y `benchmark_table.md` además del trace.
+
+```bash
+pytest tests/test_appendix_export.py tests/test_benchmark_bundle.py -q
+paper-export-appendix -o /tmp/paper_pipeline_appendix
+```
+
+**Assets Mermaid (P4, sin `mmdc` en CI obligatorio):**
+
+```bash
+pytest tests/test_docs_assets.py -q
+```
+
+**Figuras y snapshot para preprint (`docs/preprint/`):**
+
+```bash
+pip install -e ".[figures]"
+python scripts/generate_preprint_figures.py
+python -m paper_pipeline.reporting.appendix_export -o docs/preprint/snapshot/appendix_bundle
+python -m paper_pipeline.reporting.benchmark_bundle -o /tmp/benchmark_only.json
+```
+
+**Auditoría de números del abstract (Plan v3, sin red):**
+
+```bash
+python scripts/audit_abstract_numbers.py
+pytest tests/test_audit_abstract_numbers.py -q
 ```
 
 **Goal Manager + memoria V2 (thin):**

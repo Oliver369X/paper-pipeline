@@ -64,6 +64,48 @@ SECTION_PROMPTS: dict[str, str] = {
         "Provide a discussion section for {topic} for {paper_target}: relate findings to prior work, "
         "broader impact for safety/alignment if relevant, and suggested next experiments."
     ),
+    "peer_review": (
+        "Simulate a structured peer review of a manuscript outline on {topic} for {paper_target}. "
+        "Include: Summary, Strengths, Weaknesses, Missing citations or related work, "
+        "Suggestions for improvement. Do not invent empirical numbers."
+    ),
+    # AI Safety specific templates
+    "safety_related_work": (
+        "Search recent academic literature (2020–present) on AI safety, alignment, and robustness for {topic}. "
+        "Focus on: (1) jailbreak attacks and defenses, (2) red teaming methodologies, (3) alignment techniques, "
+        "(4) safety benchmarks (HarmBench, ToxiGen, etc.), (5) adversarial robustness. "
+        "Return annotated bibliography with DOI/arXiv/URL. Include BibTeX entries for 10–15 key papers."
+    ),
+    "threat_model": (
+        "Define a comprehensive threat model for {topic} targeting {paper_target}. "
+        "Include: (1) attacker capabilities and goals, (2) attack vectors (prompt injection, jailbreak, encoding bypass), "
+        "(3) target model vulnerabilities, (4) success criteria for attacks, (5) defense assumptions. "
+        "Structure as a formal threat model with adversary model and security properties."
+    ),
+    "attack_methodology": (
+        "Propose attack methodologies for evaluating safety of {topic} at {paper_target}. "
+        "Include: (1) jailbreak techniques (prefix/suffix, role-play, encoding), (2) prompt injection strategies, "
+        "(3) adversarial example generation, (4) red teaming protocols, (5) metrics for attack success rate (ASR). "
+        "Provide concrete attack prompts and evaluation criteria."
+    ),
+    "defense_mechanism": (
+        "Propose defense mechanisms for {topic} targeting {paper_target}. "
+        "Include: (1) safety training techniques (RLHF, DPO, constitutional AI), (2) input/output filtering, "
+        "(3) guardrail architectures, (4) detection mechanisms for adversarial inputs, (5) robustness certifications. "
+        "Compare trade-offs between safety and utility."
+    ),
+    "safety_experiments": (
+        "Design safety experiments for {topic} at {paper_target}. "
+        "Include: (1) benchmark selection (HarmBench, ToxiGen, BBQ, etc.), (2) attack success rate measurement, "
+        "(3) refusal rate analysis, (4) alignment score calculation, (5) robustness evaluation, "
+        "(6) bias and fairness assessment. Provide experiment table with metrics and baselines."
+    ),
+    "ethical_considerations": (
+        "Analyze ethical considerations for {topic} targeting {paper_target}. "
+        "Include: (1) potential harms and misuse scenarios, (2) dual-use concerns, (3) fairness and bias issues, "
+        "(4) privacy implications, (5) transparency requirements, (6) responsible disclosure considerations. "
+        "Provide mitigation strategies for each concern."
+    ),
 }
 
 
@@ -82,6 +124,56 @@ QUALITY_CHECK_TEMPLATE = (
     "Below is the full draft (possibly truncated). List concrete gaps: missing citations, weak methodology, "
     "unclear experiments, ethical/safety issues, and formatting issues for that venue.\n\n"
     "--- DRAFT ---\n{draft}\n--- END ---\n"
+)
+
+RESEARCH_PLAN_TEMPLATE = (
+    "You are a research planner. Topic: {topic}\n"
+    "Target: {paper_target}\n"
+    "Sections: {sections}\n\n"
+    "Return ONLY valid JSON with this shape:\n"
+    '{{"schema_version": 1, "sections": {{"SECTION_NAME": {{"queries": ["..."], "mode": "discovery|verification|synthesis"}}}}}}\n'
+    "Each section needs 1-3 queries (20-500 chars each)."
+)
+
+QUALITY_STAGE1_TEMPLATE = (
+    "You are selecting sections for focused peer review.\n"
+    "Topic: {topic}\n"
+    "Draft excerpt (first 8000 chars):\n{draft_excerpt}\n\n"
+    "Available sections: {sections}\n"
+    'Return ONLY JSON: {{"sections": ["section_a", "section_b"]}} with exactly 2 section keys from the list.'
+)
+
+QUALITY_STAGE2_TEMPLATE = (
+    "You are an external peer reviewer (not the author). Topic: {topic}. Venue: {paper_target}.\n"
+    "Review ONLY these sections: {focus_sections}\n\n"
+    "Use exactly these markdown H2 headings:\n"
+    "## Strengths\n## Weaknesses\n## Missing citations\n## Suggestions\n\n"
+    "--- DRAFT ---\n{draft}\n--- END ---\n"
+)
+
+QUALITY_REFUTATOR_TEMPLATE = (
+    "You are a skeptical reviewer trying to refute claims in this draft.\n"
+    "Topic: {topic}. List unsupported claims, missing evidence, and alternative explanations.\n\n"
+    "--- DRAFT ---\n{draft}\n--- END ---\n"
+)
+
+LESSONS_LEARNED_TEMPLATE = (
+    "Summarize research memory and quality gaps into lessons learned (max 1500 words).\n"
+    "Topic: {topic}\n\n--- MEMORY ---\n{memory}\n--- QUALITY GAPS ---\n{quality}\n--- END ---\n"
+)
+
+SAFETY_QUALITY_CHECK_TEMPLATE = (
+    "You are reviewing an AI safety research manuscript for {paper_target}.\n\n"
+    "Focus on:\n"
+    "1. Threat model completeness\n"
+    "2. Attack methodology rigor\n"
+    "3. Defense mechanism effectiveness\n"
+    "4. Safety benchmark coverage\n"
+    "5. Ethical considerations\n"
+    "6. Reproducibility of safety evaluations\n\n"
+    "Below is the full draft:\n\n"
+    "--- DRAFT ---\n{draft}\n--- END ---\n\n"
+    "List specific safety-related gaps and recommendations."
 )
 
 CODE_README_TEMPLATE = """# Generated experiment code (manual / agent step)

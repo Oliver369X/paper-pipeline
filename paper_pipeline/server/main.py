@@ -9,10 +9,10 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from perplexity_webui_scraper.models import MODELS
 
 from paper_pipeline.brain.gemini_client import brain_sdk_available
 from paper_pipeline.env import load_dotenv_if_available
+from paper_pipeline.pipeline.common import _available_model_ids
 from paper_pipeline.version import get_package_version
 
 from .routers import missions
@@ -76,7 +76,7 @@ def health() -> dict[str, object]:
 
 @app.get("/api/models")
 def models() -> dict[str, list[str]]:
-    return {"models": list(MODELS)}
+    return {"models": _available_model_ids()}
 
 
 @app.get("/api/section-keys")

@@ -16,7 +16,7 @@
 | ResearchMemory V1 | Implementado | `tests/test_research_memory.py`, `tests/test_server.py` | `research_memory.jsonl`, `memory_index.json`, `GET .../memory/latest`, `GET .../memory/index` |
 | Goal Selection V1 | Implementado | `tests/test_goal_selection.py`, `tests/test_server.py` | `goal_selection.json`, `GET .../goal-selection/latest` |
 | API cockpit | Implementado | `tests/test_server.py` | publish/decision, loop/stop, metrics/validated, safety/latest, objective/latest, memory/latest, memory/index, goal-selection/latest |
-| Agent eval harness V1 | Implementado | `tests/test_agent_eval_runner.py` | Escenarios JSON en `paper_pipeline/agent_eval/eval_scenarios/`, CLI `python -m paper_pipeline.agent_eval`, ver `docs/technical/agent-eval-spec.md` |
+| Agent eval harness V1 | Implementado | `tests/test_agent_eval_runner.py`, `tests/test_agent_eval_baseline.py` | Escenarios JSON en `paper_pipeline/agent_eval/eval_scenarios/`; baseline en `examples/baselines/agent_eval_baseline.json`; CLI `python -m paper_pipeline.agent_eval`, `--check-baseline`, `paper-agent-eval-check`; ver `docs/technical/agent-eval-spec.md`, `docs/PREPRINT_ARTIFACTS.md` |
 | Perplexity Strategy V1 | Implementado | `tests/test_perplexity_strategy.py` | Flag `PAPER_PIPELINE_PERPLEXITY_STRATEGY`, `outputs/perplexity_call_record.jsonl`, ver `docs/technical/perplexity-strategy-spec.md` |
 | Memoria estratégica V2 (thin) | Implementado | `tests/test_strategic_memory.py` | `working_memory.json`, `hypotheses_registry.json`; hooks en `goal_selection` |
 | Goal Manager V1 (goals.json) | Implementado | `tests/test_goals_manager.py`, `tests/test_goal_selection.py` | Semilla + override `in_progress`; `GET .../goals/latest` |
@@ -25,5 +25,10 @@
 | Memoria query / compact (stub) | Implementado | `tests/test_research_memory.py`, `tests/test_server.py` | `GET .../memory/query`, `POST .../memory/compact` |
 | Web cockpit | Implementado | — | `/missions/:id/cockpit`; bloques agent decisions + Perplexity calls |
 | Paralelo batch summary | Implementado | — | `outputs/batch_summary.json` |
+| Caso de uso P2 (safety_usecase) | Implementado | `tests/test_safety_usecase_repro.py` | `examples/safety_usecase/`, script `scripts/safety_usecase_repro.py`; ver `report.md` |
+| Exportación anexo preprint (`paper-export-appendix`) | Implementado | `tests/test_appendix_export.py` | `appendix_export.py` + `benchmark_bundle.json` + `benchmark_table.md`; sin secretos; un solo `run_all` |
+| Benchmark bundle preprint (`benchmark_bundle`) | Implementado | `tests/test_benchmark_bundle.py` | `reporting/benchmark_bundle.py`; JSON + `benchmark_bundle_to_markdown_table`; figuras en `scripts/generate_preprint_figures.py` |
+| Plan v3 abstract audit (`abstract_audit`, `audit_abstract_numbers.py`) | Implementado | `tests/test_audit_abstract_numbers.py` | Tabla Markdown desde JSON de misión; sin red |
+| Figuras arquitectura Mermaid (P4) | Implementado | `tests/test_docs_assets.py` | `docs/assets/*.mmd`, `scripts/export_architecture_figure.*` |
 
 Actualizar esta tabla al cambiar contratos o deprecar archivos.

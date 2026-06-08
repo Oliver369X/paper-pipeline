@@ -111,10 +111,11 @@ outputs/
 │                                Si `single_thread_perplexity: true` en la misión, también guarda `perplexity_backend_uuid`
 │                                y `perplexity_read_write_token` para seguir el mismo hilo al reanudar.
 │
-├── cursor_cli.log            ← Traza del binario `agent` (Cursor CLI), si aplica (append por intento si hay reintentos).
-├── cursor_cli_diagnostics.json ← Último diagnóstico del subprocess (comando, stderr/stdout truncados); puede incluir clave ``iteration`` si hay reintentos o bucle experimento.
-├── cursor_cli_rounds.json    ← Lista de intentos del agent (``process_returncode``, etc.) si hubo más de un intento o bucle de reintentos headless.
-├── cursor_cli_prompt_last.txt ← Último prompt enviado por stdin (Windows/prompts largos).
+├── cursor_cli.log            ← Traza del agente Cursor (SDK streaming o CLI subprocess); append por intento si hay reintentos.
+├── cursor_cli_diagnostics.json ← Último diagnóstico (comando/modelo, stderr/stdout truncados, `backend`, `run_id`, `agent_id` en SDK).
+├── cursor_cli_rounds.json    ← Lista de intentos (`process_returncode`, `backend`, `run_id`, …) si hubo reintentos.
+├── cursor_agent_state.json   ← Persistencia SDK: `agent_id`, `model`, `cwd` para `Agent.resume` en la siguiente invocación.
+├── cursor_cli_prompt_last.txt ← Último prompt enviado (SDK o stdin CLI en Windows/prompts largos).
 ├── experiment_iteration.jsonl ← Una línea JSON por ronda del bucle post-Cursor (experimento + validación determinista).
 ├── experiment_iteration_hint.md ← Pista generada tras fallo de validación o experimento; alimenta el siguiente ``cursor_cli`` en ese bucle.
 ├── INTEGRATION_TRANSCRIPT.md ← Append de trazas (p. ej. Cursor CLI) vía ``integration_transcript.append_transcript``; no confundir con ``cursor_turn.md``.

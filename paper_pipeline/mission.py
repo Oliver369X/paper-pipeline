@@ -114,6 +114,13 @@ class AutonomyConfig(BaseModel):
     max_global_tokens: int = Field(default=2_000_000, ge=1)
 
 
+class ResearchAgentConfig(BaseModel):
+    """Opt-in supervisor-style research agent (LangGraph-lite)."""
+
+    enabled: bool = False
+    max_concurrent: int = Field(default=2, ge=1, le=8)
+
+
 class ExperimentRunnerConfig(BaseModel):
     """Post-draft experiments: script generado, micro-entrenamiento HF, o benchmark numpy."""
 
@@ -237,6 +244,9 @@ class Mission(BaseModel):
     # -- v1 fields (unchanged) ------------------------------------------------
     topic: str
     paper_target: str = "generic venue"
+    #: LLM provider: ``perplexity`` (default), ``xiaomi_mimo``, or ``mistral``.
+    provider: str = "perplexity"
+    research_agent: ResearchAgentConfig = Field(default_factory=ResearchAgentConfig)
     sections_needed: list[str] = Field(
         default_factory=lambda: [
             "related_work",
@@ -302,6 +312,15 @@ class Mission(BaseModel):
         v = (value or "standard").strip().lower()
         if v not in ("standard", "autonomy"):
             msg = "mode must be 'standard' or 'autonomy'"
+            raise ValueError(msg)
+        return v
+
+    @field_validator("provider")
+    @classmethod
+    def _provider_ok(cls, value: str) -> str:
+        v = (value or "perplexity").strip().lower()
+        if v not in ("perplexity", "xiaomi_mimo", "mistral"):
+            msg = "provider must be 'perplexity', 'xiaomi_mimo', or 'mistral'"
             raise ValueError(msg)
         return v
 

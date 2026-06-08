@@ -61,20 +61,31 @@ Los ficheros viven en `paper_pipeline/agent_eval/eval_scenarios/`. Cada JSON inc
 
 Las comparaciones deben usar el **mismo** conjunto de escenarios versionados en git.
 
+## Baseline versionado en repo (regresión explícita)
+
+- **Archivo canónico:** [`examples/baselines/agent_eval_baseline.json`](../../examples/baselines/agent_eval_baseline.json) — contrato Pydantic en [`paper_pipeline/agent_eval/baseline_spec.py`](../../paper_pipeline/agent_eval/baseline_spec.py).
+- **Campos clave:** `expected_scenario_count`, `expected_scenario_ids` (lista ordenada de `id` de cada escenario), tasas esperadas en `scorecard` e `integrity`. Si se **añade, elimina o renombra** un escenario bajo `eval_scenarios/`, hay que **actualizar este JSON en el mismo PR** y mencionarlo en el mensaje de commit.
+- **Comparación:** [`paper_pipeline/agent_eval/baseline_compare.py`](../../paper_pipeline/agent_eval/baseline_compare.py) — `compare_report_to_baseline(report, baseline)` devuelve una lista de mensajes ordenados (vacía = OK).
+- **CLI:** `python -m paper_pipeline.agent_eval --check-baseline examples/baselines/agent_eval_baseline.json` (código de salida 0/1). Atajo: `paper-agent-eval-check` desde la raíz del repo (usa esa ruta por defecto).
+- **Regenerar el archivo** (tras cambios intencionales de oráculo o escenarios): [`scripts/write_agent_eval_baseline.py`](../../scripts/write_agent_eval_baseline.py) — revisar el diff y ejecutar `pytest tests/test_agent_eval_baseline.py`.
+- **Manuscrito / revisores:** tabla y límites en [../PREPRINT_ARTIFACTS.md](../PREPRINT_ARTIFACTS.md).
+
 ## Límites y regresión (CI)
 
 - Suite por defecto: **sin** llamadas a Perplexity (`pytest -m "not integration and not notion_real"`).
 - Costo máximo: tiempo de CPU despreciable; escenarios solo instancian modelos Pydantic y escriben en `tmp_path`.
-- **Regresión**: un cambio que baje `scenario_pass_rate` por debajo del último baseline registrado en el PR debe justificarse o actualizar escenarios explícitamente.
+- **Regresión**: el JSON en `examples/baselines/` y los tests `tests/test_agent_eval_baseline.py` fallan si el scorecard deja de coincidir con el baseline o cambian los ids de escenario sin actualizar el archivo.
 
 ## Verificación manual
 
 ```bash
 python -m paper_pipeline.agent_eval --out /tmp/eval_report.json
-pytest tests/test_agent_eval_runner.py -q
+pytest tests/test_agent_eval_runner.py tests/test_agent_eval_baseline.py -q
+python -m paper_pipeline.agent_eval --check-baseline examples/baselines/agent_eval_baseline.json
 ```
 
 ## Ver también
 
 - [../GUIA_PRUEBAS_Y_DEBUG.md](../GUIA_PRUEBAS_Y_DEBUG.md) — sección Agent eval harness
+- [../PREPRINT_ARTIFACTS.md](../PREPRINT_ARTIFACTS.md) — artefactos citables en un paper sobre el sistema
 - [../../vision_futura/detalle 3 y 4.md](../../vision_futura/detalle%203%20y%204.md) — marco de evaluación

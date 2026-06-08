@@ -1,0 +1,108 @@
+{
+  "artifacts_present": [
+    "run_ledger.json",
+    "manifest.json",
+    "metrics.json",
+    "draft_paper.md",
+    "evidence/claims.json",
+    "publication/publish_decision.json",
+    "triage/triage_report.json",
+    "replication_status.md"
+  ],
+  "claims_extracted_count": 21,
+  "claims_types": {
+    "literature_or_performance": 10,
+    "quantitative": 11
+  },
+  "ended_at": "2026-03-29T06:17:18.375346+00:00",
+  "kind": "case_study_trace",
+  "ledger_status": "completed",
+  "manifest_summary": {},
+  "metrics_summary": {
+    "exit_code": 0,
+    "experiment_runner": {
+      "fallback_from_hf_import": true,
+      "hf_import_error": "hf_llm_micro requiere torch, transformers, datasets. Instalá: pip install paper-pipeline[llm]",
+      "notes": "Perfil hf_llm_micro no ejecutado: dependencias HF ausentes; se usó benchmark numpy sintético.",
+      "reason": "numpy not installed; pip install paper-pipeline[experiments] or pip install numpy",
+      "remediation": "pip install paper-pipeline[llm]",
+      "replication_tier": "planning_only",
+      "status": "skipped"
+    },
+    "replication_tier": "planning_only",
+    "schema_version": 1
+  },
+  "mission_id": "4f6715a65f4c",
+  "note": "Redacted summary for reproducibility reporting; does not include API payloads, tokens, or full draft text.",
+  "outputs_dir_hint": "mission outputs/ root (relative names below)",
+  "phases": [
+    {
+      "ended_at": "2026-03-29T06:12:37.825268+00:00",
+      "error": null,
+      "name": "mission_validation",
+      "status": "done"
+    },
+    {
+      "ended_at": "2026-03-29T06:12:37.867603+00:00",
+      "error": null,
+      "name": "preflight",
+      "status": "done"
+    },
+    {
+      "ended_at": "2026-03-29T06:15:54.567991+00:00",
+      "error": null,
+      "name": "perplexity_sections",
+      "status": "done"
+    },
+    {
+      "ended_at": "2026-03-29T06:15:54.725505+00:00",
+      "error": null,
+      "name": "assembly_draft",
+      "status": "done"
+    },
+    {
+      "ended_at": "2026-03-29T06:15:55.638136+00:00",
+      "error": null,
+      "name": "experiment_runner",
+      "status": "done"
+    },
+    {
+      "ended_at": "2026-03-29T06:16:35.905764+00:00",
+      "error": null,
+      "name": "quality_check",
+      "status": "done"
+    },
+    {
+      "ended_at": "2026-03-29T06:16:35.908487+00:00",
+      "error": null,
+      "name": "notion_sync",
+      "status": "done"
+    },
+    {
+      "ended_at": "2026-03-29T06:17:18.153782+00:00",
+      "error": null,
+      "name": "cursor_cli",
+      "status": "done"
+    },
+    {
+      "ended_at": "2026-03-29T06:17:18.373778+00:00",
+      "error": null,
+      "name": "final_decision",
+      "status": "done"
+    }
+  ],
+  "publish_decision": {
+    "blocking_reasons": [],
+    "eligible_for_publication": true,
+    "triage_label": "insufficient_metrics",
+    "triage_tier": 2
+  },
+  "run_id": "2026-03-29T06-12-37Z__cca251fe",
+  "schema_version": 1,
+  "started_at": "2026-03-29T06:12:37.821631+00:00",
+  "triage": {
+    "label": "insufficient_metrics",
+    "reason": "No primary metric; classified as neutral match (no breakthrough claim)",
+    "tier": 2
+  }
+}

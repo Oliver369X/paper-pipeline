@@ -12,6 +12,16 @@ on:
       - "paper_pipeline/ledger/**"
       - "paper_pipeline/evidence/**"
       - "paper_pipeline/agent_eval/**"
+      - "paper_pipeline/reporting/appendix_export.py"
+      - "paper_pipeline/reporting/benchmark_bundle.py"
+      - "paper_pipeline/reporting/preprint_figures.py"
+      - "paper_pipeline/reporting/abstract_audit.py"
+      - "paper_pipeline/validation/claim_extractor.py"
+      - "examples/baselines/**"
+      - "examples/safety_usecase/**"
+      - "scripts/safety_usecase_repro.py"
+      - "scripts/generate_preprint_figures.py"
+      - "scripts/audit_abstract_numbers.py"
       - "paper_pipeline/agent/perplexity_strategy.py"
       - "paper_pipeline/agent/goals.py"
       - "paper_pipeline/agent/strategic_memory.py"
@@ -21,6 +31,14 @@ on:
       - "tests/test_publication_*.py"
       - "tests/test_ledger_merge.py"
       - "tests/test_agent_eval_runner.py"
+      - "tests/test_agent_eval_baseline.py"
+      - "tests/test_safety_usecase_repro.py"
+      - "tests/test_appendix_export.py"
+      - "tests/test_benchmark_bundle.py"
+      - "tests/test_preprint_figures.py"
+      - "tests/test_audit_abstract_numbers.py"
+      - "tests/test_docs_assets.py"
+      - "docs/assets/**"
       - "tests/test_perplexity_strategy.py"
       - "tests/test_goals_manager.py"
       - "tests/test_strategic_memory.py"
@@ -47,6 +65,13 @@ jobs:
           tests/test_publication_packs.py
           tests/test_ledger_merge.py
           tests/test_agent_eval_runner.py
+          tests/test_agent_eval_baseline.py
+          tests/test_safety_usecase_repro.py
+          tests/test_appendix_export.py
+          tests/test_benchmark_bundle.py
+          tests/test_preprint_figures.py
+          tests/test_audit_abstract_numbers.py
+          tests/test_docs_assets.py
           tests/test_perplexity_strategy.py
           tests/test_goals_manager.py
           tests/test_strategic_memory.py

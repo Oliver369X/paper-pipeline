@@ -1,0 +1,18 @@
+[
+  {
+    "claim_id": "line_10",
+    "line": 10,
+    "text": "The analysis shows that removing low-curvature components can reduce verbatim memorization by roughly **15%** on held-out probes while preserving downstream reasoning scores within **2%** of the unedited baseline.",
+    "type": "quantitative",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  },
+  {
+    "claim_id": "line_12",
+    "line": 12,
+    "text": "Prior work on mechanistic unlearning often reports state-of-the-art perplexity on clean data; our editing rule **outperforms** a random-direction ablation on targeted memorization tasks.",
+    "type": "literature_or_performance",
+    "evidence_status": "unverified",
+    "evidence_source": null
+  }
+]

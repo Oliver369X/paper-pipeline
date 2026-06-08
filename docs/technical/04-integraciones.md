@@ -12,13 +12,14 @@
 - `sync_sections` devuelve `SyncSectionsResult` (`ok`, `errors`).
 - Triage tier 3: `NOTION_TRIAGE_PAGE_ID` vía `notion_telemetry`.
 
-## Cursor CLI
+## Cursor agent (SDK default, CLI fallback)
 
-- `CURSOR_API_KEY`, binario `agent` (opcional `CURSOR_AGENT_BIN`).
-- Modo: **headless** — `agent -p --force --output-format text` (+ `CURSOR_AGENT_EXTRA_ARGS`); no es la CLI interactiva del IDE.
-- Timeout: `CURSOR_CLI_TIMEOUT_SEC`.
-- **Reintentos:** si un intento falla (exit ≠ 0), hasta `debugging.cursor_max_attempts` invocaciones; el siguiente prompt incluye stdout/stderr del fallo. Override: `CURSOR_CLI_MAX_ROUNDS`. Resumen: `outputs/cursor_cli_rounds.json`; trazas: `cursor_cli.log`, `cursor_cli_diagnostics.json`.
-- Auditoría: cada invocación puede dejar en `outputs/run.log` un evento JSON `cursor_cli_subprocess_done` (`cwd`, `prompt_chars`, `duration_s`, `exit_code`, `timed_out`, `dry_run`, `attempt_index`, `attempts_total`, etc.) vía `PipelineLogger`.
+- `CURSOR_API_KEY` obligatoria.
+- **Backend SDK (default):** `cursor-sdk` con `CURSOR_AGENT_MODEL=composer-2.5`, runtime local (`LocalAgentOptions.cwd`). Sin binario `agent` en PATH. Resume: `outputs/cursor_agent_state.json` + `CURSOR_AGENT_RESUME=1`. En Windows, `paper_pipeline/cursor_sdk_bridge_patch.py` parchea el arranque del bridge (``select`` en pipes no es válido en Win32).
+- **Backend CLI:** `CURSOR_AGENT_BACKEND=cli` — subprocess `agent -p --force --output-format text` (+ `CURSOR_AGENT_EXTRA_ARGS`); binario vía PATH o `CURSOR_AGENT_BIN`.
+- Timeout: `CURSOR_CLI_TIMEOUT_SEC` (ambos backends).
+- **Reintentos:** hasta `debugging.cursor_max_attempts` (override `CURSOR_CLI_MAX_ROUNDS`). SDK reutiliza el mismo agente con `send()`; CLI respawnea con prompt de follow-up. Resumen: `outputs/cursor_cli_rounds.json`; trazas: `cursor_cli.log`, `cursor_cli_diagnostics.json` (incluye `backend`, `model`, `run_id`, `agent_id` en SDK).
+- Auditoría: evento `cursor_cli_subprocess_done` en `run.log` (`backend`, `run_id`, `agent_id`, `model`, …) vía `PipelineLogger`.
 
 ## Experimento post-Cursor (opcional)
 

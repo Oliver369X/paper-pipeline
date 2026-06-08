@@ -1,0 +1,18 @@
+%% Governance / audit (preprint complement; CI exercises agent_eval independently)
+flowchart TB
+  Runner[pipeline.runner]
+  subgraph audit [Auditoría]
+    Ledger[run_ledger.json]
+    Manifest[manifest.json]
+    Events[pipeline_events.jsonl]
+  end
+  subgraph pub [Publicación y calidad]
+    Triage[triage / metrics]
+    Quality[quality_validation.json]
+    Publish[publish_decision.json]
+  end
+  subgraph ci [CI determinista]
+    AgentEval[agent_eval harness]
+  end
+  Runner --> audit
+  Runner --> pub

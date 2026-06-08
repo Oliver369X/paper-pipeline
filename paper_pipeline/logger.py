@@ -144,6 +144,10 @@ class PipelineLogger:
         error: str | None = None,
         attempt_index: int | None = None,
         attempts_total: int | None = None,
+        backend: str | None = None,
+        run_id: str | None = None,
+        agent_id: str | None = None,
+        model: str | None = None,
     ) -> None:
         """Una línea por invocación real o dry-run del Cursor CLI (auditoría / métricas)."""
 
@@ -156,6 +160,14 @@ class PipelineLogger:
             "timed_out": timed_out,
             "dry_run": dry_run,
         }
+        if backend:
+            rec["backend"] = backend
+        if run_id:
+            rec["run_id"] = run_id
+        if agent_id:
+            rec["agent_id"] = agent_id
+        if model:
+            rec["model"] = model
         if attempt_index is not None:
             rec["attempt_index"] = attempt_index
         if attempts_total is not None:

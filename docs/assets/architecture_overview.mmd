@@ -1,0 +1,9 @@
+%% Canonical source for the overview figure in technical/01-arquitectura.md
+%% Regenerate PNG/SVG: scripts/export_architecture_figure.ps1 or .sh (requires @mermaid-js/mermaid-cli)
+flowchart LR
+  CLI[CLI paper-pipeline] --> Runner[pipeline.runner]
+  Web[FastAPI web] --> Runner
+  Runner --> Perplexity[Perplexity client]
+  Runner --> Notion[notion_sync]
+  Runner --> Manifest[manifest.json]
+  Runner --> Events[pipeline_events.jsonl]

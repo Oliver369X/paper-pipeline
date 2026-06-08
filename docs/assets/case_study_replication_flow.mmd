@@ -1,0 +1,13 @@
+%% Case study flow (mission → artifacts) — for preprint §5 / supplementary figures
+flowchart TB
+  M[mission.md + paper_target] --> V[mission_validation]
+  V --> P[preflight]
+  P --> S[perplexity_sections]
+  S --> A[assembly_draft draft_paper.md]
+  A --> E[experiment_runner]
+  E --> Q[quality_check + claims.json]
+  Q --> N[notion_sync optional]
+  N --> C[cursor_cli optional]
+  C --> F[final_decision + publish_decision]
+  F --> L[run_ledger.json + triage]
+  L --> T[case_study_trace.json export]

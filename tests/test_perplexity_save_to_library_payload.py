@@ -9,6 +9,8 @@ from perplexity_webui_scraper.config import ConversationConfig
 from perplexity_webui_scraper.core import Conversation
 from perplexity_webui_scraper.models import MODELS
 
+from paper_pipeline.pipeline.common import _resolve_perplexity_model_id
+
 from paper_pipeline.mission import Mission
 from paper_pipeline.orchestrator import _build_conversation_config
 
@@ -24,7 +26,12 @@ def test_build_payload_is_incognito_matches_save_to_library(
     http = MagicMock()
     cfg = ConversationConfig(model="best", save_to_library=save_to_library)
     conv = Conversation(http, cfg)
-    model = MODELS["best"]
+    if not hasattr(conv, "_build_payload"):
+        pytest.skip("perplexity-webui-scraper Conversation._build_payload not available")
+    if hasattr(MODELS, "resolve"):
+        model = MODELS.resolve(_resolve_perplexity_model_id("best"))
+    else:
+        model = MODELS["best"]
     payload = conv._build_payload("test query", model, [])
     assert payload["params"]["is_incognito"] is expect_incognito
 

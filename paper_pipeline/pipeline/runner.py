@@ -30,9 +30,22 @@ from paper_pipeline.validation.claim_extractor import (
 from paper_pipeline.validation.quality_gate_runner import run_quality_gates, write_quality_validation
 
 from .assembly_phase import run_assembly
-from .common import build_conversation_config, count_prior_perplexity_calls
+from .common import (
+    build_conversation_config,
+    build_mimo_client,
+    build_mistral_client,
+    count_prior_perplexity_calls,
+)
+from .lessons_learned_phase import run_lessons_learned_phase
+from paper_pipeline.literature.arxiv_fetch import run_literature_ingest_phase
+from .mistral_phase import run_mistral_sections
+from .research_agent_phase import run_research_agent_phase
+from .research_map import write_research_map
+from .research_plan_phase import run_research_plan_phase
+from .source_curation import run_source_curation_phase
 from .notion_phase import run_notion_phase
 from .perplexity_phase import run_perplexity_sections
+from .mimo_phase import run_mimo_sections
 from .preflight import run_preflight, write_preflight_report
 from .experiment_iteration import (
     run_post_cursor_experiment_iteration,
@@ -138,14 +151,15 @@ def run_pipeline(
     maybe_invalidate_on_empirical_fingerprint_change(state, state_path, out)
     invalidate_resume_if_experiment_runner_config_changed(mission, state, state_path)
 
-    try:
-        build_conversation_config(mission)
-    except ValueError as exc:
-        logger.error("%s", exc)
-        plog.step_error("pipeline", error="invalid_mission_model", detail=str(exc))
-        ledger.upsert_phase("mission_validation", "failed", error=str(exc))
-        ledger.finalize("failed")
-        return ExitCode.ERROR
+    if mission.provider not in ("xiaomi_mimo", "mistral"):
+        try:
+            build_conversation_config(mission)
+        except ValueError as exc:
+            logger.error("%s", exc)
+            plog.step_error("pipeline", error="invalid_mission_model", detail=str(exc))
+            ledger.upsert_phase("mission_validation", "failed", error=str(exc))
+            ledger.finalize("failed")
+            return ExitCode.ERROR
 
     ledger.upsert_phase("preflight", "running")
     pf = run_preflight(
@@ -164,12 +178,30 @@ def run_pipeline(
     ledger.upsert_phase("preflight", "done")
 
     token = os.environ.get("PERPLEXITY_SESSION_TOKEN", "").strip()
-    if not token and not dry_run:
-        logger.error("PERPLEXITY_SESSION_TOKEN is not set")
-        plog.step_error("pipeline", error="perplexity_auth_error", detail="PERPLEXITY_SESSION_TOKEN missing")
-        ledger.upsert_phase("preflight", "failed", error="missing PERPLEXITY_SESSION_TOKEN")
-        ledger.finalize("failed")
-        return ExitCode.PERPLEXITY_AUTH_ERROR
+    xiaomi_token = os.environ.get("XIAOMI_API_KEY", "").strip()
+    mistral_token = os.environ.get("MISTRAL_API_KEY", "").strip()
+
+    if mission.provider == "mistral":
+        if not mistral_token and not dry_run:
+            logger.error("MISTRAL_API_KEY is not set")
+            plog.step_error("pipeline", error="mistral_auth_error", detail="MISTRAL_API_KEY missing")
+            ledger.upsert_phase("preflight", "failed", error="missing MISTRAL_API_KEY")
+            ledger.finalize("failed")
+            return ExitCode.PERPLEXITY_AUTH_ERROR
+    elif mission.provider == "xiaomi_mimo":
+        if not xiaomi_token and not dry_run:
+            logger.error("XIAOMI_API_KEY is not set")
+            plog.step_error("pipeline", error="xiaomi_auth_error", detail="XIAOMI_API_KEY missing")
+            ledger.upsert_phase("preflight", "failed", error="missing XIAOMI_API_KEY")
+            ledger.finalize("failed")
+            return ExitCode.PERPLEXITY_AUTH_ERROR
+    else:
+        if not token and not dry_run:
+            logger.error("PERPLEXITY_SESSION_TOKEN is not set")
+            plog.step_error("pipeline", error="perplexity_auth_error", detail="PERPLEXITY_SESSION_TOKEN missing")
+            ledger.upsert_phase("preflight", "failed", error="missing PERPLEXITY_SESSION_TOKEN")
+            ledger.finalize("failed")
+            return ExitCode.PERPLEXITY_AUTH_ERROR
 
     ctx = {
         "topic": mission.topic,
@@ -193,34 +225,122 @@ def run_pipeline(
         return ExitCode.OK
 
     ledger.upsert_phase("perplexity_sections", "running")
-    client = Perplexity(token, config=ClientConfig())
+
+    client = None
+    mimo_client = None
+    mistral_client = None
+    shared_conversation = None
 
     try:
-        if mission.single_thread_perplexity:
-            logger.info("Perplexity mode: single thread (sections share one conversation)")
-        else:
-            if state.perplexity_backend_uuid is not None or state.perplexity_read_write_token is not None:
-                state.perplexity_backend_uuid = None
-                state.perplexity_read_write_token = None
-                state.save(state_path)
+        run_literature_ingest_phase(mission, out, plog, manifest=manifest)
 
-        calls_used, shared_conversation, p_code = run_perplexity_sections(
-            mission,
-            client,
-            state,
-            state_path,
-            out,
-            plog,
-            calls_used,
-            written,
-            event_sink=event_sink,
-            manifest=manifest,
-        )
-        if p_code != 0:
-            ledger.upsert_phase("perplexity_sections", "failed", error="perplexity phase failed")
-            ledger.finalize("failed")
-            return ExitCode.ERROR
-        ledger.upsert_phase("perplexity_sections", "done")
+        if mission.provider == "mistral":
+            mistral_client = build_mistral_client(mission)
+            agent_code = run_research_agent_phase(
+                mission, mistral_client, out, plog, manifest=manifest
+            )
+            if agent_code != 0:
+                ledger.upsert_phase("perplexity_sections", "failed", error="research_agent failed")
+                ledger.finalize("failed")
+                return ExitCode.ERROR
+
+            calls_used, plan_code = run_research_plan_phase(
+                mission,
+                mistral_client,
+                state,
+                state_path,
+                out,
+                plog,
+                calls_used,
+                manifest=manifest,
+            )
+            if plan_code != 0:
+                ledger.upsert_phase("perplexity_sections", "failed", error="research_plan failed")
+                ledger.finalize("failed")
+                return ExitCode.ERROR
+
+            calls_used, p_code = run_mistral_sections(
+                mission,
+                mistral_client,
+                state,
+                state_path,
+                out,
+                plog,
+                calls_used,
+                written,
+                event_sink=event_sink,
+                manifest=manifest,
+            )
+            if p_code != 0:
+                ledger.upsert_phase("perplexity_sections", "failed", error="mistral phase failed")
+                ledger.finalize("failed")
+                return ExitCode.ERROR
+            ledger.upsert_phase("perplexity_sections", "done")
+
+            run_source_curation_phase(
+                mission,
+                out,
+                written,
+                plog,
+                manifest=manifest,
+                mistral_client=mistral_client,
+            )
+        elif mission.provider == "xiaomi_mimo":
+            mimo_client = build_mimo_client(mission)
+            calls_used, p_code = run_mimo_sections(
+                mission,
+                mimo_client,
+                state,
+                state_path,
+                out,
+                plog,
+                calls_used,
+                written,
+                event_sink=event_sink,
+                manifest=manifest,
+            )
+            if p_code != 0:
+                ledger.upsert_phase("perplexity_sections", "failed", error="mimo phase failed")
+                ledger.finalize("failed")
+                return ExitCode.ERROR
+            ledger.upsert_phase("perplexity_sections", "done")
+        else:
+            client = Perplexity(token, config=ClientConfig())
+
+            if mission.single_thread_perplexity:
+                logger.info("Perplexity mode: single thread (sections share one conversation)")
+            else:
+                if state.perplexity_backend_uuid is not None or state.perplexity_read_write_token is not None:
+                    state.perplexity_backend_uuid = None
+                    state.perplexity_read_write_token = None
+                    state.save(state_path)
+
+            calls_used, shared_conversation, p_code = run_perplexity_sections(
+                mission,
+                client,
+                state,
+                state_path,
+                out,
+                plog,
+                calls_used,
+                written,
+                event_sink=event_sink,
+                manifest=manifest,
+            )
+            if p_code != 0:
+                ledger.upsert_phase("perplexity_sections", "failed", error="perplexity phase failed")
+                ledger.finalize("failed")
+                return ExitCode.ERROR
+            ledger.upsert_phase("perplexity_sections", "done")
+
+            run_source_curation_phase(
+                mission,
+                out,
+                written,
+                plog,
+                manifest=manifest,
+                mistral_client=None,
+            )
 
         ledger.upsert_phase("assembly_draft", "running")
         draft_path = run_assembly(
@@ -275,20 +395,53 @@ def run_pipeline(
             return ExitCode.ERROR
 
         ledger.upsert_phase("quality_check", "running")
-        calls_used, q_code = run_quality_phase(
-            mission,
-            client,
-            shared_conversation,
-            state,
-            state_path,
-            out,
-            draft_path,
-            plog,
-            calls_used,
-            written,
-            ctx,
-            manifest=manifest,
-        )
+        if mission.provider == "mistral":
+            calls_used, q_code = run_quality_phase(
+                mission,
+                None,
+                None,
+                state,
+                state_path,
+                out,
+                draft_path,
+                plog,
+                calls_used,
+                written,
+                ctx,
+                manifest=manifest,
+                mistral_client=mistral_client,
+            )
+        elif mission.provider == "xiaomi_mimo":
+            calls_used, q_code = run_quality_phase(
+                mission,
+                None,
+                None,
+                state,
+                state_path,
+                out,
+                draft_path,
+                plog,
+                calls_used,
+                written,
+                ctx,
+                manifest=manifest,
+                mimo_client=mimo_client,
+            )
+        else:
+            calls_used, q_code = run_quality_phase(
+                mission,
+                client,
+                shared_conversation,
+                state,
+                state_path,
+                out,
+                draft_path,
+                plog,
+                calls_used,
+                written,
+                ctx,
+                manifest=manifest,
+            )
         if q_code != 0:
             ledger.upsert_phase("quality_check", "failed", error="quality phase failed")
             ledger.finalize("failed")
@@ -441,9 +594,13 @@ def run_pipeline(
                             return ExitCode.ERROR
 
     finally:
-        client.close()
+        if client is not None:
+            client.close()
 
-    logger.info("Done. Perplexity calls used: %s / %s", calls_used, mission.max_perplexity_calls)
+    run_lessons_learned_phase(mission, out, plog, mistral_client=mistral_client)
+    write_research_map(out, mission)
+
+    logger.info("Done. LLM calls used: %s / %s", calls_used, mission.max_perplexity_calls)
     plog.step_ok("pipeline", calls_used=calls_used, max_calls=mission.max_perplexity_calls)
     write_pipeline_provenance_json(out)
     build_evidence_bundle(out, mission)

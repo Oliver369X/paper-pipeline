@@ -17,8 +17,17 @@ Documento de **referencia exhaustiva** (complementa [VARIABLES_Y_FLAGS.md](../VA
 | `paper-parallel` | `paper_pipeline.parallel_cli:main` | Batch en worktrees; prefijos de comando en `PAPER_PIPELINE_PARALLEL_CMD_PREFIXES` o misión. |
 | `paper-agent-step` | `paper_pipeline.agent.scheduler:main` | Un paso del scheduler en modo `autonomy` (dry-run por defecto). |
 | `paper-report-figures` | `paper_pipeline.reporting.paper_figures:main` | Figuras / informes desde artefactos del paper. |
+| `paper-agent-eval-check` | `paper_pipeline.agent_eval.check_cli:main` | Ejecuta `python -m paper_pipeline.agent_eval --check-baseline examples/baselines/agent_eval_baseline.json` (ruta por defecto; ejecutar desde la raíz del repo). |
+| `paper-export-appendix` | `paper_pipeline.reporting.appendix_export:main` | Escribe `VERSION`, `git_commit.txt`, `agent_eval_report.json`, `pytest_collect.txt`, **`case_study_trace.json`** (sin secretos; `--repo-root` y `--case-study-outputs` opcionales). |
 
-**No** están en `pip`: el binario **`agent`** de Cursor (instalación aparte; ver [04-integraciones.md](04-integraciones.md)).
+**Módulos auxiliares** (sin entrada en `project.scripts`; `python -m …`):
+
+| Invocación | Rol breve |
+|------------|-----------|
+| `python -m paper_pipeline.reporting.benchmark_bundle -o archivo.json` | Escribe **`benchmark_bundle.json`**: `agent_eval` por escenario + `case_study_trace` + duraciones de fase del ledger (sin red). |
+| `python scripts/audit_abstract_numbers.py` | Tabla Markdown en stdout: números del abstract vs `run_ledger` / `claims` / triaje (Plan v3); sin red. |
+
+**No** se instala con `pip`: el binario **`agent`** de Cursor (ver [04-integraciones.md](04-integraciones.md)).
 
 ## Extras opcionales (`pip install -e ".[extra]"`)
 
@@ -48,7 +57,10 @@ Documento de **referencia exhaustiva** (complementa [VARIABLES_Y_FLAGS.md](../VA
 | `META_WATCH_POLL`, `META_WATCH_DEBOUNCE`, `META_WATCH_EXIT_ON_STOP` | `paper-meta-watch` | Polling, debounce, salir si el hijo para. |
 | `PAPER_EXPERIMENT_TIMEOUT_SEC` | `user_script_runner` | Override de timeout del script de experimento (además de `mission.experiment_runner.subprocess_timeout_sec`). |
 | `PAPER_OUTPUT_DIR` | plantilla `run_experiment` | Directorio de salida esperado por scripts (default `outputs`). |
-| `CURSOR_AGENT_VERSION_EXPECTED` | `cursor_cli_runner` | Si `agent --version` no contiene esta cadena, advertencia en `run.log`. |
+| `CURSOR_AGENT_VERSION_EXPECTED` | `cursor_cli_runner` (backend `cli`) | Si `agent --version` no contiene esta cadena, advertencia en `run.log`. |
+| `CURSOR_AGENT_BACKEND` | `cursor_sdk_runner` / `cursor_cli_runner` | `sdk` (default) o `cli`. |
+| `CURSOR_AGENT_MODEL` | `cursor_sdk_runner` | Modelo local SDK (default `composer-2.5`). |
+| `CURSOR_AGENT_RESUME` | `cursor_sdk_runner` | Reanudar agente desde `cursor_agent_state.json` (default activo). |
 | `PAPER_PIPELINE_TRIAGE_WEBHOOK_URL` | hipervisor | POST HTTPS opcional en tier 3 (ver `hypervisor/triage.py`). |
 
 ## Módulos de código clave (mapa rápido)
@@ -58,7 +70,8 @@ Documento de **referencia exhaustiva** (complementa [VARIABLES_Y_FLAGS.md](../VA
 | `paper_pipeline/pipeline/runner.py` | Orquestador principal (`run_pipeline`). |
 | `paper_pipeline/pipeline/experiment_phase.py` | Experiment runner integrado. |
 | `paper_pipeline/pipeline/experiment_iteration.py` | Bucle post-Cursor + validación determinista. |
-| `paper_pipeline/cursor_cli_runner.py` | Cursor CLI headless y reintentos. |
+| `paper_pipeline/cursor_cli_runner.py` | Dispatcher SDK/CLI, prompts y reintentos. |
+| `paper_pipeline/cursor_sdk_runner.py` | Backend Cursor SDK (`Agent.create` / `resume`). |
 | `paper_pipeline/integrated_loop_main.py` | `paper-loop`. |
 | `paper_pipeline/server/` | FastAPI, routers Cockpit, SSE. |
 | `paper_pipeline/brain/` | Cerebro Gemini + prompts. |

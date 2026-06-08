@@ -9,7 +9,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from perplexity_webui_scraper import ClientConfig, ConversationConfig, Perplexity
-from perplexity_webui_scraper.models import MODELS
+from paper_pipeline.pipeline.common import _resolve_perplexity_model_id
 
 from paper_pipeline.integration_transcript import append_transcript
 
@@ -89,7 +89,9 @@ def run_meta_loop(
         logger.error("PERPLEXITY_SESSION_TOKEN no está definido.")
         return 1
 
-    if model not in MODELS:
+    try:
+        model = _resolve_perplexity_model_id(model)
+    except ValueError:
         logger.error("Modelo desconocido: %s", model)
         return 1
 

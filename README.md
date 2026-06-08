@@ -1,6 +1,6 @@
 # Paper pipeline
 
-Pipeline orientado a **borrador de paper asistido por LLM**: un único `mission.md` define el tema y las secciones; el orquestador llama a Perplexity (vía [perplexity-webui-scraper](../perplexity-webui-scraper)), genera `outputs/`, un borrador consolidado, calidad opcional (revisión asistida, no validación empírica independiente) y Notion si lo activás. **No** sustituye experimentos ejecutados ni replicación científica sin pasos adicionales — ver [docs/MODE_NARRATIVE_VS_EMPIRICAL.md](docs/MODE_NARRATIVE_VS_EMPIRICAL.md) y [docs/ARXIV_TARGET_ALIGNMENT.md](docs/ARXIV_TARGET_ALIGNMENT.md) (evitar confundir el ID arXiv con el tema de la misión). Por defecto cada sección usa una **conversación nueva**; si pones `single_thread_perplexity: true` en `mission.md`, todas las secciones (y el quality check, si aplica) van en **un solo hilo** en Perplexity para conservar contexto; el UUID del hilo se guarda en `outputs/run_state.json` para poder reanudar. Por defecto `save_perplexity_to_library: true` para que los hilos **aparezcan en el historial** de la web (antes el cliente usaba modo incógnito y muchas cuentas no veían conversaciones nuevas en la biblioteca).
+Pipeline orientado a **borrador de paper asistido por LLM**: un único `mission.md` define el tema y las secciones; el orquestador llama a Perplexity (vía [perplexity-webui-scraper](../perplexity-webui-scraper)), **Mistral** (`provider: mistral`, sin búsqueda web en vivo) o MiMo (`provider: xiaomi_mimo`), genera `outputs/`, un borrador consolidado, calidad opcional (revisión asistida, no validación empírica independiente) y Notion si lo activás. **No** sustituye experimentos ejecutados ni replicación científica sin pasos adicionales — ver [docs/MODE_NARRATIVE_VS_EMPIRICAL.md](docs/MODE_NARRATIVE_VS_EMPIRICAL.md) y [docs/ARXIV_TARGET_ALIGNMENT.md](docs/ARXIV_TARGET_ALIGNMENT.md). Benchmark: [scripts/benchmark_provider_comparison.py](scripts/benchmark_provider_comparison.py). Misión repo-adoption: [data/missions/repo-adoption-mistral/mission.md](data/missions/repo-adoption-mistral/mission.md). Por defecto cada sección Perplexity usa una **conversación nueva**; `single_thread_perplexity: true` reutiliza un hilo. `save_perplexity_to_library: true` (default) hace visibles los hilos en la biblioteca web.
 
 **Índice de toda la documentación** (guías, técnica, pruebas): [docs/README.md](docs/README.md).
 
@@ -185,8 +185,11 @@ paper-pipeline mission.md --dry-run
 |----------|-------------|
 | `PERPLEXITY_SESSION_TOKEN` | Obligatorio para ejecutar (cookie `__Secure-next-auth.session-token` o equivalente). |
 | `NOTION_TOKEN` | Token de integración Notion (si `enable_notion: true`). |
-| `CURSOR_API_KEY` | Solo si usas `enable_cursor_cli: true` o el comando `paper-cursor-agent` (CLI oficial). |
-| `CURSOR_AGENT_BIN` | Opcional: nombre del binario (por defecto `agent`). |
+| `CURSOR_API_KEY` | Solo si usas `enable_cursor_cli: true` o `paper-cursor-agent` (SDK o CLI). |
+| `CURSOR_AGENT_BACKEND` | `sdk` (default) o `cli` (subprocess `agent`). |
+| `CURSOR_AGENT_MODEL` | Modelo SDK (default `composer-2.5`). |
+| `CURSOR_AGENT_RESUME` | Si `1` (default), reanuda `agent_id` desde `outputs/cursor_agent_state.json`. |
+| `CURSOR_AGENT_BIN` | Solo backend `cli`: binario (default `agent`). |
 | `CURSOR_AGENT_EXTRA_ARGS` | Opcional: flags extra antes del prompt (p. ej. modelo); ver [CLI headless](https://cursor.com/docs/cli/headless). |
 | `CURSOR_CLI_TIMEOUT_SEC` | Opcional: timeout en segundos para el paso CLI (default 1800). |
 | `CURSOR_AGENT_VERSION_EXPECTED` | Opcional: cadena esperada en `agent --version` (advertencia en `run.log` si no coincide). |
@@ -249,8 +252,8 @@ Por defecto se crea `outputs/` con secciones `.md`, `draft_paper.md`, `quality_g
 ## Cursor (código)
 
 - **Reglas:** [`.cursorrules`](.cursorrules) guían al Agent en el IDE y el contenido que escribís en `outputs/cursor_turn.md`.
-- **CLI headless (opcional):** con [Cursor CLI](https://cursor.com/docs/cli/headless) instalado (`curl` / PowerShell según la doc) y `CURSOR_API_KEY` en el entorno, podés:
-  - Poner `enable_cursor_cli: true` y `code_needed: true` en `mission.md`: tras Perplexity y el borrador, el orquestador ejecuta **`agent -p --force`** en el directorio de la misión, deja trazas en `outputs/cursor_cli.log` y **añade** a `outputs/cursor_turn.md`.
+- **Agente headless (opcional):** con `CURSOR_API_KEY` en el entorno, el pipeline usa por defecto el **[Cursor SDK](https://cursor.com/docs/sdk/python)** (`cursor-sdk`, modelo `composer-2.5`). Fallback: `CURSOR_AGENT_BACKEND=cli` + binario [Cursor CLI](https://cursor.com/docs/cli/headless).
+  - Poner `enable_cursor_cli: true` y `code_needed: true` en `mission.md`: tras Perplexity y el borrador, el orquestador ejecuta el agente en el directorio de la misión, deja trazas en `outputs/cursor_cli.log`, persiste `outputs/cursor_agent_state.json` (resume) y **añade** a `outputs/cursor_turn.md`.
   - O ejecutar manualmente: `paper-cursor-agent --mission mission.md --output-dir outputs` (y `--dry-run` para validar sin tocar archivos).
 - **Solo IDE:** seguís pudiendo abrir esta carpeta en Cursor y usar el Agent a mano (mejor para depuración interactiva).
 

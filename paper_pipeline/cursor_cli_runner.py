@@ -1,4 +1,7 @@
-"""Run Cursor CLI (`agent -p --force` + optional `CURSOR_AGENT_EXTRA_ARGS`) headless; append to outputs/cursor_turn.md.
+"""Run Cursor agent headless via SDK (default) or CLI fallback; append to outputs/cursor_turn.md.
+
+Backend: ``CURSOR_AGENT_BACKEND=sdk`` (default) uses ``cursor-sdk`` with model ``composer-2.5``;
+``CURSOR_AGENT_BACKEND=cli`` invokes ``agent -p --force``.
 
 Varios intentos por run (reintentos con contexto): ``debugging.cursor_max_attempts`` en ``mission.md`` o
 ``CURSOR_CLI_MAX_ROUNDS`` en el entorno. Tras un fallo, el siguiente prompt incluye la salida del intento
@@ -60,6 +63,10 @@ def _write_cursor_cli_diagnostics_json(
     timed_out: bool,
     error: str | None = None,
     iteration: dict[str, Any] | None = None,
+    backend: str | None = None,
+    model: str | None = None,
+    agent_id: str | None = None,
+    run_id: str | None = None,
 ) -> None:
     """Persistencia legible para la UI: comando, stderr, pistas de recuperación."""
 
@@ -82,6 +89,14 @@ def _write_cursor_cli_diagnostics_json(
         "error": error,
         "remediation_hints": hints,
     }
+    if backend:
+        payload["backend"] = backend
+    if model:
+        payload["model"] = model
+    if agent_id:
+        payload["agent_id"] = agent_id
+    if run_id:
+        payload["run_id"] = run_id
     if iteration:
         payload["iteration"] = iteration
     (output_dir / CURSOR_DIAGNOSTICS_JSON).write_text(
@@ -222,6 +237,9 @@ def _append_cursor_turn(
     stderr: str,
     attempt: int | None = None,
     attempts_total: int | None = None,
+    backend: str = "cli",
+    run_id: str | None = None,
+    agent_id: str | None = None,
 ) -> None:
     path = output_dir / DEFAULT_CURSOR_TURN
     stamp = datetime.now(UTC).isoformat()
@@ -230,9 +248,15 @@ def _append_cursor_turn(
     att = ""
     if attempt is not None and attempts_total is not None:
         att = f" attempt {attempt}/{attempts_total}"
+    heading = "Cursor agent (sdk)" if backend == "sdk" else "Cursor CLI (automated)"
+    meta_extra = ""
+    if run_id:
+        meta_extra += f"\nrun_id={run_id}"
+    if agent_id:
+        meta_extra += f"\nagent_id={agent_id}"
     block = (
-        f"\n\n---\n## Cursor CLI (automated){att} {stamp}\n"
-        f"exit_code={exit_code}\n\n"
+        f"\n\n---\n## {heading}{att} {stamp}\n"
+        f"exit_code={exit_code}{meta_extra}\n\n"
         f"### stdout\n```\n{out_snip}\n```\n\n"
         f"### stderr\n```\n{err_snip}\n```\n"
     )
@@ -248,10 +272,11 @@ def _append_cursor_turn(
     ]
     if attempt is not None and attempts_total is not None:
         meta_lines.append(f"attempt={attempt}/{attempts_total}")
+    transcript_heading = "Cursor agent (sdk)" if backend == "sdk" else "Cursor CLI (agent headless)"
     append_transcript(
         output_dir,
         source="cursor_cli",
-        heading="Cursor CLI (agent headless)",
+        heading=transcript_heading,
         body=(
             f"```\n{out_snip}\n```\n\n### stderr\n\n```\n{err_snip}\n```\n"
             if (out_snip or err_snip)
@@ -372,6 +397,7 @@ def _run_single_cursor_invocation(
             stderr="timeout",
             attempt=attempt,
             attempts_total=attempts_total,
+            backend="cli",
         )
         _write_cursor_cli_diagnostics_json(
             output_dir,
@@ -393,6 +419,7 @@ def _run_single_cursor_invocation(
                 timed_out=True,
                 attempt_index=attempt,
                 attempts_total=attempts_total,
+                backend="cli",
             )
         return ExitCode.ERROR, "", "", dur, cmd, None
     except FileNotFoundError as exc:
@@ -429,6 +456,7 @@ def _run_single_cursor_invocation(
                 error=f"FileNotFoundError: {exc}",
                 attempt_index=attempt,
                 attempts_total=attempts_total,
+                backend="cli",
             )
         return ExitCode.CURSOR_CLI_NOT_FOUND, "", "", dur, cmd, None
     except OSError as exc:
@@ -460,6 +488,7 @@ def _run_single_cursor_invocation(
                 error=f"OSError: {exc}",
                 attempt_index=attempt,
                 attempts_total=attempts_total,
+                backend="cli",
             )
         return ExitCode.ERROR, "", "", dur, cmd, None
 
@@ -484,6 +513,7 @@ def _run_single_cursor_invocation(
         stderr=err,
         attempt=attempt,
         attempts_total=attempts_total,
+        backend="cli",
     )
     _write_cursor_cli_diagnostics_json(
         output_dir,
@@ -493,6 +523,7 @@ def _run_single_cursor_invocation(
         stderr=err,
         stdout=out,
         timed_out=False,
+        backend="cli",
         iteration={"attempt": attempt, "attempts_total": attempts_total, "phase": "completed"},
     )
 
@@ -507,6 +538,7 @@ def _run_single_cursor_invocation(
                 exit_code=proc.returncode,
                 attempt_index=attempt,
                 attempts_total=attempts_total,
+                backend="cli",
             )
         if "401" in combined or "Unauthorized" in combined:
             return ExitCode.CURSOR_CLI_AUTH_ERROR, out, err, dur, cmd, proc.returncode
@@ -521,67 +553,24 @@ def _run_single_cursor_invocation(
             exit_code=proc.returncode,
             attempt_index=attempt,
             attempts_total=attempts_total,
+            backend="cli",
         )
     return ExitCode.OK, out, err, dur, cmd, proc.returncode
 
 
-def run_cursor_cli(
+def _run_via_cli(
     *,
     cwd: Path,
     output_dir: Path,
-    mission: Mission | None = None,
-    prompt: str | None = None,
-    prompt_file: Path | None = None,
-    dry_run: bool = False,
-    pipeline_log: "PipelineLogger | None" = None,
+    base_body: str,
+    max_attempts: int,
+    timeout_sec: float,
+    dry_run: bool,
+    api_key: str,
+    agent_exe: Path,
+    pipeline_log: "PipelineLogger | None",
 ) -> int:
-    """Invoca ``agent -p --force`` hasta ``debugging.cursor_max_attempts`` veces; para en el primer éxito."""
-
-    api_key = os.environ.get("CURSOR_API_KEY", "").strip()
-    if not api_key:
-        logger.error("CURSOR_API_KEY is not set")
-        _write_cursor_cli_diagnostics_json(
-            output_dir,
-            cmd=["(cursor_cli not started)"],
-            cwd=str(cwd.resolve()),
-            exit_code=None,
-            stderr="",
-            stdout="",
-            timed_out=False,
-            error="CURSOR_API_KEY is not set",
-        )
-        return ExitCode.CURSOR_CLI_AUTH_ERROR
-
-    agent_bin = os.environ.get("CURSOR_AGENT_BIN", "agent").strip() or "agent"
-    agent_exe = _resolve_agent_executable(agent_bin)
-    if agent_exe is None:
-        logger.error(
-            "Cursor CLI not found (%r). Instalá el CLI headless y asegurate de que "
-            "`agent` esté en PATH, o definí CURSOR_AGENT_BIN con la ruta absoluta al .exe "
-            "(Windows). Docs: https://cursor.com/docs/cli/headless",
-            agent_bin,
-        )
-        _write_cursor_cli_diagnostics_json(
-            output_dir,
-            cmd=[agent_bin, "(not found)"],
-            cwd=str(cwd.resolve()),
-            exit_code=None,
-            stderr="",
-            stdout="",
-            timed_out=False,
-            error="Cursor CLI executable not found",
-        )
-        return ExitCode.CURSOR_CLI_NOT_FOUND
-
-    if prompt_file is not None and prompt_file.is_file():
-        base_body = prompt_file.read_text(encoding="utf-8")
-    elif prompt is not None:
-        base_body = prompt
-    else:
-        base_body = build_cursor_prompt(output_dir, mission)
-
-    max_attempts = _resolve_max_attempts(mission)
-    timeout_sec = float(os.environ.get("CURSOR_CLI_TIMEOUT_SEC", "1800"))
+    """Subprocess backend: ``agent -p --force`` with retries."""
 
     extra = os.environ.get("CURSOR_AGENT_EXTRA_ARGS", "").strip()
     extra_parts: list[str] = shlex.split(extra) if extra else []
@@ -589,7 +578,6 @@ def run_cursor_cli(
     cwd_str = str(cwd.resolve())
     log_path = output_dir / CURSOR_LOG
 
-    # Dry-run: un solo bloque con el primer prompt (misma forma que antes).
     probe = base_body
     pv_stdin = _use_stdin_for_prompt(probe)
     cmd0: list[str] = [
@@ -610,8 +598,9 @@ def run_cursor_cli(
             len(probe),
             "stdin" if pv_stdin else "argv",
         )
+        output_dir.mkdir(parents=True, exist_ok=True)
         log_path.write_text(
-            f"dry_run=true\nmax_attempts={max_attempts}\n"
+            f"dry_run=true\nbackend=cli\nmax_attempts={max_attempts}\n"
             f"prompt_delivery={'stdin' if pv_stdin else 'argv'}\n"
             f"command={cmd0[:8]!r} ... [prompt omitted]\n",
             encoding="utf-8",
@@ -625,6 +614,7 @@ def run_cursor_cli(
                 dry_run=True,
                 attempt_index=1,
                 attempts_total=max_attempts,
+                backend="cli",
             )
         return ExitCode.OK
 
@@ -678,6 +668,7 @@ def run_cursor_cli(
                 "attempt": attempt,
                 "process_returncode": proc_rc,
                 "pipeline_exit_kind": code,
+                "backend": "cli",
             }
         )
 
@@ -690,6 +681,7 @@ def run_cursor_cli(
                 stderr=last_err,
                 stdout=last_out,
                 timed_out=False,
+                backend="cli",
                 iteration={
                     "max_attempts": max_attempts,
                     "stopped_after_attempt": attempt,
@@ -734,6 +726,7 @@ def run_cursor_cli(
         stderr=last_err,
         stdout=last_out,
         timed_out=False,
+        backend="cli",
         iteration={
             "max_attempts": max_attempts,
             "stopped_after_attempt": max_attempts,
@@ -743,3 +736,119 @@ def run_cursor_cli(
     )
     logger.error("Cursor CLI: all %s attempts failed (last pipeline code=%s)", max_attempts, last_code)
     return last_code
+
+
+def run_cursor_cli(
+    *,
+    cwd: Path,
+    output_dir: Path,
+    mission: Mission | None = None,
+    prompt: str | None = None,
+    prompt_file: Path | None = None,
+    dry_run: bool = False,
+    pipeline_log: "PipelineLogger | None" = None,
+) -> int:
+    """Run Cursor agent (SDK default, CLI fallback) with retries until success or limit."""
+
+    from paper_pipeline.cursor_sdk_runner import (
+        cursor_sdk_importable,
+        resolve_cursor_backend,
+        run_cursor_via_sdk,
+    )
+
+    api_key = os.environ.get("CURSOR_API_KEY", "").strip()
+    if not api_key:
+        logger.error("CURSOR_API_KEY is not set")
+        _write_cursor_cli_diagnostics_json(
+            output_dir,
+            cmd=["(cursor agent not started)"],
+            cwd=str(cwd.resolve()),
+            exit_code=None,
+            stderr="",
+            stdout="",
+            timed_out=False,
+            error="CURSOR_API_KEY is not set",
+        )
+        return ExitCode.CURSOR_CLI_AUTH_ERROR
+
+    if prompt_file is not None and prompt_file.is_file():
+        base_body = prompt_file.read_text(encoding="utf-8")
+    elif prompt is not None:
+        base_body = prompt
+    else:
+        base_body = build_cursor_prompt(output_dir, mission)
+
+    max_attempts = _resolve_max_attempts(mission)
+    timeout_sec = float(os.environ.get("CURSOR_CLI_TIMEOUT_SEC", "1800"))
+    backend = resolve_cursor_backend()
+
+    if backend == "sdk":
+        if cursor_sdk_importable():
+            try:
+                return run_cursor_via_sdk(
+                    cwd=cwd,
+                    output_dir=output_dir,
+                    base_body=base_body,
+                    max_attempts=max_attempts,
+                    timeout_sec=timeout_sec,
+                    dry_run=dry_run,
+                    api_key=api_key,
+                    pipeline_log=pipeline_log,
+                )
+            except OSError as exc:
+                logger.warning(
+                    "Cursor SDK bridge failed on this platform (%s); falling back to CLI",
+                    exc,
+                )
+                backend = "cli"
+            except Exception as exc:
+                from cursor_sdk.errors import CursorAgentError
+
+                if isinstance(exc, CursorAgentError):
+                    raise
+                logger.warning(
+                    "Cursor SDK unexpected error (%s); falling back to CLI",
+                    exc,
+                )
+                backend = "cli"
+        else:
+            logger.warning(
+                "CURSOR_AGENT_BACKEND=sdk but cursor-sdk is unavailable "
+                "(install: pip install cursor-sdk; requires Python 3.12+); "
+                "falling back to CLI"
+            )
+            backend = "cli"
+
+    agent_bin = os.environ.get("CURSOR_AGENT_BIN", "agent").strip() or "agent"
+    agent_exe = _resolve_agent_executable(agent_bin)
+    if agent_exe is None:
+        logger.error(
+            "Cursor CLI not found (%r). Instalá el CLI headless y asegurate de que "
+            "`agent` esté en PATH, o definí CURSOR_AGENT_BIN con la ruta absoluta al .exe "
+            "(Windows). Docs: https://cursor.com/docs/cli/headless",
+            agent_bin,
+        )
+        _write_cursor_cli_diagnostics_json(
+            output_dir,
+            cmd=[agent_bin, "(not found)"],
+            cwd=str(cwd.resolve()),
+            exit_code=None,
+            stderr="",
+            stdout="",
+            timed_out=False,
+            error="Cursor CLI executable not found",
+            backend="cli",
+        )
+        return ExitCode.CURSOR_CLI_NOT_FOUND
+
+    return _run_via_cli(
+        cwd=cwd,
+        output_dir=output_dir,
+        base_body=base_body,
+        max_attempts=max_attempts,
+        timeout_sec=timeout_sec,
+        dry_run=dry_run,
+        api_key=api_key,
+        agent_exe=agent_exe,
+        pipeline_log=pipeline_log,
+    )

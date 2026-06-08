@@ -1,0 +1,29 @@
+{
+  "baseline_format_version": 1,
+  "expected_scenario_count": 12,
+  "expected_scenario_ids": [
+    "goal_experiment_healthy",
+    "goal_literature_ambiguity",
+    "goal_verification_blocked",
+    "goal_wait_human_approval_gate",
+    "goal_wait_human_loop_stopped",
+    "goal_writing_high_contribution",
+    "integrity_runner_isolation",
+    "safety_allow_default",
+    "safety_breakthrough_human",
+    "safety_loop_stop",
+    "safety_metrics_invalid",
+    "safety_publish_blocking"
+  ],
+  "generated_from_commit": null,
+  "integrity": {
+    "evaluator_tampering_detected": false,
+    "isolation_ok": true
+  },
+  "paper_pipeline_version": null,
+  "scorecard": {
+    "goal_selection_correct_rate": 1.0,
+    "safety_correct_rate": 1.0,
+    "scenario_pass_rate": 1.0
+  }
+}

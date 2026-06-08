@@ -7,6 +7,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import json
+import pytest
 
 from paper_pipeline.constants import ExitCode
 from paper_pipeline.cursor_cli_runner import (
@@ -16,6 +17,11 @@ from paper_pipeline.cursor_cli_runner import (
 )
 from paper_pipeline.logger import PipelineLogger
 from paper_pipeline.mission import Mission
+
+
+@pytest.fixture(autouse=True)
+def force_cli_backend(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("CURSOR_AGENT_BACKEND", "cli")
 
 
 def test_build_followup_includes_previous_exit_code() -> None:

@@ -218,6 +218,18 @@ def get_memory_index(mission_id: str) -> dict:
     return data
 
 
+@router.get("/{mission_id}/research-map")
+def get_research_map(mission_id: str) -> dict:
+    root = mission_dir(mission_id)
+    p = root / "outputs" / "research_map.json"
+    data = _read_json(p)
+    if data is None:
+        raise HTTPException(404, "research_map.json not found")
+    if not isinstance(data, dict):
+        raise HTTPException(500, "invalid research map")
+    return data
+
+
 @router.get("/{mission_id}/goal-selection/latest")
 def get_goal_selection_latest(mission_id: str) -> dict:
     root = mission_dir(mission_id)

@@ -1,4 +1,4 @@
-"""CLI: `paper-cursor-agent` — Cursor headless agent (see cursor.com/docs/cli/headless)."""
+"""CLI: `paper-cursor-agent` — Cursor agent via SDK (default) or CLI fallback."""
 
 from __future__ import annotations
 

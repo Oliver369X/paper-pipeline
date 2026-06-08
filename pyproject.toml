@@ -18,7 +18,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "ruff>=0.15", "pytest-cov>=4.1", "httpx>=0.28.1", "pytest-asyncio>=1.0"]
+cursor = ["cursor-sdk>=0.1.0"]
+dev = ["pytest>=8", "ruff>=0.15", "pytest-cov>=4.1", "httpx>=0.28.1", "pytest-asyncio>=1.0", "cursor-sdk>=0.1.0"]
 e2e = ["playwright>=1.49"]
 rag_qdrant = ["qdrant-client>=1.12"]
 figures = ["matplotlib>=3.8"]
@@ -38,6 +39,8 @@ paper-web = "paper_pipeline.server_cli:main"
 paper-parallel = "paper_pipeline.parallel_cli:main"
 paper-agent-step = "paper_pipeline.agent.scheduler:main"
 paper-report-figures = "paper_pipeline.reporting.paper_figures:main"
+paper-agent-eval-check = "paper_pipeline.agent_eval.check_cli:main"
+paper-export-appendix = "paper_pipeline.reporting.appendix_export:main"
 
 [build-system]
 requires = ["setuptools>=61"]
