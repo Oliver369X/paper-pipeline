@@ -47,7 +47,9 @@ Estados por línea de investigación: 🌱 emergente · 🔥 en auge · ✅ acti
 
 | Rama troncal | Sub-ramas |
 |---|---|
-| **A. Ataques y ofensiva** (~14) | jailbreaks LLM, prompt injection, ataques a agentes, adversarios en visión, envenenamiento/backdoors, extracción de modelos, ataques de privacidad, RAG poisoning, ataques multimodales, cadena de suministro ML, deepfakes ofensivos, side-channels, sistemas embebidos/edge |
+| **A. Ataques y ofensiva** (~13) | jailbreaks LLM, prompt injection, ataques a agentes, adversarios en visión, envenenamiento/backdoors, extracción de modelos, ataques de privacidad, RAG poisoning, ataques multimodales, cadena de suministro ML, deepfakes ofensivos, side-channels, sistemas embebidos/edge |
+
+> El conteo por rama es orientativo: el número exacto y la lista definitiva de sub-ramas salen de `taxonomy.json`, que es la fuente única de verdad y de donde el generador dimensiona el batch.
 | **B. Defensas y robustez** (~12) | entrenamiento adversario, robustez certificada, guardarraíles LLM, defensas anti-prompt-injection, detección de jailbreaks, watermarking, procedencia de contenido (C2PA), privacidad diferencial, machine unlearning, sanitización de datos, sandboxing de agentes, MLSecOps/hardening |
 | **C. AI Safety / alineamiento** (~11) | RLHF/DPO/Constitutional AI, scalable oversight, interpretabilidad mecanicista, dangerous evals, AI control, model organisms of misalignment, reward hacking/specification gaming, honestidad y epistemia, riesgos existenciales, cooperación multi-agente, alineamiento de agentes autónomos |
 | **D. Evaluación y benchmarks** (~6) | HarmBench/JailbreakBench y afines, red teaming automatizado, evaluación de agentes (tau-bench...), métricas (ASR, refusal...), arenas/leaderboards, rigor estadístico y contaminación |
@@ -65,7 +67,7 @@ Estados por línea de investigación: 🌱 emergente · 🔥 en auge · ✅ acti
 
 ## 5. Componentes
 
-1. **Misión madre** — `missions/mapa-seguridad-ia/mission.md`. Topic: "Mapa maestro de investigación en Seguridad en IA". Secciones del catálogo existente: `related_work`, `sota`, `gaps`, `discussion`. Provider `perplexity`. Produce el tronco: visión del campo, marco unificado (incluye clasificación de áreas afines: criptografía aplicada a ML, verificación formal, seguridad de sistemas, HCI-seguridad, derecho), y metodología de clasificación de estados. `enable_quality_check: true` solo aquí y en consolidación.
+1. **Misión madre** — `missions/mapa-seguridad-ia/mission.md`. Topic: "Mapa maestro de investigación en Seguridad en IA". Secciones del catálogo existente: `related_work`, `sota`, `gaps`, `discussion`. Provider `perplexity`. `output_dir: outputs/mapa-seguridad-ia/tronco` (el consolidador lee de ahí). Produce el tronco: visión del campo, marco unificado (incluye clasificación de áreas afines: criptografía aplicada a ML, verificación formal, seguridad de sistemas, HCI-seguridad, derecho), y metodología de clasificación de estados. `enable_quality_check: true` solo aquí y en consolidación.
 2. **`taxonomy.json`** — árbol versionado: id, nombre, rama troncal, descripción, preguntas guía por sub-rama, estado inicial tentativo (a validar por su agente).
 3. **Extensión del catálogo de secciones** (`paper_pipeline/templates.py`) — 5 claves nuevas (~30-40 líneas, aditivo, sin tocar claves existentes):
    - `research_lines_status`: clasificar líneas de {topic} por estado (emergente/auge/activa/declive/cerrada) con evidencia y años.
@@ -73,10 +75,11 @@ Estados por línea de investigación: 🌱 emergente · 🔥 en auge · ✅ acti
    - `trends_timeline`: qué líneas nacen, cuáles mueren y por qué (2019–presente).
    - `venues_map`: dónde se publica y verifica por pares el trabajo de {topic} (conferencias, revistas, workshops), con rankings.
    - `hackathon_projects`: hackathons, CTFs y proyectos de comunidad en {topic} con artefactos públicos.
-4. **Generador de specs** — `scripts/generar_specs_mapa.py`: lee `taxonomy.json` → escribe `specs.json` con un `AgentRunSpec` por sub-rama. Misión embebida por rama: topic descriptivo de la sub-rama (incluye el encuadre de estados), secciones `related_work`, `research_lines_status`, `venues_map`, `key_actors`, `related_code`; `max_perplexity_calls: 6`; `language: es-ES`; `enable_quality_check: false`. Comando por agente: `python -m paper_pipeline mission.md` (prefijo `python` ya permitido). Salta sub-ramas cuya rama git ya tiene outputs (reanudable). `--only` para regenerar un subset.
-5. **Ejecución paralela** — `paper-parallel batch --repo . --specs specs.json --max-concurrent 5 --timeout 3600`. Cada agente: worktree aislado → misión inyectada → secciones vía Perplexity → outputs → commit en rama `exp/mapa-<id>` → worktree eliminado (outputs preservados en git).
-6. **Consolidador** — `scripts/consolidar_mapa.py`: extrae los drafts/secciones de cada rama `exp/mapa-<id>` (vía `git show`), ensambla `outputs/mapa-seguridad-ia/MAPA_SEGURIDAD_IA.md` en orden del árbol: portada, índice, resumen ejecutivo, tronco (misión madre), ramas A–G con sus sub-ramas, tabla maestra (sub-rama × estado × venues × actores), glosario y bibliografía consolidada. Reporta sub-ramas fallidas como PENDIENTE.
-7. **Verificación de calidad final** — un run de revisión (misión de consolidación con `peer_review` del catálogo existente) sobre el documento ensamblado.
+4. **Generador de specs** — `scripts/generar_specs_mapa.py`: lee `taxonomy.json` → escribe `specs.json` con un `AgentRunSpec` por sub-rama. Misión embebida por rama: topic descriptivo de la sub-rama (incluye el encuadre de estados), secciones `related_work`, `research_lines_status`, `trends_timeline`, `venues_map`, `key_actors`, `related_code` (la sub-rama G3 hackathons/CTFs añade `hackathon_projects`); `max_perplexity_calls: 8`; `language: es-ES`; `enable_quality_check: false`. Comando por agente: `python -m paper_pipeline mission.md` (prefijo `python` ya permitido). Salta sub-ramas cuya rama git ya tiene outputs (reanudable). `--only` para regenerar un subset.
+5. **Retención de ramas (cambio en `paper-parallel`)** — el código actual (`agent_executor.py`) elimina la rama `exp/<id>` tras cada agente salvo tier-3, y el tier solo se calcula con `outputs/metrics.json`, que las misiones de research no generan: sin este cambio, el batch destruiría los outputs. Cambio mínimo y aditivo: campo `keep_all_branches: bool = False` en `WorktreeConfig` (`parallel/specs.py`), honrado en `agent_executor.py` (`keep = keep_all_branches or (tier_result == 3 and keep_breakthrough_branches)`), expuesto como flag `--keep-branches` en `paper-parallel batch` (`parallel_cli.py`). Para este proyecto el batch se lanza **siempre** con `--keep-branches`.
+6. **Ejecución paralela** — `paper-parallel batch --repo . --specs specs.json --max-concurrent 5 --timeout 3600 --keep-branches`. Cada agente: worktree aislado → misión inyectada → secciones vía Perplexity → outputs → commit en rama `exp/mapa-<id>` → worktree eliminado, **rama y outputs preservados en git**.
+7. **Consolidador** — `scripts/consolidar_mapa.py`: extrae los drafts/secciones de cada rama `exp/mapa-<id>` (vía `git show`), ensambla `outputs/mapa-seguridad-ia/MAPA_SEGURIDAD_IA.md` en orden del árbol: portada, índice, resumen ejecutivo, tronco (misión madre), ramas A–G con sus sub-ramas, tabla maestra (sub-rama × estado × venues × actores), glosario y bibliografía consolidada. Reporta sub-ramas fallidas como PENDIENTE. Incluye `--limpiar-ramas` para borrar las ramas `exp/mapa-*` tras una consolidación exitosa (opt-in, nunca por defecto).
+8. **Verificación de calidad final** — un run de revisión (misión de consolidación con `peer_review` del catálogo existente) sobre el documento ensamblado.
 
 ## 6. Flujo de datos
 
@@ -96,6 +99,7 @@ taxonomy.json ──▶ generar_specs_mapa.py ──▶ specs.json
 ## 7. Manejo de errores
 
 - **Agente fallido/timeout:** queda registrado en `batch_summary.json`; el consolidador lo marca PENDIENTE; se relanza solo ese subset (`generar_specs_mapa.py --only <ids>`).
+- **Pérdida de outputs:** imposible por diseño — el batch corre con `--keep-branches` (§5.5) y las ramas `exp/mapa-<id>` persisten hasta una consolidación exitosa con `--limpiar-ramas` explícito.
 - **Perplexity sin token o saturado:** aborta con mensaje claro; rate limiter integrado del orquestador paralelo + `max_concurrent: 5` + `max_perplexity_calls: 6` por misión.
 - **Sección inválida:** validación estricta del catálogo (error existente de `templates.py`); los tests lo cubren.
 - **Reanudabilidad:** specs filtrados por ramas git ya completadas; ninguna rerun innecesaria.
@@ -110,6 +114,7 @@ Al terminar el mapa: **web que exponga la base de conocimiento para consulta por
 - `--dry-run` de la misión madre y de una misión de rama (valida sin llamadas de red).
 - Test unitario de `generar_specs_mapa.py` (taxonomía → specs válidos, filtro de reanudación, `--only`).
 - Test de las 5 claves nuevas de `templates.py` (presentes en `prompt_for_section`, formato correcto).
+- Test de retención de ramas: con `--keep-branches`, tras un batch la rama `exp/<id>` existe; sin el flag, comportamiento actual intacto.
 - Test de `consolidar_mapa.py` con fixtures (2-3 ramas falsas en un repo temporal): orden del árbol, PENDIENTE en faltantes, bibliografía.
 - **Piloto:** batch con 2-3 sub-ramas reales antes del batch completo de ~55.
 
